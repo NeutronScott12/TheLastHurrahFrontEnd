@@ -1,0 +1,23 @@
+mutation ConfirmUser($token: String!) {
+    confirm_user(token: $token) {
+        success
+        message
+    }
+}
+
+mutation RegisterUser(
+    $email: String!
+    $password: String!
+    $redirect_url: String
+    $username: String!
+) {
+    register_user(
+        email: $email
+        password: $password
+        redirect_url: $redirect_url
+        username: $username
+    ) {
+        success
+        message
+    }
+}

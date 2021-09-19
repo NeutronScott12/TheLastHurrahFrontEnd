@@ -1,0 +1,27 @@
+query FetchUsers {
+	fetch_users {
+		id
+		username
+		email
+		confirmed
+	}
+}
+
+query CurrentUser {
+	current_user {
+		id
+		email
+	}
+}
+
+query SearchUserByEmail($email: String!) {
+	search_user_by_email(email: $email) {
+		id
+		email
+		username
+	}
+}
+
+# query IsUserLoggedIn {
+#     isLoggedIn @client
+# }

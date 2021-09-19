@@ -1,0 +1,84 @@
+fragment ApplicationFields on ApplicationModel {
+	id
+	application_name
+	plan
+	cost
+	renewal
+	created_at
+	updated_at
+	members_ids
+	application_owner {
+		id
+	}
+	comments {
+		id
+	}
+	application_members {
+		email
+		id
+	}
+	moderators {
+		email
+		username
+		id
+	}
+}
+
+query FetchApplicationByName($name: String!) {
+	find_one_application_by_name(name: $name) {
+		...ApplicationFields
+	}
+}
+
+query FetchApplicationsByOwner {
+	fetch_all_applications {
+		...ApplicationFields
+	}
+}
+
+query FindOneApplicationById($findOneApplicationByIdId: String!) {
+	find_one_application_by_id(id: $findOneApplicationByIdId) {
+		...ApplicationFields
+	}
+}
+
+# query FindApplicationModerators()
+
+input CreateApplicationInput {
+	application_name: String!
+}
+
+mutation CreateApplication($createApplicationInput: CreateApplicationInput!) {
+	create_application(createApplicationInput: $createApplicationInput) {
+		application_name
+		# created_at
+		comments {
+			id
+		}
+		application_members {
+			email
+		}
+	}
+}
+
+input RemoveModeratorInput {
+	application_id: String!
+	moderation_id: String!
+}
+
+input AddModeratorInput {
+	application_id: String!
+	moderation_id: String!
+}
+
+mutation RemoveApplicationModerator($removeModeratorInput: RemoveModeratorInput!) {
+	remove_application_moderator(removeModeratorInput: $removeModeratorInput) {
+		...ApplicationFields
+	}
+}
+
+mutation AddApplicationModerator($addModeratorInput: AddModeratorInput!) {
+	add_application_moderator(addModeratorInput: $addModeratorInput) {
+		...ApplicationFields
+	}
+}
