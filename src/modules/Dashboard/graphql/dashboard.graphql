@@ -6,17 +6,10 @@ fragment ApplicationFields on ApplicationModel {
 	renewal
 	created_at
 	updated_at
-	members_ids
 	application_owner {
 		id
 	}
-	comments {
-		id
-	}
-	application_members {
-		email
-		id
-	}
+
 	moderators {
 		email
 		username
@@ -24,9 +17,54 @@ fragment ApplicationFields on ApplicationModel {
 	}
 }
 
-query FetchApplicationByName($name: String!) {
+input FetchThreadCommentsById {
+	limit: Int!
+	skip: Int!
+}
+
+query FetchApplicationByName($name: String!, $FetchThreadCommentsById: FetchThreadCommentsById!) {
 	find_one_application_by_name(name: $name) {
 		...ApplicationFields
+		threads {
+			application_id
+			id
+			thread_comments(FetchThreadCommentsById: $FetchThreadCommentsById) {
+				comments {
+					plain_text_body
+					application_id
+					author {
+						id
+						username
+					}
+				}
+			}
+		}
+	}
+}
+
+input FetchCommentsByApplicationIdInput {
+	limit: Int!
+	skip: Int!
+	sort: sort!
+	application_id: String!
+}
+
+query FetchCommentsByApplicationId(
+	$fetchCommentsByApplicationIdInput: FetchCommentsByApplicationIdInput!
+) {
+	fetch_comments_by_application_id(
+		fetchCommentsByApplicationId: $fetchCommentsByApplicationIdInput
+	) {
+		comments_count
+		comments {
+			id
+			plain_text_body
+			application_id
+			author {
+				id
+				username
+			}
+		}
 	}
 }
 
@@ -52,12 +90,6 @@ mutation CreateApplication($createApplicationInput: CreateApplicationInput!) {
 	create_application(createApplicationInput: $createApplicationInput) {
 		application_name
 		# created_at
-		comments {
-			id
-		}
-		application_members {
-			email
-		}
 	}
 }
 

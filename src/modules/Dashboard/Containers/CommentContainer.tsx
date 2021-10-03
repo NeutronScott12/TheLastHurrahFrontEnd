@@ -1,13 +1,12 @@
 import React from 'react'
-import { gql, useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { DataGrid, GridColDef } from '@material-ui/data-grid'
 import moment from 'moment'
 
 import {
 	CommentModel,
-	FetchApplicationByNameQuery,
-	FetchApplicationByNameQueryVariables,
+	Sort,
+	useFetchCommentsByApplicationIdQuery,
 } from '../../../generated/graphql'
 import { IParams } from './AppContainer'
 import { makeStyles } from '@material-ui/styles'
@@ -18,33 +17,6 @@ const columns: GridColDef[] = [
 	{ field: 'username', headerName: 'Username', width: 200 },
 	{ field: 'created_at', headerName: 'Created At', width: 200 },
 ]
-
-const APPLICATION_COMMENTS = gql`
-	query ApplicationComments($name: String!) {
-		find_one_application_by_name(name: $name) {
-			id
-			application_name
-			comments {
-				id
-				body
-				created_at
-				author {
-					username
-					id
-					email
-				}
-				replies {
-					id
-					body
-					author {
-						id
-						email
-					}
-				}
-			}
-		}
-	}
-`
 
 const useStyles = makeStyles({
 	root: {
@@ -60,29 +32,45 @@ const useStyles = makeStyles({
 	},
 })
 
+interface ILocationState {
+	state: {
+		application_id: string
+	}
+}
+
 export const CommentContainer = () => {
 	const { application_name } = useParams() as IParams
+	const location = useLocation() as ILocationState
 	const classes = useStyles()
 
-	const { data, loading } = useQuery<
-		FetchApplicationByNameQuery,
-		FetchApplicationByNameQueryVariables
-	>(APPLICATION_COMMENTS, {
+	console.log('LOCATION', location)
+
+	const { data, loading } = useFetchCommentsByApplicationIdQuery({
 		variables: {
-			name: application_name,
+			fetchCommentsByApplicationIdInput: {
+				application_id: location.state && location.state.application_id,
+				limit: 10,
+				skip: 0,
+				sort: Sort.Asc,
+			},
 		},
 	})
 
+	console.log('DATA', data)
+
 	const formattedRows = () => {
 		if (data) {
-			if (data.find_one_application_by_name) {
-				return data?.find_one_application_by_name.comments.reduce(
+			if (
+				data.fetch_comments_by_application_id &&
+				data.fetch_comments_by_application_id.comments
+			) {
+				return data.fetch_comments_by_application_id.comments.reduce(
 					// @ts-ignore
 					(prev, curr: CommentModel, key) => {
 						return [
 							...prev,
 							{
-								body: curr.body,
+								body: curr.plain_text_body,
 								username: curr.author.username,
 								id: curr.id,
 								created_at: moment(curr.created_at).format('l'),

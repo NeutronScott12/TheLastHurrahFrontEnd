@@ -10,8 +10,14 @@ export interface IParams {
 export const AppContainer = () => {
 	const { application_name } = useParams() as IParams
 
-	const { loading } = useFetchApplicationByNameQuery({
-		variables: { name: application_name },
+	const { loading, data } = useFetchApplicationByNameQuery({
+		variables: {
+			name: application_name,
+			FetchThreadCommentsById: {
+				limit: 10,
+				skip: 0,
+			},
+		},
 	})
 
 	return loading ? (
@@ -30,7 +36,12 @@ export const AppContainer = () => {
 				Moderation
 			</Button>
 			<br />
-			<Link to={`/dashboard/apps/${application_name}/comments`}>Comments</Link>
+			<Link
+				state={{ application_id: data && data.find_one_application_by_name.id }}
+				to={`/dashboard/apps/${application_name}/comments`}
+			>
+				Comments
+			</Link>
 			<br />
 			<Link to={`/dashboard/apps/${application_name}/users`}>Users</Link>
 			{/* <Outlet /> */}

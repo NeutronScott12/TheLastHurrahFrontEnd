@@ -16,7 +16,6 @@ import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'
 
 export const SiteRouter: React.FC<{ loggedIn: boolean }> = ({ loggedIn }) => {
-	console.log('ROUTES LOGGED_IN', loggedIn)
 	let routes = useRoutes([
 		{
 			path: '/confirmed',

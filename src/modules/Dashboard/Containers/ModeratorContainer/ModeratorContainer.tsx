@@ -21,8 +21,9 @@ export const ModeratorContainer = () => {
 	const { application_name } = useParams() as IParams
 	const [getUser, { data: userData }] = useSearchUserByEmailLazyQuery()
 	const [addUserModerator, setAddModerator] = useState<IModeratorState>()
+	const [isAddModeratorOpen, setAddModeratorOpen] = useState(false)
 	const { data, loading, refetch } = useFetchApplicationByNameQuery({
-		variables: { name: application_name },
+		variables: { name: application_name, FetchThreadCommentsById: { limit: 10, skip: 0 } },
 	})
 	const [removeMod] = useRemoveApplicationModeratorMutation()
 	const [addMod] = useAddApplicationModeratorMutation()
@@ -36,6 +37,7 @@ export const ModeratorContainer = () => {
 				getUser({ variables: { email: values.email } })
 				if (userData) {
 					console.log('WORKING')
+					setAddModeratorOpen(true)
 					setAddModerator(userData.search_user_by_email)
 				}
 
@@ -49,8 +51,10 @@ export const ModeratorContainer = () => {
 
 	const addModerator = async (id: string) => {
 		try {
+			console.log('DATA', data)
+			console.log('USER_DATA', userData)
 			if (data && userData) {
-				await addMod({
+				const response = await addMod({
 					variables: {
 						addModeratorInput: {
 							application_id: data.find_one_application_by_name.id,
@@ -58,6 +62,8 @@ export const ModeratorContainer = () => {
 						},
 					},
 				})
+				setAddModeratorOpen(false)
+				console.log('RESPONSE', response)
 			}
 		} catch (error) {
 			console.log(error)
@@ -107,7 +113,7 @@ export const ModeratorContainer = () => {
 					</Button>
 				</form>
 			</Grid>
-			{userData ? (
+			{userData && isAddModeratorOpen ? (
 				<Grid>
 					<ListItem style={{ width: '30%' }}>
 						<ListItemText primary={userData.search_user_by_email.username} />

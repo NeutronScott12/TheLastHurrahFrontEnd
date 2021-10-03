@@ -9,7 +9,7 @@ import { SettingsEditForm } from '../../components/SettingsComponents/SettingsEd
 export const SettingApplicationContainer = () => {
 	const { application_name } = useParams() as IParams
 	const { data, loading } = useFetchApplicationByNameQuery({
-		variables: { name: application_name },
+		variables: { name: application_name, FetchThreadCommentsById: { limit: 10, skip: 0 } },
 	})
 
 	if (!loading && data) {
