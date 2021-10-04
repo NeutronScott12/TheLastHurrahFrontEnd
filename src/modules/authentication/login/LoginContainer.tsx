@@ -1,15 +1,13 @@
 import React, { useState } from 'react'
+import Alert from '@mui/material/Alert'
 import { useFormik } from 'formik'
-import * as yup from 'yup'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import { Button, Container, TextField } from '@mui/material'
 import { gql, useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
-import { Alert } from '@material-ui/lab'
+import * as yup from 'yup'
 
 import { IS_LOGGED_IN } from '../../../graphql/graphql'
 import { cache } from '../../../apollo/cache'
-import { Container } from '@material-ui/core'
 import { ILoginForm } from '../utils/types'
 
 const LOGIN_MUTATION = gql`

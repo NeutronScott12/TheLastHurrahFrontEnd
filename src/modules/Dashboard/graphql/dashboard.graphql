@@ -42,6 +42,16 @@ query FetchApplicationByName($name: String!, $FetchThreadCommentsById: FetchThre
 	}
 }
 
+fragment CommentFragment on CommentModel {
+	id
+	plain_text_body
+	application_id
+	author {
+		id
+		username
+	}
+}
+
 input FetchCommentsByApplicationIdInput {
 	limit: Int!
 	skip: Int!
@@ -57,13 +67,36 @@ query FetchCommentsByApplicationId(
 	) {
 		comments_count
 		comments {
-			id
-			plain_text_body
-			application_id
-			author {
-				id
-				username
-			}
+			...CommentFragment
+		}
+	}
+}
+
+enum WHERE {
+	PENDING
+	APPOVED
+	SPAM
+	DELETED
+	ALL
+}
+
+input FetchCommentsByApplicationNameInput {
+	limit: Int!
+	skip: Int!
+	sort: sort!
+	application_name: String!
+	where: WHERE!
+}
+
+query FetchCommentsByApplicationName(
+	$fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput!
+) {
+	fetch_comments_by_application_name(
+		fetchCommentsByApplicationName: $fetchCommentsByApplicationName
+	) {
+		comments_count
+		comments {
+			...CommentFragment
 		}
 	}
 }
@@ -112,5 +145,16 @@ mutation RemoveApplicationModerator($removeModeratorInput: RemoveModeratorInput!
 mutation AddApplicationModerator($addModeratorInput: AddModeratorInput!) {
 	add_application_moderator(addModeratorInput: $addModeratorInput) {
 		...ApplicationFields
+	}
+}
+
+input DeleteManyCommentsInput {
+	comments_id: String
+}
+
+mutation DeleteManyComments($deleteManyCommentsInput: [DeleteManyCommentsInput!]!) {
+	delete_many_comments(deleteManyCommentsInput: $deleteManyCommentsInput) {
+		success
+		message
 	}
 }

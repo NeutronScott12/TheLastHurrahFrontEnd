@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Grid, List, ListItem, ListItemText, TextField } from '@material-ui/core'
+import { Button, Grid, List, ListItem, ListItemText, TextField } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import {
 	useAddApplicationModeratorMutation,

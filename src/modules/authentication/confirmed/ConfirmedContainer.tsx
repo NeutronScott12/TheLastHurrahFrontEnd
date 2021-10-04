@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Grid } from '@material-ui/core'
+import { Button, Grid } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router'
-import { Alert } from '@material-ui/lab'
+import Alert from '@mui/material/Alert'
 import { useConfirmUserMutation } from '../../../generated/graphql'
 
 export const ConfirmedContainer = () => {

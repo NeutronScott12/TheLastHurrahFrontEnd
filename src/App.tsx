@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import { makeStyles } from '@material-ui/core'
+import React, { Suspense, useEffect, useState } from 'react'
+import { CssBaseline } from '@mui/material'
+import { createTheme } from '@mui/material/styles'
+import { makeStyles, ThemeProvider } from '@mui/styles'
 
 import { MainHeader } from './partials/Header'
 import { MainDrawer } from './partials/Drawer'
@@ -22,6 +23,8 @@ const useStyles = makeStyles(() => ({
 	},
 }))
 
+const theme = createTheme()
+
 // const theme = createMui({
 //     palette: {
 //       secondary: {
@@ -37,7 +40,8 @@ const useStyles = makeStyles(() => ({
 function App() {
 	const classes = useStyles()
 	const { data: currentUserData } = useCurrentUser()
-	const { data, loading } = useCurrentUserQuery()
+	const [loading, changeLoading] = useState(true)
+	const { data, loading: userLoading } = useCurrentUserQuery()
 
 	useEffect(() => {
 		if (data) {
@@ -47,6 +51,9 @@ function App() {
 					isLoggedIn: true,
 				},
 			})
+			changeLoading(false)
+		} else {
+			changeLoading(false)
 		}
 	}, [data])
 
@@ -56,19 +63,25 @@ function App() {
 		setOpen(!open)
 	}
 
-	return loading && !data ? (
+	return loading || (userLoading && !data) ? (
 		<LoadingComponent />
 	) : (
-		<div className={classes.root}>
-			<CssBaseline />
-			<MainHeader handleDrawer={handleDrawer} open={open} />
-			<MainDrawer handleDrawer={handleDrawer} open={open} />
-			<MainContainer>
-				<SiteRouter
-					loggedIn={currentUserData?.isLoggedIn ? currentUserData.isLoggedIn : false}
-				/>
-			</MainContainer>
-		</div>
+		<ThemeProvider theme={theme}>
+			<div className={classes.root}>
+				<CssBaseline />
+				<MainHeader handleDrawer={handleDrawer} open={open} />
+				<MainDrawer handleDrawer={handleDrawer} open={open} />
+				<MainContainer>
+					<Suspense fallback={<LoadingComponent />}>
+						<SiteRouter
+							loggedIn={
+								currentUserData?.isLoggedIn ? currentUserData.isLoggedIn : false
+							}
+						/>
+					</Suspense>
+				</MainContainer>
+			</div>
+		</ThemeProvider>
 	)
 }
 

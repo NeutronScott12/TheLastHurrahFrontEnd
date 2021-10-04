@@ -1,55 +1,53 @@
 import React from 'react'
 import {
-    makeStyles,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableCellProps,
-    TableContainer,
-    TableHead,
-    TableRow,
-} from '@material-ui/core'
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableCellProps,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Theme,
+} from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
-export const useStyles = makeStyles((theme) => ({
-    table: {
-        minWidth: 650,
-    },
+export const useStyles = makeStyles((theme: Theme) => ({
+	table: {
+		minWidth: 650,
+	},
 }))
 
 interface ITableHead {
-    name: string
-    props: TableCellProps
+	name: string
+	props: TableCellProps
 }
 
 interface ITableGenerator {
-    tableHeaders: ITableHead[]
+	tableHeaders: ITableHead[]
 }
 
-export const TableGenerator: React.FC<ITableGenerator> = ({
-    children,
-    tableHeaders,
-}) => {
-    const classes = useStyles()
+export const TableGenerator: React.FC<ITableGenerator> = ({ children, tableHeaders }) => {
+	const classes = useStyles()
 
-    return (
-        <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        {tableHeaders.map(({ name, props }, key) => {
-                            return (
-                                <TableCell key={key + name} {...props}>
-                                    {name}
-                                </TableCell>
-                            )
-                        })}
-                    </TableRow>
-                </TableHead>
-                <TableBody>{children}</TableBody>
-            </Table>
-        </TableContainer>
-    )
+	return (
+		<TableContainer component={Paper}>
+			<Table className={classes.table} aria-label="simple table">
+				<TableHead>
+					<TableRow>
+						{tableHeaders.map(({ name, props }, key) => {
+							return (
+								<TableCell key={key + name} {...props}>
+									{name}
+								</TableCell>
+							)
+						})}
+					</TableRow>
+				</TableHead>
+				<TableBody>{children}</TableBody>
+			</Table>
+		</TableContainer>
+	)
 }
 
 // {

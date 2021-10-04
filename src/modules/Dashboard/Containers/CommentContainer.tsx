@@ -1,108 +1,100 @@
-import React from 'react'
-import { useParams, useLocation } from 'react-router-dom'
-import { DataGrid, GridColDef } from '@material-ui/data-grid'
-import moment from 'moment'
+import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { GridRowId, GridState } from '@mui/x-data-grid'
 
 import {
-	CommentModel,
 	Sort,
-	useFetchCommentsByApplicationIdQuery,
+	useDeleteManyCommentsMutation,
+	useFetchCommentsByApplicationNameQuery,
+	Where,
 } from '../../../generated/graphql'
 import { IParams } from './AppContainer'
-import { makeStyles } from '@material-ui/styles'
 import { LoadingComponent } from '../../../partials/Loading'
-
-const columns: GridColDef[] = [
-	{ field: 'body', headerName: 'Body', width: 500 },
-	{ field: 'username', headerName: 'Username', width: 200 },
-	{ field: 'created_at', headerName: 'Created At', width: 200 },
-]
-
-const useStyles = makeStyles({
-	root: {
-		'& .super-app-theme--header': {
-			// backgroundColor: 'rgba(255, 7, 0, 0.55)',
-		},
-	},
-	tableStyle: {
-		color: '#ededed',
-		'& .PrivateSwitchBase-input-27': {
-			color: '#ededed',
-		},
-	},
-})
-
-interface ILocationState {
-	state: {
-		application_id: string
-	}
-}
+import { formattedRows } from '../helpers'
+import { CommentDataGrid } from '../Views/CommentDataGrid'
 
 export const CommentContainer = () => {
 	const { application_name } = useParams() as IParams
-	const location = useLocation() as ILocationState
-	const classes = useStyles()
+	const [selected, changeSelected] = useState<GridRowId[]>([])
+	const [deleteManyComments] = useDeleteManyCommentsMutation()
+	const [checkError, setError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
 
-	console.log('LOCATION', location)
+	let rows
 
-	const { data, loading } = useFetchCommentsByApplicationIdQuery({
+	const { data, loading, refetch } = useFetchCommentsByApplicationNameQuery({
 		variables: {
-			fetchCommentsByApplicationIdInput: {
-				application_id: location.state && location.state.application_id,
+			fetchCommentsByApplicationName: {
+				application_name,
 				limit: 10,
 				skip: 0,
 				sort: Sort.Asc,
+				where: Where.Pending,
 			},
 		},
 	})
 
-	console.log('DATA', data)
-
-	const formattedRows = () => {
-		if (data) {
-			if (
-				data.fetch_comments_by_application_id &&
-				data.fetch_comments_by_application_id.comments
-			) {
-				return data.fetch_comments_by_application_id.comments.reduce(
-					// @ts-ignore
-					(prev, curr: CommentModel, key) => {
-						return [
-							...prev,
-							{
-								body: curr.plain_text_body,
-								username: curr.author.username,
-								id: curr.id,
-								created_at: moment(curr.created_at).format('l'),
-							},
-						]
-					},
-					[]
-				)
-			}
+	const onChange = (
+		params: GridState,
+		event: {
+			defaultMuiPrevented?: boolean | undefined
 		}
+	) => {
+		// console.log('PARAMS', params)
+		// console.log('EVENT', event)
 
-		return []
+		changeSelected(params.selection)
 	}
 
-	const rows = formattedRows()
+	const filterComments = async (where: Where) => {
+		await refetch({
+			fetchCommentsByApplicationName: {
+				application_name,
+				limit: 10,
+				skip: 0,
+				sort: Sort.Asc,
+				where,
+			},
+		})
+	}
+
+	const deleteSelected = async () => {
+		console.log('SELECTED', selected)
+
+		const arr = selected as string[]
+
+		try {
+			await deleteManyComments({
+				variables: {
+					deleteManyCommentsInput: { comment_ids: arr },
+				},
+			})
+		} catch (error) {
+			if (error instanceof Error) {
+				setErrorMessage(error.message)
+				setError(true)
+			}
+		}
+	}
+
+	if (
+		data?.fetch_comments_by_application_name &&
+		data.fetch_comments_by_application_name.comments
+	) {
+		rows = formattedRows(data.fetch_comments_by_application_name.comments)
+	}
 
 	return loading ? (
 		<LoadingComponent />
 	) : (
-		<div className={classes.root} style={{ height: '100vh' }}>
-			<h2>Comment Container</h2>
-			<DataGrid
-				className={classes.tableStyle}
-				getRowId={(rows) => rows.id}
-				//@ts-ignore
-				rows={rows}
-				columns={columns}
-				pageSize={5}
-				rowsPerPageOptions={[5]}
-				checkboxSelection
-				disableSelectionOnClick
-			></DataGrid>
-		</div>
+		<CommentDataGrid
+			selected={selected}
+			filterComments={filterComments}
+			onChange={onChange}
+			deleteSelected={deleteSelected}
+			rows={rows}
+			checkError={checkError}
+			errorMessage={errorMessage}
+		/>
 	)
 }

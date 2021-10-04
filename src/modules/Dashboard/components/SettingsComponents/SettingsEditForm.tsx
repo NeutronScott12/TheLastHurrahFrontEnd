@@ -1,9 +1,9 @@
 import React from 'react'
-import { Button, Grid, TextField } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 import { ApplicationFieldsFragment } from '../../../../generated/graphql'
+import { Button, Grid, TextField } from '@mui/material'
 
 interface ISettingsFormProps {
 	application: ApplicationFieldsFragment

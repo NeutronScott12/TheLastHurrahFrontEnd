@@ -1,39 +1,37 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
 import { Link } from 'react-router-dom'
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-    linkStyle: {
-        color: '#ededed',
-        textDecoration: 'none',
-    },
+const useStyles = makeStyles((theme: Theme) => ({
+	root: {
+		flexGrow: 1,
+	},
+	menuButton: {
+		marginRight: theme.spacing(2),
+	},
+	title: {
+		flexGrow: 1,
+	},
+	linkStyle: {
+		color: '#ededed',
+		textDecoration: 'none',
+	},
 }))
 
 export const DashboardHeader = () => {
-    const classes = useStyles()
+	const classes = useStyles()
 
-    return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Link className={classes.linkStyle} to="/dashboard/apps">
-                        <Typography variant="h6">Apps</Typography>
-                    </Link>
-                </Toolbar>
-            </AppBar>
-        </div>
-    )
+	return (
+		<div className={classes.root}>
+			<AppBar position="static">
+				<Toolbar>
+					<Link className={classes.linkStyle} to="/dashboard/apps">
+						<Typography variant="h6">Apps</Typography>
+					</Link>
+				</Toolbar>
+			</AppBar>
+		</div>
+	)
 }

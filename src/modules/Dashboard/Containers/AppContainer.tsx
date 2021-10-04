@@ -1,5 +1,5 @@
-import { Button } from '@material-ui/core'
 import React from 'react'
+import { Button } from '@mui/material'
 import { Link, useParams } from 'react-router-dom'
 import { useFetchApplicationByNameQuery } from '../../../generated/graphql'
 import { LoadingComponent } from '../../../partials/Loading'

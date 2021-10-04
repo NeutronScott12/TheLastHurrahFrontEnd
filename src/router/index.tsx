@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import { useRoutes } from 'react-router-dom'
 
 import { AboutContainer } from '../modules/About/AboutContainer'
@@ -14,6 +14,12 @@ import { SettingApplicationContainer } from '../modules/Dashboard/Containers/Set
 import { UsersContainer } from '../modules/Dashboard/Containers/UsersContainer'
 import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'
+
+const LazyDashboard = lazy(() =>
+	import('../modules/Dashboard/Layouts/DashboardLayout').then((module) => ({
+		default: module.DashboardLayout,
+	}))
+)
 
 export const SiteRouter: React.FC<{ loggedIn: boolean }> = ({ loggedIn }) => {
 	let routes = useRoutes([
@@ -35,7 +41,7 @@ export const SiteRouter: React.FC<{ loggedIn: boolean }> = ({ loggedIn }) => {
 		},
 		{
 			path: 'dashboard/*',
-			element: loggedIn === true ? <DashboardLayout /> : <LoginContainer />,
+			element: loggedIn === true ? <LazyDashboard /> : <LoginContainer />,
 			children: [
 				{
 					path: 'apps/add_application',
