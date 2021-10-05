@@ -30,7 +30,7 @@ export const ModeratorContainer = () => {
 	const [userModerator, setAddModerator] = useState<IModeratorState>()
 	const [isAddModeratorOpen, setAddModeratorOpen] = useState(false)
 	const { data, loading, refetch } = useFetchApplicationByNameQuery({
-		variables: { name: application_name, FetchThreadCommentsById: { limit: 10, skip: 0 } },
+		variables: { name: application_name },
 	})
 	const [removeMod] = useRemoveApplicationModeratorMutation()
 	const [addMod] = useAddApplicationModeratorMutation()
@@ -96,21 +96,47 @@ export const ModeratorContainer = () => {
 		}
 	}
 
-	return loading ? (
+	let displaySettingsForm
+
+	if (data && data.find_one_application_by_name) {
+		const {
+			pre_comment_moderation,
+			allow_images_and_videos_on_comments,
+			display_comments_when_flagged,
+			email_mods_when_comments_flagged,
+			links_in_comments,
+		} = data.find_one_application_by_name
+		displaySettingsForm = (
+			<ModeratorSettingsForm
+				application_name={application_name}
+				pre_comment_moderation={pre_comment_moderation}
+				display_comments_when_flagged={display_comments_when_flagged}
+				email_mods_when_comments_flagged={email_mods_when_comments_flagged}
+				links_in_comments={links_in_comments}
+				allow_images_and_videos_on_comments={allow_images_and_videos_on_comments}
+			/>
+		)
+	}
+
+	return loading && data ? (
 		<LoadingComponent />
 	) : (
-		<Grid>
-			<ModerationSettingsForm
-				userData={userData}
-				formik={formik}
-				isAddModeratorOpen={isAddModeratorOpen}
-				addModerator={addModerator}
-			/>
-			<ModeratorList
-				moderators={data?.find_one_application_by_name.moderators}
-				removeModerator={removeModerator}
-			/>
-			<ModeratorSettingsForm />
+		<Grid container spacing={2}>
+			<Grid item xs={4}>
+				<ModerationSettingsForm
+					userData={userData}
+					formik={formik}
+					isAddModeratorOpen={isAddModeratorOpen}
+					addModerator={addModerator}
+				/>
+				<ModeratorList
+					moderators={data?.find_one_application_by_name.moderators}
+					removeModerator={removeModerator}
+				/>
+			</Grid>
+			<Grid container justifyContent="center" item xs={8}>
+				{displaySettingsForm}
+			</Grid>
 		</Grid>
 	)
 }

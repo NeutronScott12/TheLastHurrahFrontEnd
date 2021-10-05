@@ -6,6 +6,12 @@ fragment ApplicationFields on ApplicationModel {
 	renewal
 	created_at
 	updated_at
+	application_name
+	links_in_comments
+	email_mods_when_comments_flagged
+	allow_images_and_videos_on_comments
+	pre_comment_moderation
+	display_comments_when_flagged
 	application_owner {
 		id
 	}
@@ -22,23 +28,9 @@ input FetchThreadCommentsById {
 	skip: Int!
 }
 
-query FetchApplicationByName($name: String!, $FetchThreadCommentsById: FetchThreadCommentsById!) {
+query FetchApplicationByName($name: String!) {
 	find_one_application_by_name(name: $name) {
 		...ApplicationFields
-		threads {
-			application_id
-			id
-			thread_comments(FetchThreadCommentsById: $FetchThreadCommentsById) {
-				comments {
-					plain_text_body
-					application_id
-					author {
-						id
-						username
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -156,5 +148,30 @@ mutation DeleteManyComments($deleteManyCommentsInput: [DeleteManyCommentsInput!]
 	delete_many_comments(deleteManyCommentsInput: $deleteManyCommentsInput) {
 		success
 		message
+	}
+}
+
+input UpdateApplicationCommentRulesInput {
+	application_name: String!
+	links_in_comments: Boolean!
+	email_mods_when_comments_flagged: Boolean!
+	display_comments_when_flagged: Boolean!
+	allow_images_and_videos_on_comments: Boolean!
+	pre_comment_moderation: pre_comment_moderation!
+}
+
+mutation UpdateApplicationCommentRules(
+	$updateApplicationCommentRulesInput: UpdateApplicationCommentRulesInput!
+) {
+	update_application_comment_rules(
+		updateApplicationCommentRulesInput: $updateApplicationCommentRulesInput
+	) {
+		id
+		application_name
+		links_in_comments
+		email_mods_when_comments_flagged
+		allow_images_and_videos_on_comments
+		pre_comment_moderation
+		display_comments_when_flagged
 	}
 }

@@ -1,4 +1,4 @@
-import { Button, Grid, List, ListItem, ListItemText } from '@mui/material'
+import { Button, List, ListItem, ListItemText } from '@mui/material'
 import React from 'react'
 
 interface IModeratorList {
@@ -15,22 +15,18 @@ interface IModeratorList {
 
 export const ModeratorList: React.FC<IModeratorList> = ({ moderators, removeModerator }) => {
 	return (
-		<div>
-			<Grid>
-				<List>
-					{moderators &&
-						moderators.map((moderator) => {
-							return (
-								<ListItem style={{ width: '30%' }} key={moderator.id}>
-									<ListItemText primary={moderator.username} />
-									<Button onClick={() => removeModerator(moderator.id)}>
-										Remove moderator
-									</Button>
-								</ListItem>
-							)
-						})}
-				</List>
-			</Grid>
-		</div>
+		<List>
+			{moderators &&
+				moderators.map((moderator) => {
+					return (
+						<ListItem key={moderator.id}>
+							<ListItemText primary={moderator.username} />
+							<Button onClick={() => removeModerator(moderator.id)}>
+								Remove moderator
+							</Button>
+						</ListItem>
+					)
+				})}
+		</List>
 	)
 }

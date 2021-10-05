@@ -13,10 +13,6 @@ export const AppContainer = () => {
 	const { loading, data } = useFetchApplicationByNameQuery({
 		variables: {
 			name: application_name,
-			FetchThreadCommentsById: {
-				limit: 10,
-				skip: 0,
-			},
 		},
 	})
 

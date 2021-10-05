@@ -26,6 +26,7 @@ export type AddModeratorInput = {
 
 export type ApplicationModel = {
   __typename?: 'ApplicationModel';
+  allow_images_and_videos_on_comments: Scalars['Boolean'];
   application_name: Scalars['String'];
   application_owner: UserModel;
   application_owner_id: Scalars['String'];
@@ -35,10 +36,14 @@ export type ApplicationModel = {
   comments: Array<CommentModel>;
   cost: Scalars['Float'];
   created_at: Scalars['DateTime'];
+  display_comments_when_flagged: Scalars['Boolean'];
+  email_mods_when_comments_flagged: Scalars['Boolean'];
   id: Scalars['String'];
+  links_in_comments: Scalars['Boolean'];
   moderators: Array<UserModel>;
   moderators_ids: Array<Scalars['String']>;
   plan: Scalars['String'];
+  pre_comment_moderation: Pre_Comment_Moderation;
   renewal?: Maybe<Scalars['DateTime']>;
   threads: Array<ThreadModel>;
   updated_at: Scalars['DateTime'];
@@ -191,6 +196,7 @@ export type Mutation = {
   reset_password: StandardResponseModel;
   up_vote_comment: CommentModel;
   update_application: ApplicationModel;
+  update_application_comment_rules: ApplicationModel;
   update_comment: CommentModel;
 };
 
@@ -297,9 +303,20 @@ export type MutationUpdate_ApplicationArgs = {
 };
 
 
+export type MutationUpdate_Application_Comment_RulesArgs = {
+  updateApplicationCommentRulesInput: UpdateApplicationCommentRulesInput;
+};
+
+
 export type MutationUpdate_CommentArgs = {
   UpdateCommentInput: UpdateCommentInput;
 };
+
+export enum Pre_Comment_Moderation {
+  All = 'ALL',
+  NewComments = 'NEW_COMMENTS',
+  None = 'NONE'
+}
 
 export type Query = {
   __typename?: 'Query';
@@ -392,6 +409,15 @@ export type ThreadModelThread_CommentsArgs = {
   FetchThreadCommentsById: FetchThreadCommentsById;
 };
 
+export type UpdateApplicationCommentRulesInput = {
+  allow_images_and_videos_on_comments: Scalars['Boolean'];
+  application_name: Scalars['String'];
+  display_comments_when_flagged: Scalars['Boolean'];
+  email_mods_when_comments_flagged: Scalars['Boolean'];
+  links_in_comments: Scalars['Boolean'];
+  pre_comment_moderation: Pre_Comment_Moderation;
+};
+
 export type UpdateApplicationInput = {
   application_name: Scalars['String'];
   id: Scalars['String'];
@@ -446,15 +472,14 @@ export type SearchUserByEmailQueryVariables = Exact<{
 
 export type SearchUserByEmailQuery = { __typename?: 'Query', search_user_by_email: { __typename?: 'UserModel', id: string, email: string, username: string } };
 
-export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
 
 export type FetchApplicationByNameQueryVariables = Exact<{
   name: Scalars['String'];
-  FetchThreadCommentsById: FetchThreadCommentsById;
 }>;
 
 
-export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, threads: Array<{ __typename?: 'ThreadModel', application_id: string, id: string, thread_comments: { __typename?: 'FetchCommentByThreadIdResponse', comments: Array<{ __typename?: 'CommentModel', plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } }>, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } };
 
@@ -475,14 +500,14 @@ export type FetchCommentsByApplicationNameQuery = { __typename?: 'Query', fetch_
 export type FetchApplicationsByOwnerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
+export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
 
 export type FindOneApplicationByIdQueryVariables = Exact<{
   findOneApplicationByIdId: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CreateApplicationMutationVariables = Exact<{
   createApplicationInput: CreateApplicationInput;
@@ -496,14 +521,14 @@ export type RemoveApplicationModeratorMutationVariables = Exact<{
 }>;
 
 
-export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type AddApplicationModeratorMutationVariables = Exact<{
   addModeratorInput: AddModeratorInput;
 }>;
 
 
-export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type DeleteManyCommentsMutationVariables = Exact<{
   deleteManyCommentsInput: Array<DeleteManyCommentsInput> | DeleteManyCommentsInput;
@@ -511,6 +536,13 @@ export type DeleteManyCommentsMutationVariables = Exact<{
 
 
 export type DeleteManyCommentsMutation = { __typename?: 'Mutation', delete_many_comments: { __typename?: 'StandardResponseModel', success: boolean, message: string } };
+
+export type UpdateApplicationCommentRulesMutationVariables = Exact<{
+  updateApplicationCommentRulesInput: UpdateApplicationCommentRulesInput;
+}>;
+
+
+export type UpdateApplicationCommentRulesMutation = { __typename?: 'Mutation', update_application_comment_rules: { __typename?: 'ApplicationModel', id: string, application_name: string, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean } };
 
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
@@ -538,6 +570,12 @@ export const ApplicationFieldsFragmentDoc = gql`
   renewal
   created_at
   updated_at
+  application_name
+  links_in_comments
+  email_mods_when_comments_flagged
+  allow_images_and_videos_on_comments
+  pre_comment_moderation
+  display_comments_when_flagged
   application_owner {
     id
   }
@@ -669,23 +707,9 @@ export type SearchUserByEmailQueryHookResult = ReturnType<typeof useSearchUserBy
 export type SearchUserByEmailLazyQueryHookResult = ReturnType<typeof useSearchUserByEmailLazyQuery>;
 export type SearchUserByEmailQueryResult = Apollo.QueryResult<SearchUserByEmailQuery, SearchUserByEmailQueryVariables>;
 export const FetchApplicationByNameDocument = gql`
-    query FetchApplicationByName($name: String!, $FetchThreadCommentsById: FetchThreadCommentsById!) {
+    query FetchApplicationByName($name: String!) {
   find_one_application_by_name(name: $name) {
     ...ApplicationFields
-    threads {
-      application_id
-      id
-      thread_comments(FetchThreadCommentsById: $FetchThreadCommentsById) {
-        comments {
-          plain_text_body
-          application_id
-          author {
-            id
-            username
-          }
-        }
-      }
-    }
   }
 }
     ${ApplicationFieldsFragmentDoc}`;
@@ -703,7 +727,6 @@ export const FetchApplicationByNameDocument = gql`
  * const { data, loading, error } = useFetchApplicationByNameQuery({
  *   variables: {
  *      name: // value for 'name'
- *      FetchThreadCommentsById: // value for 'FetchThreadCommentsById'
  *   },
  * });
  */
@@ -1000,6 +1023,47 @@ export function useDeleteManyCommentsMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteManyCommentsMutationHookResult = ReturnType<typeof useDeleteManyCommentsMutation>;
 export type DeleteManyCommentsMutationResult = Apollo.MutationResult<DeleteManyCommentsMutation>;
 export type DeleteManyCommentsMutationOptions = Apollo.BaseMutationOptions<DeleteManyCommentsMutation, DeleteManyCommentsMutationVariables>;
+export const UpdateApplicationCommentRulesDocument = gql`
+    mutation UpdateApplicationCommentRules($updateApplicationCommentRulesInput: UpdateApplicationCommentRulesInput!) {
+  update_application_comment_rules(
+    updateApplicationCommentRulesInput: $updateApplicationCommentRulesInput
+  ) {
+    id
+    application_name
+    links_in_comments
+    email_mods_when_comments_flagged
+    allow_images_and_videos_on_comments
+    pre_comment_moderation
+    display_comments_when_flagged
+  }
+}
+    `;
+export type UpdateApplicationCommentRulesMutationFn = Apollo.MutationFunction<UpdateApplicationCommentRulesMutation, UpdateApplicationCommentRulesMutationVariables>;
+
+/**
+ * __useUpdateApplicationCommentRulesMutation__
+ *
+ * To run a mutation, you first call `useUpdateApplicationCommentRulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateApplicationCommentRulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateApplicationCommentRulesMutation, { data, loading, error }] = useUpdateApplicationCommentRulesMutation({
+ *   variables: {
+ *      updateApplicationCommentRulesInput: // value for 'updateApplicationCommentRulesInput'
+ *   },
+ * });
+ */
+export function useUpdateApplicationCommentRulesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateApplicationCommentRulesMutation, UpdateApplicationCommentRulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateApplicationCommentRulesMutation, UpdateApplicationCommentRulesMutationVariables>(UpdateApplicationCommentRulesDocument, options);
+      }
+export type UpdateApplicationCommentRulesMutationHookResult = ReturnType<typeof useUpdateApplicationCommentRulesMutation>;
+export type UpdateApplicationCommentRulesMutationResult = Apollo.MutationResult<UpdateApplicationCommentRulesMutation>;
+export type UpdateApplicationCommentRulesMutationOptions = Apollo.BaseMutationOptions<UpdateApplicationCommentRulesMutation, UpdateApplicationCommentRulesMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirm_user(token: $token) {
@@ -1076,8 +1140,9 @@ export function useRegisterUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
 export type RegisterUserMutationResult = Apollo.MutationResult<RegisterUserMutation>;
 export type RegisterUserMutationOptions = Apollo.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
-export type ApplicationModelKeySpecifier = ('application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'comments' | 'cost' | 'created_at' | 'id' | 'moderators' | 'moderators_ids' | 'plan' | 'renewal' | 'threads' | 'updated_at' | ApplicationModelKeySpecifier)[];
+export type ApplicationModelKeySpecifier = ('allow_images_and_videos_on_comments' | 'application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'comments' | 'cost' | 'created_at' | 'display_comments_when_flagged' | 'email_mods_when_comments_flagged' | 'id' | 'links_in_comments' | 'moderators' | 'moderators_ids' | 'plan' | 'pre_comment_moderation' | 'renewal' | 'threads' | 'updated_at' | ApplicationModelKeySpecifier)[];
 export type ApplicationModelFieldPolicy = {
+	allow_images_and_videos_on_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_owner?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_owner_id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1087,10 +1152,14 @@ export type ApplicationModelFieldPolicy = {
 	comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	cost?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	display_comments_when_flagged?: FieldPolicy<any> | FieldReadFunction<any>,
+	email_mods_when_comments_flagged?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	links_in_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	moderators?: FieldPolicy<any> | FieldReadFunction<any>,
 	moderators_ids?: FieldPolicy<any> | FieldReadFunction<any>,
 	plan?: FieldPolicy<any> | FieldReadFunction<any>,
+	pre_comment_moderation?: FieldPolicy<any> | FieldReadFunction<any>,
 	renewal?: FieldPolicy<any> | FieldReadFunction<any>,
 	threads?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>
@@ -1148,7 +1217,7 @@ export type LoginResponseFieldPolicy = {
 	token?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('add_application_moderator' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_reply_comment' | 'delete_comment' | 'delete_many_comments' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'up_vote_comment' | 'update_application' | 'update_comment' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('add_application_moderator' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_reply_comment' | 'delete_comment' | 'delete_many_comments' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	add_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
 	confirm_user?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1169,6 +1238,7 @@ export type MutationFieldPolicy = {
 	reset_password?: FieldPolicy<any> | FieldReadFunction<any>,
 	up_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_application?: FieldPolicy<any> | FieldReadFunction<any>,
+	update_application_comment_rules?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_comment?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_name' | 'fetch_comments_by_thread_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
