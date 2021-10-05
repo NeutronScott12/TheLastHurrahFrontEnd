@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Button, Grid, List, ListItem, ListItemText, TextField } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import {
 	useAddApplicationModeratorMutation,
@@ -10,6 +9,10 @@ import {
 import { LoadingComponent } from '../../../../partials/Loading'
 import { IParams } from '../AppContainer'
 import { useFormik } from 'formik'
+import { ModerationSettingsForm } from '../../Views/ModerationSettingsView'
+import { Grid } from '@mui/material'
+import { ModeratorList } from '../../Views/ModeratorList'
+import { ModeratorSettingsForm } from '../../components/ModeratorComponents/ModeratorSettingsForm'
 
 interface IModeratorState {
 	id: string
@@ -17,17 +20,21 @@ interface IModeratorState {
 	username: string
 }
 
+export interface IFormikValues {
+	email: string
+}
+
 export const ModeratorContainer = () => {
 	const { application_name } = useParams() as IParams
 	const [getUser, { data: userData }] = useSearchUserByEmailLazyQuery()
-	const [addUserModerator, setAddModerator] = useState<IModeratorState>()
+	const [userModerator, setAddModerator] = useState<IModeratorState>()
 	const [isAddModeratorOpen, setAddModeratorOpen] = useState(false)
 	const { data, loading, refetch } = useFetchApplicationByNameQuery({
 		variables: { name: application_name, FetchThreadCommentsById: { limit: 10, skip: 0 } },
 	})
 	const [removeMod] = useRemoveApplicationModeratorMutation()
 	const [addMod] = useAddApplicationModeratorMutation()
-	const formik = useFormik({
+	const formik = useFormik<IFormikValues>({
 		initialValues: {
 			email: '',
 		},
@@ -92,53 +99,18 @@ export const ModeratorContainer = () => {
 	return loading ? (
 		<LoadingComponent />
 	) : (
-		<div>
-			<h2>Moderators</h2>
-			<Grid style={{ width: '30%' }}>
-				<form onSubmit={formik.handleSubmit}>
-					<TextField
-						autoComplete="off"
-						fullWidth
-						id="email"
-						name="email"
-						label="email"
-						type="email"
-						value={formik.values.email}
-						onChange={formik.handleChange}
-						error={formik.touched.email && Boolean(formik.errors.email)}
-						helperText={formik.touched.email && formik.errors.email}
-					/>
-					<Button color="primary" variant="contained" fullWidth type="submit">
-						Search Users
-					</Button>
-				</form>
-			</Grid>
-			{userData && isAddModeratorOpen ? (
-				<Grid>
-					<ListItem style={{ width: '30%' }}>
-						<ListItemText primary={userData.search_user_by_email.username} />
-						<Button onClick={() => addModerator(userData.search_user_by_email.id)}>
-							Add moderator
-						</Button>
-					</ListItem>
-				</Grid>
-			) : (
-				''
-			)}
-			<Grid>
-				<List>
-					{data?.find_one_application_by_name.moderators.map((moderator) => {
-						return (
-							<ListItem style={{ width: '30%' }} key={moderator.id}>
-								<ListItemText primary={moderator.username} />
-								<Button onClick={() => removeModerator(moderator.id)}>
-									Remove moderator
-								</Button>
-							</ListItem>
-						)
-					})}
-				</List>
-			</Grid>
-		</div>
+		<Grid>
+			<ModerationSettingsForm
+				userData={userData}
+				formik={formik}
+				isAddModeratorOpen={isAddModeratorOpen}
+				addModerator={addModerator}
+			/>
+			<ModeratorList
+				moderators={data?.find_one_application_by_name.moderators}
+				removeModerator={removeModerator}
+			/>
+			<ModeratorSettingsForm />
+		</Grid>
 	)
 }
