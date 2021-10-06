@@ -15,13 +15,7 @@ import {
 	Pre_Comment_Moderation,
 	useUpdateApplicationCommentRulesMutation,
 } from '../../../../generated/graphql'
-import { LoadingComponent } from '../../../../partials/Loading'
 
-enum PRE_COMMENT_MODERATION {
-	NONE = 'NONE',
-	NEW_COMMENTS = 'NEW_COMMENTS',
-	ALL = 'ALL',
-}
 interface IModeratorSettingsForm {
 	application_name: string
 	pre_comment_moderation: Pre_Comment_Moderation
@@ -41,6 +35,8 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 }) => {
 	const [checkError, setError] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
+	const [checkSuccess, setSuccess] = useState(false)
+	const [successMessage, setSuccessMessage] = useState('')
 	const [updateCommentRules] = useUpdateApplicationCommentRulesMutation()
 
 	const formik = useFormik({
@@ -72,6 +68,8 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 						},
 					},
 				})
+				setSuccessMessage('Settings successfully updated')
+				setSuccess(true)
 			} catch (error) {
 				if (error instanceof Error) {
 					setErrorMessage(error.message)
@@ -85,6 +83,7 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 		<div>
 			<h2>Moderator Settings</h2>
 			{checkError ? <Alert severity="error">{errorMessage}</Alert> : ''}
+			{checkSuccess ? <Alert severity="success">{successMessage}</Alert> : ''}
 			<form onSubmit={formik.handleSubmit}>
 				<FormControl component="fieldset">
 					<FormLabel component="legend">Pre-Moderation</FormLabel>

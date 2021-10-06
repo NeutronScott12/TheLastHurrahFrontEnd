@@ -12,10 +12,18 @@ fragment ApplicationFields on ApplicationModel {
 	allow_images_and_videos_on_comments
 	pre_comment_moderation
 	display_comments_when_flagged
+	website_url
+	category
+	language
+	theme
+	adult_content
+	comment_policy_url
+	comment_policy_summary
+	description
+	default_avatar_url
 	application_owner {
 		id
 	}
-
 	moderators {
 		email
 		username
@@ -173,5 +181,25 @@ mutation UpdateApplicationCommentRules(
 		allow_images_and_videos_on_comments
 		pre_comment_moderation
 		display_comments_when_flagged
+	}
+}
+
+input UpdateApplicationInput {
+	application_name: String!
+	website_url: String!
+	category: CATEGORY!
+	language: LANGUAGE!
+	theme: THEME!
+	adult_content: Boolean!
+	comment_policy_url: String
+	comment_policy_summary: String
+	description: String
+	default_avatar_url: String
+	id: String!
+}
+
+mutation UpdateApplication($updateApplicationInput: UpdateApplicationInput!) {
+	update_application(updateApplicationInput: $updateApplicationInput) {
+		...ApplicationFields
 	}
 }

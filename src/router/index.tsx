@@ -1,6 +1,8 @@
 import React, { lazy } from 'react'
 import { useRoutes } from 'react-router-dom'
 
+import { useCurrentUser } from '../utils/hooks/customApolloHooks'
+
 import { AboutContainer } from '../modules/About/AboutContainer'
 import { ConfirmedContainer } from '../modules/authentication/confirmed/ConfirmedContainer'
 import { LoginContainer } from '../modules/authentication/login/LoginContainer'
@@ -21,19 +23,27 @@ const LazyDashboard = lazy(() =>
 	}))
 )
 
-export const SiteRouter: React.FC<{ loggedIn: boolean }> = ({ loggedIn }) => {
-	let routes = useRoutes([
+export const SiteRouter = () => {
+	const { data: currentUser } = useCurrentUser()
+
+	const routes = useRoutes([
 		{
 			path: '/confirmed',
 			element: <ConfirmedContainer />,
 		},
 		{
 			path: '/register',
-			element: loggedIn === false ? <RegisterContainer /> : <DashboardLayout />,
+			element:
+				currentUser && currentUser.isLoggedIn === false ? (
+					<RegisterContainer />
+				) : (
+					<DashboardLayout />
+				),
 		},
 		{
 			path: '/login',
-			element: loggedIn === false ? <LoginContainer /> : <DashboardLayout />,
+			element:
+				currentUser && currentUser.isLoggedIn ? <LoginContainer /> : <DashboardLayout />,
 		},
 		{
 			path: '/about',
@@ -41,7 +51,7 @@ export const SiteRouter: React.FC<{ loggedIn: boolean }> = ({ loggedIn }) => {
 		},
 		{
 			path: 'dashboard/*',
-			element: loggedIn === true ? <LazyDashboard /> : <LoginContainer />,
+			element: currentUser && currentUser.isLoggedIn ? <LazyDashboard /> : <LoginContainer />,
 			children: [
 				{
 					path: 'apps/add_application',

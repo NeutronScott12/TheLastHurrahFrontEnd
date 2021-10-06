@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Grid, TextField } from '@mui/material'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
-import { useCreateApplicationMutation } from '../../../generated/graphql'
+import { Category, Language, Theme, useCreateApplicationMutation } from '../../../generated/graphql'
 import { useNavigate } from 'react-router'
 
 const validationSchema = yup.object({
@@ -26,6 +26,15 @@ export const AddApplicationContainer = () => {
 					variables: {
 						createApplicationInput: {
 							application_name: name,
+							website_url: '',
+							adult_content: false,
+							category: Category.Tech,
+							language: Language.English,
+							theme: Theme.Auto,
+							comment_policy_summary: '',
+							comment_policy_url: '',
+							default_avatar_url: '',
+							description: '',
 						},
 					},
 				})

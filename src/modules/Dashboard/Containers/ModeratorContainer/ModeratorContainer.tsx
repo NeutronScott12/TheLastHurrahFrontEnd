@@ -14,7 +14,7 @@ import { Grid } from '@mui/material'
 import { ModeratorList } from '../../Views/ModeratorList'
 import { ModeratorSettingsForm } from '../../components/ModeratorComponents/ModeratorSettingsForm'
 
-interface IModeratorState {
+export interface IModeratorState {
 	id: string
 	email: string
 	username: string
@@ -38,12 +38,10 @@ export const ModeratorContainer = () => {
 		initialValues: {
 			email: '',
 		},
-		async onSubmit(values, { setSubmitting, resetForm }) {
-			console.log(values)
+		onSubmit(values, { setSubmitting }) {
 			try {
 				getUser({ variables: { email: values.email } })
 				if (userData) {
-					console.log('WORKING')
 					setAddModeratorOpen(true)
 					setAddModerator(userData.search_user_by_email)
 				}
@@ -58,10 +56,8 @@ export const ModeratorContainer = () => {
 
 	const addModerator = async (id: string) => {
 		try {
-			console.log('DATA', data)
-			console.log('USER_DATA', userData)
 			if (data && userData) {
-				const response = await addMod({
+				await addMod({
 					variables: {
 						addModeratorInput: {
 							application_id: data.find_one_application_by_name.id,
@@ -70,7 +66,7 @@ export const ModeratorContainer = () => {
 					},
 				})
 				setAddModeratorOpen(false)
-				console.log('RESPONSE', response)
+				formik.resetForm()
 			}
 		} catch (error) {
 			console.log(error)
@@ -121,10 +117,10 @@ export const ModeratorContainer = () => {
 	return loading && data ? (
 		<LoadingComponent />
 	) : (
-		<Grid container spacing={2}>
-			<Grid item xs={4}>
+		<Grid container spacing={2} columns={{ xs: 12, sm: 8, md: 12 }}>
+			<Grid item xs={12} sm={4} md={6}>
 				<ModerationSettingsForm
-					userData={userData}
+					userData={userModerator}
 					formik={formik}
 					isAddModeratorOpen={isAddModeratorOpen}
 					addModerator={addModerator}
@@ -134,7 +130,7 @@ export const ModeratorContainer = () => {
 					removeModerator={removeModerator}
 				/>
 			</Grid>
-			<Grid container justifyContent="center" item xs={8}>
+			<Grid container justifyContent="center" item xs={12} sm={4} md={6}>
 				{displaySettingsForm}
 			</Grid>
 		</Grid>

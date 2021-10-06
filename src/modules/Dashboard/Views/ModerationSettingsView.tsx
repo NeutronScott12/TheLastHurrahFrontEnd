@@ -1,12 +1,11 @@
 import React from 'react'
 import { Button, ListItem, ListItemText, TextField } from '@mui/material'
 import { FormikProps } from 'formik'
-import { IFormikValues } from '../Containers/ModeratorContainer/ModeratorContainer'
-import { SearchUserByEmailQuery } from '../../../generated/graphql'
+import { IFormikValues, IModeratorState } from '../Containers/ModeratorContainer/ModeratorContainer'
 
 interface IModerationSettingsView {
 	formik: FormikProps<IFormikValues>
-	userData: SearchUserByEmailQuery | undefined
+	userData: IModeratorState | undefined
 	isAddModeratorOpen: boolean
 	addModerator: (id: string) => void
 }
@@ -39,8 +38,11 @@ export const ModerationSettingsForm: React.FC<IModerationSettingsView> = ({
 			</form>
 			{userData && isAddModeratorOpen ? (
 				<ListItem style={{ width: '30%' }}>
-					<ListItemText primary={userData.search_user_by_email.username} />
-					<Button onClick={() => addModerator(userData.search_user_by_email.id)}>
+					<ListItemText primary={userData.username} />
+					<Button
+						disabled={formik.isSubmitting || formik.dirty === false}
+						onClick={() => addModerator(userData.id)}
+					>
 						Add moderator
 					</Button>
 				</ListItem>

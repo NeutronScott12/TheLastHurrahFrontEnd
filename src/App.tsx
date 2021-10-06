@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { CssBaseline } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 import { makeStyles, ThemeProvider } from '@mui/styles'
@@ -7,13 +7,11 @@ import { MainHeader } from './partials/Header'
 import { MainDrawer } from './partials/Drawer'
 import { MainContainer } from './partials/MainContainer'
 
-import { IS_LOGGED_IN } from './graphql/graphql'
-import { cache } from './apollo/cache'
-import { useCurrentUserQuery } from './generated/graphql'
-
 import { SiteRouter } from './router'
 import { LoadingComponent } from './partials/Loading'
-import { useCurrentUser } from './utils/hooks/customApolloHooks'
+import { useCurrentUserQuery } from './generated/graphql'
+import { cache } from './apollo/cache'
+import { IS_LOGGED_IN } from './graphql/graphql'
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -23,7 +21,7 @@ const useStyles = makeStyles(() => ({
 	},
 }))
 
-const theme = createTheme()
+const theme = createTheme({})
 
 // const theme = createMui({
 //     palette: {
@@ -39,23 +37,24 @@ const theme = createTheme()
 
 function App() {
 	const classes = useStyles()
-	const { data: currentUserData } = useCurrentUser()
-	const [loading, changeLoading] = useState(true)
 	const { data, loading: userLoading } = useCurrentUserQuery()
 
 	useEffect(() => {
-		if (data) {
+		// console.log('USEEFFECT_RUN')
+		// console.log('DATA', data)
+
+		if (data && data.current_user) {
+			// console.log('AFTER IF')
 			cache.writeQuery({
 				query: IS_LOGGED_IN,
 				data: {
 					isLoggedIn: true,
 				},
 			})
-			changeLoading(false)
-		} else {
-			changeLoading(false)
 		}
-	}, [data])
+	}, [userLoading, data])
+	// console.log('CURRENT_USER', data)
+	// console.log('Loading', userLoading)
 
 	const [open, setOpen] = React.useState(false)
 
@@ -63,7 +62,7 @@ function App() {
 		setOpen(!open)
 	}
 
-	return loading || (userLoading && !data) ? (
+	return userLoading ? (
 		<LoadingComponent />
 	) : (
 		<ThemeProvider theme={theme}>
@@ -73,11 +72,7 @@ function App() {
 				<MainDrawer handleDrawer={handleDrawer} open={open} />
 				<MainContainer>
 					<Suspense fallback={<LoadingComponent />}>
-						<SiteRouter
-							loggedIn={
-								currentUserData?.isLoggedIn ? currentUserData.isLoggedIn : false
-							}
-						/>
+						<SiteRouter />
 					</Suspense>
 				</MainContainer>
 			</div>

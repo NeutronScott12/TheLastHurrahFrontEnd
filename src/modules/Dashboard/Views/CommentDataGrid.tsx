@@ -8,6 +8,7 @@ import { Where } from '../../../generated/graphql'
 
 const useStyles = makeStyles({
 	root: {
+		marginTop: '2rem',
 		'& .super-app-theme--header': {
 			// backgroundColor: 'rgba(255, 7, 0, 0.55)',
 		},
@@ -30,9 +31,22 @@ const useStyles = makeStyles({
 		'& .MuiDataGrid-sortIcon': {
 			color: '#ededed',
 		},
+		'& .MuiDataGrid-window': {
+			color: '#ededed',
+		},
+		'& .MuiDataGrid-root': {
+			color: '#ededed !important',
+		},
 	},
 	buttonStyle: {
 		color: '#ededed',
+		textDecoration: 'none',
+		'& MuiButton-root': {
+			color: '#ededed',
+		},
+		'& MuiButtonBase-root': {
+			color: '#ededed',
+		},
 	},
 })
 
@@ -70,7 +84,6 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 
 	return (
 		<div className={classes.root}>
-			<h2>Comment Container</h2>
 			{checkError ? <Alert severity="error">{errorMessage}</Alert> : ''}
 			{selected.length > 0 ? (
 				<Button className={classes.buttonStyle} onClick={deleteSelected}>
@@ -80,19 +93,39 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 				''
 			)}
 
-			<Button className={classes.buttonStyle} onClick={() => filterComments(Where.Pending)}>
+			<Button
+				style={{ color: '#ededed' }}
+				className={classes.buttonStyle}
+				onClick={() => filterComments(Where.Pending)}
+			>
 				Pending
 			</Button>
-			<Button className={classes.buttonStyle} onClick={() => filterComments(Where.Appoved)}>
+			<Button
+				style={{ color: '#ededed' }}
+				className={classes.buttonStyle}
+				onClick={() => filterComments(Where.Appoved)}
+			>
 				Approved
 			</Button>
-			<Button className={classes.buttonStyle} onClick={() => filterComments(Where.Spam)}>
+			<Button
+				style={{ color: '#ededed' }}
+				className={classes.buttonStyle}
+				onClick={() => filterComments(Where.Spam)}
+			>
 				Spam
 			</Button>
-			<Button className={classes.buttonStyle} onClick={() => filterComments(Where.Deleted)}>
+			<Button
+				style={{ color: '#ededed' }}
+				className={classes.buttonStyle}
+				onClick={() => filterComments(Where.Deleted)}
+			>
 				Deleted
 			</Button>
-			<Button className={classes.buttonStyle} onClick={() => filterComments(Where.All)}>
+			<Button
+				style={{ color: '#ededed' }}
+				className={classes.buttonStyle}
+				onClick={() => filterComments(Where.All)}
+			>
 				All
 			</Button>
 			<DataGrid
