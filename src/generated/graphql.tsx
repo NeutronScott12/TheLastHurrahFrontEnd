@@ -55,7 +55,11 @@ export type ApplicationModel = {
   theme: Theme;
   threads: Array<ThreadModel>;
   updated_at: Scalars['DateTime'];
-  website_url: Scalars['String'];
+  website_url?: Maybe<Scalars['String']>;
+};
+
+export type ApproveCommentsInput = {
+  comment_ids: Array<Scalars['String']>;
 };
 
 export enum Category {
@@ -68,15 +72,20 @@ export type CommentModel = {
   application_id: Scalars['String'];
   author: UserModel;
   created_at: Scalars['DateTime'];
+  deleted: Scalars['Boolean'];
   down_vote: Array<RatingModel>;
+  flagged: Scalars['Boolean'];
   id: Scalars['String'];
   json_body: Array<Scalars['JSONObject']>;
   parent_id?: Maybe<Scalars['String']>;
+  pending: Scalars['Boolean'];
   plain_text_body: Scalars['String'];
+  private_information: Scalars['Boolean'];
   replied_to_id?: Maybe<Scalars['String']>;
   replied_to_user?: Maybe<UserModel>;
   replies: Array<CommentModel>;
   thread_id: Scalars['String'];
+  threatening_content: Scalars['Boolean'];
   up_vote: Array<RatingModel>;
   updated_at: Scalars['DateTime'];
   user_id: Scalars['String'];
@@ -99,7 +108,7 @@ export type CreateApplicationInput = {
   description?: Maybe<Scalars['String']>;
   language: Language;
   theme: Theme;
-  website_url: Scalars['String'];
+  website_url?: Maybe<Scalars['String']>;
 };
 
 export type CreateCommentInput = {
@@ -123,8 +132,14 @@ export type CreateReplyCommentInput = {
   thread_id: Scalars['String'];
 };
 
+export type CreateReportInput = {
+  comment_id: Scalars['String'];
+  report: Report_Reason;
+};
+
 export type DeleteManyCommentsInput = {
   comment_ids: Array<Scalars['String']>;
+  permanent_delete: Scalars['Boolean'];
 };
 
 export type FetchAllComments = {
@@ -204,22 +219,27 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   add_application_moderator: ApplicationModel;
+  approve_comments: StandardResponseModel;
+  block_user: StandardResponseModel;
   confirm_user: StandardResponseModel;
   create_application: ApplicationModel;
   create_comment: CommentModel;
   create_order: StandardResponseModel;
   create_reply_comment: CommentModel;
+  create_report: StandardResponseModel;
   delete_comment: StandardResponseModel;
   delete_many_comments: StandardResponseModel;
   delete_user: StandardResponseModel;
   down_vote_comment: CommentModel;
   forgot_password: StandardResponseModel;
   login_user: LoginResponse;
+  logout_user: StandardResponseModel;
   regenerate_new_auth_secret: ApplicationModel;
   register_user: StandardResponseModel;
   remove_application: ApplicationModel;
   remove_application_moderator: ApplicationModel;
   reset_password: StandardResponseModel;
+  unblock_user: StandardResponseModel;
   up_vote_comment: CommentModel;
   update_application: ApplicationModel;
   update_application_comment_rules: ApplicationModel;
@@ -229,6 +249,16 @@ export type Mutation = {
 
 export type MutationAdd_Application_ModeratorArgs = {
   addModeratorInput: AddModeratorInput;
+};
+
+
+export type MutationApprove_CommentsArgs = {
+  approveCommentsInput: ApproveCommentsInput;
+};
+
+
+export type MutationBlock_UserArgs = {
+  user_id: Scalars['String'];
 };
 
 
@@ -257,13 +287,18 @@ export type MutationCreate_Reply_CommentArgs = {
 };
 
 
+export type MutationCreate_ReportArgs = {
+  createReportInput: CreateReportInput;
+};
+
+
 export type MutationDelete_CommentArgs = {
   commentId: Scalars['String'];
 };
 
 
 export type MutationDelete_Many_CommentsArgs = {
-  deleteManyCommentsInput: Array<DeleteManyCommentsInput>;
+  deleteManyCommentsInput: DeleteManyCommentsInput;
 };
 
 
@@ -316,6 +351,11 @@ export type MutationRemove_Application_ModeratorArgs = {
 export type MutationReset_PasswordArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationUnblock_UserArgs = {
+  user_id: Scalars['String'];
 };
 
 
@@ -403,6 +443,14 @@ export type QuerySearch_User_By_EmailArgs = {
   email: Scalars['String'];
 };
 
+export enum Report_Reason {
+  Disagree = 'DISAGREE',
+  InappropriateProfile = 'INAPPROPRIATE_PROFILE',
+  PrivateInformation = 'PRIVATE_INFORMATION',
+  Spam = 'SPAM',
+  ThreateningContent = 'THREATENING_CONTENT'
+}
+
 export type RatingModel = {
   __typename?: 'RatingModel';
   author_id: Scalars['String'];
@@ -461,7 +509,7 @@ export type UpdateApplicationInput = {
   id: Scalars['String'];
   language: Language;
   theme: Theme;
-  website_url: Scalars['String'];
+  website_url?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCommentInput = {
@@ -473,10 +521,12 @@ export type UpdateCommentInput = {
 export type UserModel = {
   __typename?: 'UserModel';
   applications_joined_ids: Array<Scalars['String']>;
+  blocked_users: Array<UserModel>;
   confirmed: Scalars['Boolean'];
   created_at: Scalars['DateTime'];
   email: Scalars['String'];
   id: Scalars['String'];
+  last_active: Scalars['DateTime'];
   updated_at: Scalars['DateTime'];
   user_role: Scalars['String'];
   username: Scalars['String'];
@@ -513,14 +563,14 @@ export type SearchUserByEmailQueryVariables = Exact<{
 
 export type SearchUserByEmailQuery = { __typename?: 'Query', search_user_by_email: { __typename?: 'UserModel', id: string, email: string, username: string } };
 
-export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
 
 export type FetchApplicationByNameQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } };
 
@@ -541,14 +591,14 @@ export type FetchCommentsByApplicationNameQuery = { __typename?: 'Query', fetch_
 export type FetchApplicationsByOwnerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
+export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
 
 export type FindOneApplicationByIdQueryVariables = Exact<{
   findOneApplicationByIdId: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CreateApplicationMutationVariables = Exact<{
   createApplicationInput: CreateApplicationInput;
@@ -562,17 +612,17 @@ export type RemoveApplicationModeratorMutationVariables = Exact<{
 }>;
 
 
-export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type AddApplicationModeratorMutationVariables = Exact<{
   addModeratorInput: AddModeratorInput;
 }>;
 
 
-export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type DeleteManyCommentsMutationVariables = Exact<{
-  deleteManyCommentsInput: Array<DeleteManyCommentsInput> | DeleteManyCommentsInput;
+  deleteManyCommentsInput: DeleteManyCommentsInput;
 }>;
 
 
@@ -590,7 +640,14 @@ export type UpdateApplicationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url: string, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+
+export type ApproveCommentMutationVariables = Exact<{
+  approveCommentsInput: ApproveCommentsInput;
+}>;
+
+
+export type ApproveCommentMutation = { __typename?: 'Mutation', approve_comments: { __typename?: 'StandardResponseModel', success: boolean, message: string } };
 
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
@@ -1047,7 +1104,7 @@ export type AddApplicationModeratorMutationHookResult = ReturnType<typeof useAdd
 export type AddApplicationModeratorMutationResult = Apollo.MutationResult<AddApplicationModeratorMutation>;
 export type AddApplicationModeratorMutationOptions = Apollo.BaseMutationOptions<AddApplicationModeratorMutation, AddApplicationModeratorMutationVariables>;
 export const DeleteManyCommentsDocument = gql`
-    mutation DeleteManyComments($deleteManyCommentsInput: [DeleteManyCommentsInput!]!) {
+    mutation DeleteManyComments($deleteManyCommentsInput: DeleteManyCommentsInput!) {
   delete_many_comments(deleteManyCommentsInput: $deleteManyCommentsInput) {
     success
     message
@@ -1154,6 +1211,40 @@ export function useUpdateApplicationMutation(baseOptions?: Apollo.MutationHookOp
 export type UpdateApplicationMutationHookResult = ReturnType<typeof useUpdateApplicationMutation>;
 export type UpdateApplicationMutationResult = Apollo.MutationResult<UpdateApplicationMutation>;
 export type UpdateApplicationMutationOptions = Apollo.BaseMutationOptions<UpdateApplicationMutation, UpdateApplicationMutationVariables>;
+export const ApproveCommentDocument = gql`
+    mutation ApproveComment($approveCommentsInput: ApproveCommentsInput!) {
+  approve_comments(approveCommentsInput: $approveCommentsInput) {
+    success
+    message
+  }
+}
+    `;
+export type ApproveCommentMutationFn = Apollo.MutationFunction<ApproveCommentMutation, ApproveCommentMutationVariables>;
+
+/**
+ * __useApproveCommentMutation__
+ *
+ * To run a mutation, you first call `useApproveCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveCommentMutation, { data, loading, error }] = useApproveCommentMutation({
+ *   variables: {
+ *      approveCommentsInput: // value for 'approveCommentsInput'
+ *   },
+ * });
+ */
+export function useApproveCommentMutation(baseOptions?: Apollo.MutationHookOptions<ApproveCommentMutation, ApproveCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ApproveCommentMutation, ApproveCommentMutationVariables>(ApproveCommentDocument, options);
+      }
+export type ApproveCommentMutationHookResult = ReturnType<typeof useApproveCommentMutation>;
+export type ApproveCommentMutationResult = Apollo.MutationResult<ApproveCommentMutation>;
+export type ApproveCommentMutationOptions = Apollo.BaseMutationOptions<ApproveCommentMutation, ApproveCommentMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirm_user(token: $token) {
@@ -1263,21 +1354,26 @@ export type ApplicationModelFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'author' | 'created_at' | 'down_vote' | 'id' | 'json_body' | 'parent_id' | 'plain_text_body' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'thread_id' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
+export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
 export type CommentModelFieldPolicy = {
 	_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	author?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	deleted?: FieldPolicy<any> | FieldReadFunction<any>,
 	down_vote?: FieldPolicy<any> | FieldReadFunction<any>,
+	flagged?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	json_body?: FieldPolicy<any> | FieldReadFunction<any>,
 	parent_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	pending?: FieldPolicy<any> | FieldReadFunction<any>,
 	plain_text_body?: FieldPolicy<any> | FieldReadFunction<any>,
+	private_information?: FieldPolicy<any> | FieldReadFunction<any>,
 	replied_to_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	replied_to_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	replies?: FieldPolicy<any> | FieldReadFunction<any>,
 	thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	threatening_content?: FieldPolicy<any> | FieldReadFunction<any>,
 	up_vote?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	user_id?: FieldPolicy<any> | FieldReadFunction<any>
@@ -1316,25 +1412,30 @@ export type LoginResponseFieldPolicy = {
 	token?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('add_application_moderator' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_reply_comment' | 'delete_comment' | 'delete_many_comments' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('add_application_moderator' | 'approve_comments' | 'block_user' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_reply_comment' | 'create_report' | 'delete_comment' | 'delete_many_comments' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'logout_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'unblock_user' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	add_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
+	approve_comments?: FieldPolicy<any> | FieldReadFunction<any>,
+	block_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	confirm_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_order?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_reply_comment?: FieldPolicy<any> | FieldReadFunction<any>,
+	create_report?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_many_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	down_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	forgot_password?: FieldPolicy<any> | FieldReadFunction<any>,
 	login_user?: FieldPolicy<any> | FieldReadFunction<any>,
+	logout_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	regenerate_new_auth_secret?: FieldPolicy<any> | FieldReadFunction<any>,
 	register_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	remove_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	remove_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
 	reset_password?: FieldPolicy<any> | FieldReadFunction<any>,
+	unblock_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	up_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_application_comment_rules?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1375,13 +1476,15 @@ export type ThreadModelFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type UserModelKeySpecifier = ('applications_joined_ids' | 'confirmed' | 'created_at' | 'email' | 'id' | 'updated_at' | 'user_role' | 'username' | UserModelKeySpecifier)[];
+export type UserModelKeySpecifier = ('applications_joined_ids' | 'blocked_users' | 'confirmed' | 'created_at' | 'email' | 'id' | 'last_active' | 'updated_at' | 'user_role' | 'username' | UserModelKeySpecifier)[];
 export type UserModelFieldPolicy = {
 	applications_joined_ids?: FieldPolicy<any> | FieldReadFunction<any>,
+	blocked_users?: FieldPolicy<any> | FieldReadFunction<any>,
 	confirmed?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	email?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	last_active?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	user_role?: FieldPolicy<any> | FieldReadFunction<any>,
 	username?: FieldPolicy<any> | FieldReadFunction<any>

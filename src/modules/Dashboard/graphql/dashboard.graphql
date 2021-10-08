@@ -149,10 +149,11 @@ mutation AddApplicationModerator($addModeratorInput: AddModeratorInput!) {
 }
 
 input DeleteManyCommentsInput {
-	comments_id: String
+	comment_ids: String
+	permanent_delete: Boolean!
 }
 
-mutation DeleteManyComments($deleteManyCommentsInput: [DeleteManyCommentsInput!]!) {
+mutation DeleteManyComments($deleteManyCommentsInput: DeleteManyCommentsInput!) {
 	delete_many_comments(deleteManyCommentsInput: $deleteManyCommentsInput) {
 		success
 		message
@@ -201,5 +202,16 @@ input UpdateApplicationInput {
 mutation UpdateApplication($updateApplicationInput: UpdateApplicationInput!) {
 	update_application(updateApplicationInput: $updateApplicationInput) {
 		...ApplicationFields
+	}
+}
+
+input ApproveCommentsInput {
+	comment_ids: [String!]!
+}
+
+mutation ApproveComment($approveCommentsInput: ApproveCommentsInput!) {
+	approve_comments(approveCommentsInput: $approveCommentsInput) {
+		success
+		message
 	}
 }

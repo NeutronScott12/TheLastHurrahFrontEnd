@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useFormik } from 'formik'
 import {
-	Alert,
 	Button,
 	Checkbox,
 	FormControl,
@@ -15,6 +14,8 @@ import {
 	Pre_Comment_Moderation,
 	useUpdateApplicationCommentRulesMutation,
 } from '../../../../generated/graphql'
+import { useErrorAndSuccess } from '../../../../utils/hooks/errorAndSuccessHooks'
+import { Alerts } from '../../../../partials/Alerts'
 
 interface IModeratorSettingsForm {
 	application_name: string
@@ -33,10 +34,16 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 	display_comments_when_flagged,
 	allow_images_and_videos_on_comments,
 }) => {
-	const [checkError, setError] = useState(false)
-	const [errorMessage, setErrorMessage] = useState('')
-	const [checkSuccess, setSuccess] = useState(false)
-	const [successMessage, setSuccessMessage] = useState('')
+	const {
+		checkError,
+		checkSuccess,
+		errorMessage,
+		setError,
+		setErrorMessage,
+		setSuccess,
+		setSuccessMessage,
+		successMessage,
+	} = useErrorAndSuccess()
 	const [updateCommentRules] = useUpdateApplicationCommentRulesMutation()
 
 	const formik = useFormik({
@@ -82,8 +89,12 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 	return (
 		<div>
 			<h2>Moderator Settings</h2>
-			{checkError ? <Alert severity="error">{errorMessage}</Alert> : ''}
-			{checkSuccess ? <Alert severity="success">{successMessage}</Alert> : ''}
+			<Alerts
+				checkError={checkError}
+				checkSuccess={checkSuccess}
+				errorMessage={errorMessage}
+				successMessage={successMessage}
+			/>
 			<form onSubmit={formik.handleSubmit}>
 				<FormControl component="fieldset">
 					<FormLabel component="legend">Pre-Moderation</FormLabel>
