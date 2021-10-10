@@ -1,7 +1,7 @@
 import React, { lazy } from 'react'
 import { useRoutes } from 'react-router-dom'
 
-import { useCurrentUser } from '../utils/hooks/customApolloHooks'
+import { useCurrentUserClient, useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 import { AboutContainer } from '../modules/About/AboutContainer'
 import { ConfirmedContainer } from '../modules/authentication/confirmed/ConfirmedContainer'
@@ -23,8 +23,13 @@ const LazyDashboard = lazy(() =>
 	}))
 )
 
+const LazyNotification = lazy(() =>
+	import('../modules/notifications').then((module) => ({ default: module.NotificationContainer }))
+)
+
 export const SiteRouter = () => {
-	const { data: currentUser } = useCurrentUser()
+	const { data: userData } = useCurrentUserClient()
+	const { data } = useLoggedIn()
 
 	const routes = useRoutes([
 		{
@@ -34,24 +39,23 @@ export const SiteRouter = () => {
 		{
 			path: '/register',
 			element:
-				currentUser && currentUser.isLoggedIn === false ? (
-					<RegisterContainer />
-				) : (
-					<DashboardLayout />
-				),
+				data && data.isLoggedIn === false ? <RegisterContainer /> : <DashboardLayout />,
 		},
 		{
 			path: '/login',
-			element:
-				currentUser && currentUser.isLoggedIn ? <LoginContainer /> : <DashboardLayout />,
+			element: data && data.isLoggedIn ? <LoginContainer /> : <DashboardLayout />,
 		},
 		{
 			path: '/about',
 			element: <AboutContainer />,
 		},
 		{
+			path: '/notifications',
+			element: data && data.isLoggedIn ? <LazyNotification /> : <LoginContainer />,
+		},
+		{
 			path: 'dashboard/*',
-			element: currentUser && currentUser.isLoggedIn ? <LazyDashboard /> : <LoginContainer />,
+			element: data && data.isLoggedIn ? <LazyDashboard /> : <LoginContainer />,
 			children: [
 				{
 					path: 'apps/add_application',

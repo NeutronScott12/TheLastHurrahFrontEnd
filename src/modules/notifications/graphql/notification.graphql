@@ -1,0 +1,17 @@
+input FetchNotificationsByUserIdInput {
+	user_id: String!
+}
+
+query FetchNotificationsByUserId(
+	$fetchNotificationsByUserIdInput: FetchNotificationsByUserIdInput!
+) {
+	fetch_notifications_by_user_id(
+		fetchNotificationsByUserIdInput: $fetchNotificationsByUserIdInput
+	) {
+		id
+		created_at
+		updated_at
+		message
+		url
+	}
+}

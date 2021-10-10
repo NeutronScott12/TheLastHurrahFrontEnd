@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import { MainListItems, SecondaryListItems } from './listItems'
-import { useCurrentUser } from '../utils/hooks/customApolloHooks'
+import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 const drawerWidth = 240
 
@@ -55,7 +55,7 @@ interface IMainHeader {
 export const MainDrawer: React.FC<IMainHeader> = (props) => {
 	const classes = useStyles()
 
-	const { data } = useCurrentUser()
+	const { data } = useLoggedIn()
 
 	return data && !data.isLoggedIn ? (
 		<div></div>

@@ -20,7 +20,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import { Link, useNavigate } from 'react-router-dom'
 import { IS_LOGGED_IN } from '../graphql/graphql'
 import { cache } from '../apollo/cache'
-import { useCurrentUser } from '../utils/hooks/customApolloHooks'
+import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 const drawerWidth = 240
 
@@ -78,7 +78,7 @@ interface IMainHeader {
 export const MainHeader: React.FC<IMainHeader> = (props) => {
 	const classes = useStyles()
 	const history = useNavigate()
-	const { data } = useCurrentUser()
+	const { data } = useLoggedIn()
 	let show
 	let drawer
 
@@ -99,15 +99,18 @@ export const MainHeader: React.FC<IMainHeader> = (props) => {
 		if (data.isLoggedIn) {
 			show = (
 				<>
-					<IconButton
-						style={{ paddingLeft: '2rem' }}
-						className={classes.toolbarIcon}
-						color="inherit"
-					>
-						<Badge badgeContent={4} color="secondary">
-							<NotificationsIcon />
-						</Badge>
-					</IconButton>
+					<Link style={{ color: '#f7f7f7' }} to="notifications">
+						<IconButton
+							style={{ paddingLeft: '2rem' }}
+							className={classes.toolbarIcon}
+							color="inherit"
+						>
+							<Badge badgeContent={4} color="secondary">
+								<NotificationsIcon />
+							</Badge>
+						</IconButton>
+					</Link>
+
 					<IconButton
 						style={{ paddingLeft: '2rem' }}
 						onClick={() => logOut()}

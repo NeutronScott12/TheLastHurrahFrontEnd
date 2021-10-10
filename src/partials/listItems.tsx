@@ -30,6 +30,15 @@ export const MainListItems = () => {
 				</Link>
 				<ListItemText primary="Dashboard" />
 			</ListItem>
+			<Link to="/profile">
+				<ListItem button>
+					<ListItemIcon>
+						<PeopleIcon className={classes.linkStyles} />
+					</ListItemIcon>
+					<ListItemText primary="Customers" />
+				</ListItem>
+			</Link>
+
 			<Link to="/about">
 				<ListItem button>
 					<ListItemIcon>
@@ -41,12 +50,6 @@ export const MainListItems = () => {
 					/>
 				</ListItem>
 			</Link>
-			<ListItem button>
-				<ListItemIcon>
-					<PeopleIcon className={classes.linkStyles} />
-				</ListItemIcon>
-				<ListItemText primary="Customers" />
-			</ListItem>
 			<ListItem button>
 				<ListItemIcon>
 					<BarChartIcon className={classes.linkStyles} />

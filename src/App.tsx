@@ -11,7 +11,7 @@ import { SiteRouter } from './router'
 import { LoadingComponent } from './partials/Loading'
 import { useCurrentUserQuery } from './generated/graphql'
 import { cache } from './apollo/cache'
-import { IS_LOGGED_IN } from './graphql/graphql'
+import { CURRENT_USER_CLIENT, IS_LOGGED_IN } from './graphql/graphql'
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -45,6 +45,13 @@ function App() {
 
 		if (data && data.current_user) {
 			// console.log('AFTER IF')
+			cache.writeQuery({
+				query: CURRENT_USER_CLIENT,
+				data: {
+					id: data.current_user.id,
+					username: data.current_user.username,
+				},
+			})
 			cache.writeQuery({
 				query: IS_LOGGED_IN,
 				data: {

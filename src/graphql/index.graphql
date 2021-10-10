@@ -10,7 +10,7 @@ query FetchUsers {
 query CurrentUser {
 	current_user {
 		id
-		email
+		username
 	}
 }
 
