@@ -33,7 +33,7 @@ export const DisplayApps = () => {
 			>
 				<>
 					{data?.fetch_all_applications.map(
-						({ id, application_name, cost, plan, created_at, renewal }) => {
+						({ id, application_name, cost, plan, created_at, renewal, short_name }) => {
 							return (
 								<TableRow key={id}>
 									<TableCell component="th" scope="row">
@@ -43,7 +43,7 @@ export const DisplayApps = () => {
 													textDecoration: 'none',
 													color: 'white',
 												}}
-												to={`/dashboard/apps/${application_name}`}
+												to={`/dashboard/apps/${short_name}`}
 												state={{
 													application_id: id,
 												}}

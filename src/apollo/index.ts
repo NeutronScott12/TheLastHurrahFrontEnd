@@ -1,25 +1,29 @@
 import { ApolloClient, createHttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
+import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries'
+import { sha256 } from 'crypto-hash'
+
 import { cache } from './cache'
 import { typeDefs } from './typeDefs'
 
 const httpLink = createHttpLink({
-    uri: 'http://localhost:4000/graphql',
+	uri: 'http://localhost:4000/graphql',
 })
+const linkChain = createPersistedQueryLink({ sha256 }).concat(httpLink)
 
 const authLink = setContext((_, { headers }) => {
-    const token = localStorage.getItem('token')
+	const token = localStorage.getItem('token')
 
-    return {
-        headers: {
-            ...headers,
-            authorization: token ? `Bearer ${token}` : '',
-        },
-    }
+	return {
+		headers: {
+			...headers,
+			authorization: token ? `Bearer ${token}` : '',
+		},
+	}
 })
 
 export const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache,
-    typeDefs,
+	link: authLink.concat(linkChain),
+	cache,
+	typeDefs,
 })

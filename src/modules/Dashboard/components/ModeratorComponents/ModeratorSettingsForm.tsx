@@ -18,7 +18,7 @@ import { useErrorAndSuccess } from '../../../../utils/hooks/errorAndSuccessHooks
 import { Alerts } from '../../../../partials/Alerts'
 
 interface IModeratorSettingsForm {
-	application_name: string
+	application_short_name: string
 	pre_comment_moderation: Pre_Comment_Moderation
 	links_in_comments: boolean
 	email_mods_when_comments_flagged: boolean
@@ -27,7 +27,7 @@ interface IModeratorSettingsForm {
 }
 
 export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
-	application_name,
+	application_short_name,
 	pre_comment_moderation,
 	links_in_comments,
 	email_mods_when_comments_flagged,
@@ -66,7 +66,7 @@ export const ModeratorSettingsForm: React.FC<IModeratorSettingsForm> = ({
 				await updateCommentRules({
 					variables: {
 						updateApplicationCommentRulesInput: {
-							application_name,
+							application_short_name,
 							pre_comment_moderation: preModeration,
 							links_in_comments: linksInComments,
 							email_mods_when_comments_flagged: emailModerators,

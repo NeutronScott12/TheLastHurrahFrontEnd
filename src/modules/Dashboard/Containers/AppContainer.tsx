@@ -1,18 +1,20 @@
 import React from 'react'
 import { Button } from '@mui/material'
 import { Link, useParams } from 'react-router-dom'
-import { useFetchApplicationByNameQuery } from '../../../generated/graphql'
+import { useFetchApplicationByShortNameQuery } from '../../../generated/graphql'
 import { LoadingComponent } from '../../../partials/Loading'
 export interface IParams {
-	application_name: string
+	application_short_name: string
 }
 
 export const AppContainer = () => {
-	const { application_name } = useParams() as IParams
+	const { application_short_name } = useParams() as IParams
 
-	const { loading, data } = useFetchApplicationByNameQuery({
+	const { loading, data } = useFetchApplicationByShortNameQuery({
 		variables: {
-			name: application_name,
+			fetchApplicationByShortNameInput: {
+				application_short_name,
+			},
 		},
 	})
 
@@ -20,26 +22,37 @@ export const AppContainer = () => {
 		<LoadingComponent />
 	) : (
 		<div>
-			<h2>AppContainer: {application_name}</h2>
-			<Button component={Link} style={{}} to={`/dashboard/apps/${application_name}/settings`}>
+			<h2>AppContainer: {application_short_name}</h2>
+			<Button
+				component={Link}
+				style={{}}
+				to={`/dashboard/apps/${application_short_name}/settings`}
+			>
 				Settings
 			</Button>
 			<Button
 				component={Link}
 				style={{}}
-				to={`/dashboard/apps/${application_name}/moderation`}
+				to={`/dashboard/apps/${application_short_name}/moderation`}
 			>
 				Moderation
 			</Button>
+			<Button
+				component={Link}
+				style={{}}
+				to={`/dashboard/apps/${application_short_name}/notifications`}
+			>
+				Notifications
+			</Button>
 			<br />
 			<Link
-				state={{ application_id: data && data.find_one_application_by_name.id }}
-				to={`/dashboard/apps/${application_name}/comments`}
+				state={{ application_id: data && data.fetch_application_by_short_name.id }}
+				to={`/dashboard/apps/${application_short_name}/comments`}
 			>
 				Comments
 			</Link>
 			<br />
-			<Link to={`/dashboard/apps/${application_name}/users`}>Users</Link>
+			<Link to={`/dashboard/apps/${application_short_name}/users`}>Users</Link>
 			{/* <Outlet /> */}
 		</div>
 	)

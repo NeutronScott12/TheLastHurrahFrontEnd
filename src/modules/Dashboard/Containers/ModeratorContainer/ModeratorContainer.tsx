@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import {
 	useAddApplicationModeratorMutation,
 	useFetchApplicationByNameQuery,
+	useFetchApplicationByShortNameQuery,
 	useRemoveApplicationModeratorMutation,
 	useSearchUserByEmailLazyQuery,
 } from '../../../../generated/graphql'
@@ -25,12 +26,12 @@ export interface IFormikValues {
 }
 
 export const ModeratorContainer = () => {
-	const { application_name } = useParams() as IParams
+	const { application_short_name } = useParams() as IParams
 	const [getUser, { data: userData }] = useSearchUserByEmailLazyQuery()
 	const [userModerator, setAddModerator] = useState<IModeratorState>()
 	const [isAddModeratorOpen, setAddModeratorOpen] = useState(false)
-	const { data, loading, refetch } = useFetchApplicationByNameQuery({
-		variables: { name: application_name },
+	const { data, loading, refetch } = useFetchApplicationByShortNameQuery({
+		variables: { fetchApplicationByShortNameInput: { application_short_name } },
 	})
 	const [removeMod] = useRemoveApplicationModeratorMutation()
 	const [addMod] = useAddApplicationModeratorMutation()
@@ -60,7 +61,7 @@ export const ModeratorContainer = () => {
 				await addMod({
 					variables: {
 						addModeratorInput: {
-							application_id: data.find_one_application_by_name.id,
+							application_id: data.fetch_application_by_short_name.id,
 							moderator_id: id,
 						},
 					},
@@ -79,7 +80,7 @@ export const ModeratorContainer = () => {
 				await removeMod({
 					variables: {
 						removeModeratorInput: {
-							application_id: data.find_one_application_by_name.id,
+							application_id: data.fetch_application_by_short_name.id,
 							moderator_id,
 						},
 					},
@@ -94,17 +95,17 @@ export const ModeratorContainer = () => {
 
 	let displaySettingsForm
 
-	if (data && data.find_one_application_by_name) {
+	if (data && data.fetch_application_by_short_name) {
 		const {
 			pre_comment_moderation,
 			allow_images_and_videos_on_comments,
 			display_comments_when_flagged,
 			email_mods_when_comments_flagged,
 			links_in_comments,
-		} = data.find_one_application_by_name
+		} = data.fetch_application_by_short_name
 		displaySettingsForm = (
 			<ModeratorSettingsForm
-				application_name={application_name}
+				application_short_name={application_short_name}
 				pre_comment_moderation={pre_comment_moderation}
 				display_comments_when_flagged={display_comments_when_flagged}
 				email_mods_when_comments_flagged={email_mods_when_comments_flagged}
@@ -126,7 +127,7 @@ export const ModeratorContainer = () => {
 					addModerator={addModerator}
 				/>
 				<ModeratorList
-					moderators={data?.find_one_application_by_name.moderators}
+					moderators={data?.fetch_application_by_short_name.moderators}
 					removeModerator={removeModerator}
 				/>
 			</Grid>

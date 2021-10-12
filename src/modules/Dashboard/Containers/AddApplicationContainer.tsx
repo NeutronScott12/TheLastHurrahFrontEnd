@@ -26,6 +26,7 @@ export const AddApplicationContainer = () => {
 					variables: {
 						createApplicationInput: {
 							application_name: name,
+							application_short_name: '',
 							website_url: '',
 							adult_content: false,
 							category: Category.Tech,
@@ -40,7 +41,7 @@ export const AddApplicationContainer = () => {
 				})
 
 				if (response.data) {
-					navigate(`/dashboard/apps/${response.data.create_application.application_name}`)
+					navigate(`/dashboard/apps/${response.data.create_application.short_name}`)
 				}
 			} catch (error) {
 				console.log(error)

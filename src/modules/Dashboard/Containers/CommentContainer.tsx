@@ -6,7 +6,7 @@ import {
 	Sort,
 	useApproveCommentMutation,
 	useDeleteManyCommentsMutation,
-	useFetchCommentsByApplicationNameQuery,
+	useFetchCommentsByApplicationByShortNameQuery,
 	Where,
 } from '../../../generated/graphql'
 import { IParams } from './AppContainer'
@@ -15,7 +15,7 @@ import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
 
 export const CommentContainer = () => {
-	const { application_name } = useParams() as IParams
+	const { application_short_name } = useParams() as IParams
 	const [deleteManyComments] = useDeleteManyCommentsMutation()
 	const [approveComments] = useApproveCommentMutation()
 	const [where, changeWhere] = useState<Where>(Where.Pending)
@@ -25,10 +25,10 @@ export const CommentContainer = () => {
 
 	let rows
 
-	const { data, loading, refetch } = useFetchCommentsByApplicationNameQuery({
+	const { data, loading, refetch } = useFetchCommentsByApplicationByShortNameQuery({
 		variables: {
-			fetchCommentsByApplicationName: {
-				application_name,
+			fetchCommentsByApplicationShortNameInput: {
+				application_short_name,
 				limit: 10,
 				skip: 0,
 				sort: Sort.Asc,
@@ -52,8 +52,8 @@ export const CommentContainer = () => {
 	const filterComments = async (where: Where) => {
 		changeWhere(where)
 		await refetch({
-			fetchCommentsByApplicationName: {
-				application_name,
+			fetchCommentsByApplicationShortNameInput: {
+				application_short_name,
 				limit: 10,
 				skip: 0,
 				sort: Sort.Asc,
@@ -104,10 +104,10 @@ export const CommentContainer = () => {
 	}
 
 	if (
-		data?.fetch_comments_by_application_name &&
-		data.fetch_comments_by_application_name.comments
+		data?.fetch_comments_by_application_short_name &&
+		data.fetch_comments_by_application_short_name.comments
 	) {
-		rows = formattedRows(data.fetch_comments_by_application_name.comments || [])
+		rows = formattedRows(data.fetch_comments_by_application_short_name.comments || [])
 	}
 
 	return loading ? (

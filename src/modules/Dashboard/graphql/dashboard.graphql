@@ -4,6 +4,7 @@ fragment ApplicationFields on ApplicationModel {
 	plan
 	cost
 	renewal
+	short_name
 	created_at
 	updated_at
 	application_name
@@ -28,6 +29,59 @@ fragment ApplicationFields on ApplicationModel {
 		email
 		username
 		id
+	}
+}
+
+input FetchCommentsByApplicationShortNameInput {
+	limit: Int!
+	skip: Int!
+	sort: sort!
+	application_short_name: String!
+	where: WHERE!
+}
+
+query FetchCommentsByApplicationByShortName(
+	$fetchCommentsByApplicationShortNameInput: FetchCommentsByApplicationShortNameInput!
+) {
+	fetch_comments_by_application_short_name(
+		fetchCommentsByApplicationShortNameInput: $fetchCommentsByApplicationShortNameInput
+	) {
+		comments_count
+		comments {
+			...CommentFragment
+		}
+	}
+}
+
+input FetchApplicationByShortNameInput {
+	short_name: String!
+}
+
+query FetchApplicationByShortName(
+	$fetchApplicationByShortNameInput: FetchApplicationByShortNameInput!
+) {
+	fetch_application_by_short_name(
+		fetchApplicationByShortNameInput: $fetchApplicationByShortNameInput
+	) {
+		...ApplicationFields
+	}
+}
+
+input FetchNotificationByApplicationShortNameInput {
+	short_name: String!
+}
+
+query FetchNotificationByApplicationShortName(
+	$fetchNotificationByApplicationShortNameInput: FetchNotificationByApplicationShortNameInput!
+) {
+	fetch_notifications_by_short_name(
+		fetchNotificationByApplicationShortNameInput: $fetchNotificationByApplicationShortNameInput
+	) {
+		id
+		created_at
+		updated_at
+		message
+		url
 	}
 }
 
@@ -80,26 +134,26 @@ enum WHERE {
 	ALL
 }
 
-input FetchCommentsByApplicationNameInput {
-	limit: Int!
-	skip: Int!
-	sort: sort!
-	application_name: String!
-	where: WHERE!
-}
+# input FetchCommentsByApplicationNameInput {
+# 	limit: Int!
+# 	skip: Int!
+# 	sort: sort!
+# 	application_name: String!
+# 	where: WHERE!
+# }
 
-query FetchCommentsByApplicationName(
-	$fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput!
-) {
-	fetch_comments_by_application_name(
-		fetchCommentsByApplicationName: $fetchCommentsByApplicationName
-	) {
-		comments_count
-		comments {
-			...CommentFragment
-		}
-	}
-}
+# query FetchCommentsByApplicationName(
+# 	$fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput!
+# ) {
+# 	fetch_comments_by_application_name(
+# 		fetchCommentsByApplicationName: $fetchCommentsByApplicationName
+# 	) {
+# 		comments_count
+# 		comments {
+# 			...CommentFragment
+# 		}
+# 	}
+# }
 
 query FetchApplicationsByOwner {
 	fetch_all_applications {
@@ -122,6 +176,7 @@ input CreateApplicationInput {
 mutation CreateApplication($createApplicationInput: CreateApplicationInput!) {
 	create_application(createApplicationInput: $createApplicationInput) {
 		application_name
+		short_name
 		# created_at
 	}
 }
@@ -161,7 +216,7 @@ mutation DeleteManyComments($deleteManyCommentsInput: DeleteManyCommentsInput!) 
 }
 
 input UpdateApplicationCommentRulesInput {
-	application_name: String!
+	application_short_name: String!
 	links_in_comments: Boolean!
 	email_mods_when_comments_flagged: Boolean!
 	display_comments_when_flagged: Boolean!
@@ -186,7 +241,7 @@ mutation UpdateApplicationCommentRules(
 }
 
 input UpdateApplicationInput {
-	application_name: String!
+	application_short_name: String!
 	website_url: String!
 	category: CATEGORY!
 	language: LANGUAGE!

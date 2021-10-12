@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react'
-import { useFetchNotificationsByUserIdLazyQuery } from '../../generated/graphql'
+import { useFetchNotificationByApplicationIdLazyQuery } from '../../generated/graphql'
 import { LoadingComponent } from '../../partials/Loading'
 import { useCurrentUserClient } from '../../utils/hooks/customApolloHooks'
 
-export const NotificationContainer = () => {
+interface INotificationContainer {
+	application_id: string
+}
+
+export const NotificationContainer: React.FC<INotificationContainer> = ({ application_id }) => {
 	const { data: userData } = useCurrentUserClient()
-	const [getNotification, { loading, data }] = useFetchNotificationsByUserIdLazyQuery()
+	const [getNotification, { loading, data }] = useFetchNotificationByApplicationIdLazyQuery()
 
 	useEffect(() => {
 		console.log('DATA', userData)
 		if (userData) {
 			getNotification({
 				variables: {
-					fetchNotificationsByUserIdInput: {
-						user_id: userData.current_user.id,
+					fetchNotificationsByApplicationIdInput: {
+						application_id,
 					},
 				},
 			})

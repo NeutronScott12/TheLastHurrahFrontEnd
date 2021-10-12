@@ -43,6 +43,7 @@ export const SettingsEditFormComponent: React.FC<ISettingsFormProps> = ({
 		application_name,
 		adult_content,
 		language,
+		short_name,
 		description,
 		default_avatar_url,
 		theme,
@@ -85,6 +86,7 @@ export const SettingsEditFormComponent: React.FC<ISettingsFormProps> = ({
 					variables: {
 						updateApplicationInput: {
 							id,
+							application_short_name: short_name,
 							...values,
 						},
 					},

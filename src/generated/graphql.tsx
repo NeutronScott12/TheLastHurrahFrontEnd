@@ -102,6 +102,7 @@ export type CountModel = {
 export type CreateApplicationInput = {
   adult_content: Scalars['Boolean'];
   application_name: Scalars['String'];
+  application_short_name: Scalars['String'];
   category: Category;
   comment_policy_summary?: Maybe<Scalars['String']>;
   comment_policy_url?: Maybe<Scalars['String']>;
@@ -157,6 +158,10 @@ export type FetchAllComments = {
   comments_count: Scalars['Int'];
 };
 
+export type FetchApplicationByShortNameInput = {
+  application_short_name: Scalars['String'];
+};
+
 export type FetchCommentByApplicationName = {
   __typename?: 'FetchCommentByApplicationName';
   comments: Array<CommentModel>;
@@ -189,12 +194,20 @@ export type FetchCommentsByApplicationIdInput = {
   sort: Sort;
 };
 
-export type FetchCommentsByApplicationNameInput = {
-  application_name: Scalars['String'];
+export type FetchCommentsByApplicationShortNameInput = {
+  application_short_name: Scalars['String'];
   limit: Scalars['Float'];
   skip: Scalars['Float'];
   sort: Sort;
   where: Where;
+};
+
+export type FetchNotificationByApplicationIdInput = {
+  application_id: Scalars['String'];
+};
+
+export type FetchNotificationByApplicationShortNameInput = {
+  short_name: Scalars['String'];
 };
 
 export type FetchNotificationsByUserIdInput = {
@@ -423,12 +436,15 @@ export type Query = {
   current_user: UserModel;
   fetch_all_applications: Array<ApplicationModel>;
   fetch_all_threads: Array<ThreadModel>;
+  fetch_application_by_short_name: ApplicationModel;
   fetch_applications_by_owner_id: Array<ApplicationModel>;
   fetch_comments: FetchAllComments;
   fetch_comments_by_application_id: FetchCommentsByApplicationId;
-  fetch_comments_by_application_name: FetchCommentByApplicationName;
+  fetch_comments_by_application_short_name: FetchCommentByApplicationName;
   fetch_comments_by_thread_id: FetchCommentByThreadIdResponse;
-  fetch_notifications_by_user_id: Notification;
+  fetch_notifications_by_application_id: Array<Notification>;
+  fetch_notifications_by_short_name: Array<Notification>;
+  fetch_notifications_by_user_id: Array<Notification>;
   fetch_users: Array<UserModel>;
   find_one_application_by_id: ApplicationModel;
   find_one_application_by_name: ApplicationModel;
@@ -438,18 +454,33 @@ export type Query = {
 };
 
 
+export type QueryFetch_Application_By_Short_NameArgs = {
+  fetchApplicationByShortNameInput: FetchApplicationByShortNameInput;
+};
+
+
 export type QueryFetch_Comments_By_Application_IdArgs = {
   fetchCommentsByApplicationId: FetchCommentsByApplicationIdInput;
 };
 
 
-export type QueryFetch_Comments_By_Application_NameArgs = {
-  fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput;
+export type QueryFetch_Comments_By_Application_Short_NameArgs = {
+  fetchCommentsByApplicationShortNameInput: FetchCommentsByApplicationShortNameInput;
 };
 
 
 export type QueryFetch_Comments_By_Thread_IdArgs = {
   fetchCommentByThreadIdInput: FetchCommentByThreadIdInput;
+};
+
+
+export type QueryFetch_Notifications_By_Application_IdArgs = {
+  fetchNotificationsByApplicationIdInput: FetchNotificationByApplicationIdInput;
+};
+
+
+export type QueryFetch_Notifications_By_Short_NameArgs = {
+  fetchNotificationByApplicationShortNameInput: FetchNotificationByApplicationShortNameInput;
 };
 
 
@@ -539,7 +570,7 @@ export type ThreadModelThread_CommentsArgs = {
 
 export type UpdateApplicationCommentRulesInput = {
   allow_images_and_videos_on_comments: Scalars['Boolean'];
-  application_name: Scalars['String'];
+  application_short_name: Scalars['String'];
   display_comments_when_flagged: Scalars['Boolean'];
   email_mods_when_comments_flagged: Scalars['Boolean'];
   links_in_comments: Scalars['Boolean'];
@@ -548,7 +579,7 @@ export type UpdateApplicationCommentRulesInput = {
 
 export type UpdateApplicationInput = {
   adult_content: Scalars['Boolean'];
-  application_name: Scalars['String'];
+  application_short_name: Scalars['String'];
   category: Category;
   comment_policy_summary?: Maybe<Scalars['String']>;
   comment_policy_url?: Maybe<Scalars['String']>;
@@ -611,14 +642,35 @@ export type SearchUserByEmailQueryVariables = Exact<{
 
 export type SearchUserByEmailQuery = { __typename?: 'Query', search_user_by_email: { __typename?: 'UserModel', id: string, email: string, username: string } };
 
-export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
+
+export type FetchCommentsByApplicationByShortNameQueryVariables = Exact<{
+  fetchCommentsByApplicationShortNameInput: FetchCommentsByApplicationShortNameInput;
+}>;
+
+
+export type FetchCommentsByApplicationByShortNameQuery = { __typename?: 'Query', fetch_comments_by_application_short_name: { __typename?: 'FetchCommentByApplicationName', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } };
+
+export type FetchApplicationByShortNameQueryVariables = Exact<{
+  fetchApplicationByShortNameInput: FetchApplicationByShortNameInput;
+}>;
+
+
+export type FetchApplicationByShortNameQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+
+export type FetchNotificationByApplicationShortNameQueryVariables = Exact<{
+  fetchNotificationByApplicationShortNameInput: FetchNotificationByApplicationShortNameInput;
+}>;
+
+
+export type FetchNotificationByApplicationShortNameQuery = { __typename?: 'Query', fetch_notifications_by_short_name: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
 
 export type FetchApplicationByNameQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } };
 
@@ -629,45 +681,38 @@ export type FetchCommentsByApplicationIdQueryVariables = Exact<{
 
 export type FetchCommentsByApplicationIdQuery = { __typename?: 'Query', fetch_comments_by_application_id: { __typename?: 'FetchCommentsByApplicationId', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } };
 
-export type FetchCommentsByApplicationNameQueryVariables = Exact<{
-  fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput;
-}>;
-
-
-export type FetchCommentsByApplicationNameQuery = { __typename?: 'Query', fetch_comments_by_application_name: { __typename?: 'FetchCommentByApplicationName', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } };
-
 export type FetchApplicationsByOwnerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
+export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
 
 export type FindOneApplicationByIdQueryVariables = Exact<{
   findOneApplicationByIdId: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CreateApplicationMutationVariables = Exact<{
   createApplicationInput: CreateApplicationInput;
 }>;
 
 
-export type CreateApplicationMutation = { __typename?: 'Mutation', create_application: { __typename?: 'ApplicationModel', application_name: string } };
+export type CreateApplicationMutation = { __typename?: 'Mutation', create_application: { __typename?: 'ApplicationModel', application_name: string, short_name: string } };
 
 export type RemoveApplicationModeratorMutationVariables = Exact<{
   removeModeratorInput: RemoveModeratorInput;
 }>;
 
 
-export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type AddApplicationModeratorMutationVariables = Exact<{
   addModeratorInput: AddModeratorInput;
 }>;
 
 
-export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type DeleteManyCommentsMutationVariables = Exact<{
   deleteManyCommentsInput: DeleteManyCommentsInput;
@@ -688,7 +733,7 @@ export type UpdateApplicationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type ApproveCommentMutationVariables = Exact<{
   approveCommentsInput: ApproveCommentsInput;
@@ -714,12 +759,21 @@ export type RegisterUserMutationVariables = Exact<{
 
 export type RegisterUserMutation = { __typename?: 'Mutation', register_user: { __typename?: 'StandardResponseModel', success: boolean, message: string } };
 
+export type NotificationFragment = { __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string };
+
 export type FetchNotificationsByUserIdQueryVariables = Exact<{
   fetchNotificationsByUserIdInput: FetchNotificationsByUserIdInput;
 }>;
 
 
-export type FetchNotificationsByUserIdQuery = { __typename?: 'Query', fetch_notifications_by_user_id: { __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string } };
+export type FetchNotificationsByUserIdQuery = { __typename?: 'Query', fetch_notifications_by_user_id: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
+
+export type FetchNotificationByApplicationIdQueryVariables = Exact<{
+  fetchNotificationsByApplicationIdInput: FetchNotificationByApplicationIdInput;
+}>;
+
+
+export type FetchNotificationByApplicationIdQuery = { __typename?: 'Query', fetch_notifications_by_application_id: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
 
 export const ApplicationFieldsFragmentDoc = gql`
     fragment ApplicationFields on ApplicationModel {
@@ -728,6 +782,7 @@ export const ApplicationFieldsFragmentDoc = gql`
   plan
   cost
   renewal
+  short_name
   created_at
   updated_at
   application_name
@@ -764,6 +819,15 @@ export const CommentFragmentFragmentDoc = gql`
     id
     username
   }
+}
+    `;
+export const NotificationFragmentDoc = gql`
+    fragment Notification on Notification {
+  id
+  created_at
+  updated_at
+  message
+  url
 }
     `;
 export const FetchUsersDocument = gql`
@@ -875,6 +939,124 @@ export function useSearchUserByEmailLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type SearchUserByEmailQueryHookResult = ReturnType<typeof useSearchUserByEmailQuery>;
 export type SearchUserByEmailLazyQueryHookResult = ReturnType<typeof useSearchUserByEmailLazyQuery>;
 export type SearchUserByEmailQueryResult = Apollo.QueryResult<SearchUserByEmailQuery, SearchUserByEmailQueryVariables>;
+export const FetchCommentsByApplicationByShortNameDocument = gql`
+    query FetchCommentsByApplicationByShortName($fetchCommentsByApplicationShortNameInput: FetchCommentsByApplicationShortNameInput!) {
+  fetch_comments_by_application_short_name(
+    fetchCommentsByApplicationShortNameInput: $fetchCommentsByApplicationShortNameInput
+  ) {
+    comments_count
+    comments {
+      ...CommentFragment
+    }
+  }
+}
+    ${CommentFragmentFragmentDoc}`;
+
+/**
+ * __useFetchCommentsByApplicationByShortNameQuery__
+ *
+ * To run a query within a React component, call `useFetchCommentsByApplicationByShortNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchCommentsByApplicationByShortNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchCommentsByApplicationByShortNameQuery({
+ *   variables: {
+ *      fetchCommentsByApplicationShortNameInput: // value for 'fetchCommentsByApplicationShortNameInput'
+ *   },
+ * });
+ */
+export function useFetchCommentsByApplicationByShortNameQuery(baseOptions: Apollo.QueryHookOptions<FetchCommentsByApplicationByShortNameQuery, FetchCommentsByApplicationByShortNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchCommentsByApplicationByShortNameQuery, FetchCommentsByApplicationByShortNameQueryVariables>(FetchCommentsByApplicationByShortNameDocument, options);
+      }
+export function useFetchCommentsByApplicationByShortNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchCommentsByApplicationByShortNameQuery, FetchCommentsByApplicationByShortNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchCommentsByApplicationByShortNameQuery, FetchCommentsByApplicationByShortNameQueryVariables>(FetchCommentsByApplicationByShortNameDocument, options);
+        }
+export type FetchCommentsByApplicationByShortNameQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationByShortNameQuery>;
+export type FetchCommentsByApplicationByShortNameLazyQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationByShortNameLazyQuery>;
+export type FetchCommentsByApplicationByShortNameQueryResult = Apollo.QueryResult<FetchCommentsByApplicationByShortNameQuery, FetchCommentsByApplicationByShortNameQueryVariables>;
+export const FetchApplicationByShortNameDocument = gql`
+    query FetchApplicationByShortName($fetchApplicationByShortNameInput: FetchApplicationByShortNameInput!) {
+  fetch_application_by_short_name(
+    fetchApplicationByShortNameInput: $fetchApplicationByShortNameInput
+  ) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+
+/**
+ * __useFetchApplicationByShortNameQuery__
+ *
+ * To run a query within a React component, call `useFetchApplicationByShortNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchApplicationByShortNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchApplicationByShortNameQuery({
+ *   variables: {
+ *      fetchApplicationByShortNameInput: // value for 'fetchApplicationByShortNameInput'
+ *   },
+ * });
+ */
+export function useFetchApplicationByShortNameQuery(baseOptions: Apollo.QueryHookOptions<FetchApplicationByShortNameQuery, FetchApplicationByShortNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchApplicationByShortNameQuery, FetchApplicationByShortNameQueryVariables>(FetchApplicationByShortNameDocument, options);
+      }
+export function useFetchApplicationByShortNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchApplicationByShortNameQuery, FetchApplicationByShortNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchApplicationByShortNameQuery, FetchApplicationByShortNameQueryVariables>(FetchApplicationByShortNameDocument, options);
+        }
+export type FetchApplicationByShortNameQueryHookResult = ReturnType<typeof useFetchApplicationByShortNameQuery>;
+export type FetchApplicationByShortNameLazyQueryHookResult = ReturnType<typeof useFetchApplicationByShortNameLazyQuery>;
+export type FetchApplicationByShortNameQueryResult = Apollo.QueryResult<FetchApplicationByShortNameQuery, FetchApplicationByShortNameQueryVariables>;
+export const FetchNotificationByApplicationShortNameDocument = gql`
+    query FetchNotificationByApplicationShortName($fetchNotificationByApplicationShortNameInput: FetchNotificationByApplicationShortNameInput!) {
+  fetch_notifications_by_short_name(
+    fetchNotificationByApplicationShortNameInput: $fetchNotificationByApplicationShortNameInput
+  ) {
+    id
+    created_at
+    updated_at
+    message
+    url
+  }
+}
+    `;
+
+/**
+ * __useFetchNotificationByApplicationShortNameQuery__
+ *
+ * To run a query within a React component, call `useFetchNotificationByApplicationShortNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchNotificationByApplicationShortNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchNotificationByApplicationShortNameQuery({
+ *   variables: {
+ *      fetchNotificationByApplicationShortNameInput: // value for 'fetchNotificationByApplicationShortNameInput'
+ *   },
+ * });
+ */
+export function useFetchNotificationByApplicationShortNameQuery(baseOptions: Apollo.QueryHookOptions<FetchNotificationByApplicationShortNameQuery, FetchNotificationByApplicationShortNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchNotificationByApplicationShortNameQuery, FetchNotificationByApplicationShortNameQueryVariables>(FetchNotificationByApplicationShortNameDocument, options);
+      }
+export function useFetchNotificationByApplicationShortNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchNotificationByApplicationShortNameQuery, FetchNotificationByApplicationShortNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchNotificationByApplicationShortNameQuery, FetchNotificationByApplicationShortNameQueryVariables>(FetchNotificationByApplicationShortNameDocument, options);
+        }
+export type FetchNotificationByApplicationShortNameQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationShortNameQuery>;
+export type FetchNotificationByApplicationShortNameLazyQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationShortNameLazyQuery>;
+export type FetchNotificationByApplicationShortNameQueryResult = Apollo.QueryResult<FetchNotificationByApplicationShortNameQuery, FetchNotificationByApplicationShortNameQueryVariables>;
 export const FetchApplicationByNameDocument = gql`
     query FetchApplicationByName($name: String!) {
   find_one_application_by_name(name: $name) {
@@ -950,46 +1132,6 @@ export function useFetchCommentsByApplicationIdLazyQuery(baseOptions?: Apollo.La
 export type FetchCommentsByApplicationIdQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationIdQuery>;
 export type FetchCommentsByApplicationIdLazyQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationIdLazyQuery>;
 export type FetchCommentsByApplicationIdQueryResult = Apollo.QueryResult<FetchCommentsByApplicationIdQuery, FetchCommentsByApplicationIdQueryVariables>;
-export const FetchCommentsByApplicationNameDocument = gql`
-    query FetchCommentsByApplicationName($fetchCommentsByApplicationName: FetchCommentsByApplicationNameInput!) {
-  fetch_comments_by_application_name(
-    fetchCommentsByApplicationName: $fetchCommentsByApplicationName
-  ) {
-    comments_count
-    comments {
-      ...CommentFragment
-    }
-  }
-}
-    ${CommentFragmentFragmentDoc}`;
-
-/**
- * __useFetchCommentsByApplicationNameQuery__
- *
- * To run a query within a React component, call `useFetchCommentsByApplicationNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useFetchCommentsByApplicationNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFetchCommentsByApplicationNameQuery({
- *   variables: {
- *      fetchCommentsByApplicationName: // value for 'fetchCommentsByApplicationName'
- *   },
- * });
- */
-export function useFetchCommentsByApplicationNameQuery(baseOptions: Apollo.QueryHookOptions<FetchCommentsByApplicationNameQuery, FetchCommentsByApplicationNameQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FetchCommentsByApplicationNameQuery, FetchCommentsByApplicationNameQueryVariables>(FetchCommentsByApplicationNameDocument, options);
-      }
-export function useFetchCommentsByApplicationNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchCommentsByApplicationNameQuery, FetchCommentsByApplicationNameQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FetchCommentsByApplicationNameQuery, FetchCommentsByApplicationNameQueryVariables>(FetchCommentsByApplicationNameDocument, options);
-        }
-export type FetchCommentsByApplicationNameQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationNameQuery>;
-export type FetchCommentsByApplicationNameLazyQueryHookResult = ReturnType<typeof useFetchCommentsByApplicationNameLazyQuery>;
-export type FetchCommentsByApplicationNameQueryResult = Apollo.QueryResult<FetchCommentsByApplicationNameQuery, FetchCommentsByApplicationNameQueryVariables>;
 export const FetchApplicationsByOwnerDocument = gql`
     query FetchApplicationsByOwner {
   fetch_all_applications {
@@ -1063,6 +1205,7 @@ export const CreateApplicationDocument = gql`
     mutation CreateApplication($createApplicationInput: CreateApplicationInput!) {
   create_application(createApplicationInput: $createApplicationInput) {
     application_name
+    short_name
   }
 }
     `;
@@ -1381,14 +1524,10 @@ export const FetchNotificationsByUserIdDocument = gql`
   fetch_notifications_by_user_id(
     fetchNotificationsByUserIdInput: $fetchNotificationsByUserIdInput
   ) {
-    id
-    created_at
-    updated_at
-    message
-    url
+    ...Notification
   }
 }
-    `;
+    ${NotificationFragmentDoc}`;
 
 /**
  * __useFetchNotificationsByUserIdQuery__
@@ -1417,6 +1556,43 @@ export function useFetchNotificationsByUserIdLazyQuery(baseOptions?: Apollo.Lazy
 export type FetchNotificationsByUserIdQueryHookResult = ReturnType<typeof useFetchNotificationsByUserIdQuery>;
 export type FetchNotificationsByUserIdLazyQueryHookResult = ReturnType<typeof useFetchNotificationsByUserIdLazyQuery>;
 export type FetchNotificationsByUserIdQueryResult = Apollo.QueryResult<FetchNotificationsByUserIdQuery, FetchNotificationsByUserIdQueryVariables>;
+export const FetchNotificationByApplicationIdDocument = gql`
+    query FetchNotificationByApplicationId($fetchNotificationsByApplicationIdInput: FetchNotificationByApplicationIdInput!) {
+  fetch_notifications_by_application_id(
+    fetchNotificationsByApplicationIdInput: $fetchNotificationsByApplicationIdInput
+  ) {
+    ...Notification
+  }
+}
+    ${NotificationFragmentDoc}`;
+
+/**
+ * __useFetchNotificationByApplicationIdQuery__
+ *
+ * To run a query within a React component, call `useFetchNotificationByApplicationIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchNotificationByApplicationIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchNotificationByApplicationIdQuery({
+ *   variables: {
+ *      fetchNotificationsByApplicationIdInput: // value for 'fetchNotificationsByApplicationIdInput'
+ *   },
+ * });
+ */
+export function useFetchNotificationByApplicationIdQuery(baseOptions: Apollo.QueryHookOptions<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>(FetchNotificationByApplicationIdDocument, options);
+      }
+export function useFetchNotificationByApplicationIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>(FetchNotificationByApplicationIdDocument, options);
+        }
+export type FetchNotificationByApplicationIdQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationIdQuery>;
+export type FetchNotificationByApplicationIdLazyQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationIdLazyQuery>;
+export type FetchNotificationByApplicationIdQueryResult = Apollo.QueryResult<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>;
 export type ApplicationModelKeySpecifier = ('adult_content' | 'allow_images_and_videos_on_comments' | 'application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'category' | 'comment_policy_summary' | 'comment_policy_url' | 'comments' | 'cost' | 'created_at' | 'default_avatar_url' | 'description' | 'display_comments_when_flagged' | 'email_mods_when_comments_flagged' | 'id' | 'language' | 'links_in_comments' | 'moderators' | 'moderators_ids' | 'plan' | 'pre_comment_moderation' | 'renewal' | 'short_name' | 'theme' | 'threads' | 'updated_at' | 'website_url' | ApplicationModelKeySpecifier)[];
 export type ApplicationModelFieldPolicy = {
 	adult_content?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1548,16 +1724,19 @@ export type NotificationFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	current_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_applications?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_threads?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_application_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_applications_by_owner_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comments_by_application_name?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_comments_by_application_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_notifications_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_notifications_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_users?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_application_by_id?: FieldPolicy<any> | FieldReadFunction<any>,

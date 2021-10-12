@@ -16,6 +16,7 @@ import { SettingApplicationContainer } from '../modules/Dashboard/Containers/Set
 import { UsersContainer } from '../modules/Dashboard/Containers/UsersContainer'
 import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'
+import { DashboardNotificationContainer } from '../modules/Dashboard/Containers/NotificationContainer'
 
 const LazyDashboard = lazy(() =>
 	import('../modules/Dashboard/Layouts/DashboardLayout').then((module) => ({
@@ -28,7 +29,6 @@ const LazyNotification = lazy(() =>
 )
 
 export const SiteRouter = () => {
-	const { data: userData } = useCurrentUserClient()
 	const { data } = useLoggedIn()
 
 	const routes = useRoutes([
@@ -49,10 +49,10 @@ export const SiteRouter = () => {
 			path: '/about',
 			element: <AboutContainer />,
 		},
-		{
-			path: '/notifications',
-			element: data && data.isLoggedIn ? <LazyNotification /> : <LoginContainer />,
-		},
+		// {
+		// 	path: '/notifications',
+		// 	element: data && data.isLoggedIn ? <LazyNotification /> : <LoginContainer />,
+		// },
 		{
 			path: 'dashboard/*',
 			element: data && data.isLoggedIn ? <LazyDashboard /> : <LoginContainer />,
@@ -66,24 +66,28 @@ export const SiteRouter = () => {
 					element: <AccountContainer />,
 				},
 				{
-					path: 'apps/:application_name',
+					path: 'apps/:application_short_name',
 					element: <AppContainer />,
 				},
 				{
-					path: 'apps/:application_name/comments',
+					path: 'apps/:application_short_name/comments',
 					element: <CommentContainer />,
 				},
 				{
-					path: 'apps/:application_name/users',
+					path: 'apps/:application_short_name/users',
 					element: <UsersContainer />,
 				},
 				{
-					path: 'apps/:application_name/settings',
+					path: 'apps/:application_short_name/settings',
 					element: <SettingApplicationContainer />,
 				},
 				{
-					path: 'apps/:application_name/moderation',
+					path: 'apps/:application_short_name/moderation',
 					element: <ModeratorContainer />,
+				},
+				{
+					path: 'apps/:application_short_name/notifications',
+					element: <DashboardNotificationContainer />,
 				},
 			],
 		},

@@ -1109,6 +1109,22 @@
             "deprecationReason": null
           },
           {
+            "name": "application_short_name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "category",
             "description": null,
             "type": {
@@ -1648,6 +1664,33 @@
         "possibleTypes": null
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "FetchApplicationByShortNameInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "application_short_name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "FetchCommentByApplicationName",
         "description": null,
@@ -1952,12 +1995,12 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "FetchCommentsByApplicationNameInput",
+        "name": "FetchCommentsByApplicationShortNameInput",
         "description": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "application_name",
+            "name": "application_short_name",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -2029,6 +2072,60 @@
               "ofType": {
                 "kind": "ENUM",
                 "name": "where",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "FetchNotificationByApplicationIdInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "application_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "FetchNotificationByApplicationShortNameInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "short_name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -3524,6 +3621,39 @@
             "deprecationReason": null
           },
           {
+            "name": "fetch_application_by_short_name",
+            "description": null,
+            "args": [
+              {
+                "name": "fetchApplicationByShortNameInput",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FetchApplicationByShortNameInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ApplicationModel",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "fetch_applications_by_owner_id",
             "description": null,
             "args": [],
@@ -3597,18 +3727,18 @@
             "deprecationReason": null
           },
           {
-            "name": "fetch_comments_by_application_name",
+            "name": "fetch_comments_by_application_short_name",
             "description": null,
             "args": [
               {
-                "name": "fetchCommentsByApplicationName",
+                "name": "fetchCommentsByApplicationShortNameInput",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "FetchCommentsByApplicationNameInput",
+                    "name": "FetchCommentsByApplicationShortNameInput",
                     "ofType": null
                   }
                 },
@@ -3663,6 +3793,88 @@
             "deprecationReason": null
           },
           {
+            "name": "fetch_notifications_by_application_id",
+            "description": null,
+            "args": [
+              {
+                "name": "fetchNotificationsByApplicationIdInput",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FetchNotificationByApplicationIdInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Notification",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "fetch_notifications_by_short_name",
+            "description": null,
+            "args": [
+              {
+                "name": "fetchNotificationByApplicationShortNameInput",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FetchNotificationByApplicationShortNameInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Notification",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "fetch_notifications_by_user_id",
             "description": null,
             "args": [
@@ -3687,9 +3899,17 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Notification",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Notification",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,
@@ -4321,7 +4541,7 @@
             "deprecationReason": null
           },
           {
-            "name": "application_name",
+            "name": "application_short_name",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -4428,7 +4648,7 @@
             "deprecationReason": null
           },
           {
-            "name": "application_name",
+            "name": "application_short_name",
             "description": null,
             "type": {
               "kind": "NON_NULL",

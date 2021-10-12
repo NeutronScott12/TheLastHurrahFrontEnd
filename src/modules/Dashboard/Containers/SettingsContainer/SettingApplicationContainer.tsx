@@ -3,17 +3,17 @@ import { Navigate, useParams } from 'react-router-dom'
 
 import { LoadingComponent } from '../../../../partials/Loading'
 import { IParams } from '../AppContainer'
-import { useFetchApplicationByNameQuery } from '../../../../generated/graphql'
+import { useFetchApplicationByShortNameQuery } from '../../../../generated/graphql'
 import { SettingsEditFormComponent } from '../../components/SettingsComponents/SettingsEditForm'
 
 export const SettingApplicationContainer = () => {
-	const { application_name } = useParams() as IParams
-	const { data, loading } = useFetchApplicationByNameQuery({
-		variables: { name: application_name },
+	const { application_short_name } = useParams() as IParams
+	const { data, loading } = useFetchApplicationByShortNameQuery({
+		variables: { fetchApplicationByShortNameInput: { application_short_name } },
 	})
 
 	if (!loading && data) {
-		return <SettingsEditFormComponent application={data.find_one_application_by_name} />
+		return <SettingsEditFormComponent application={data.fetch_application_by_short_name} />
 	} else if (loading) {
 		return <LoadingComponent />
 	} else {

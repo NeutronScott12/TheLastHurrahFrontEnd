@@ -1,3 +1,11 @@
+fragment Notification on Notification {
+	id
+	created_at
+	updated_at
+	message
+	url
+}
+
 input FetchNotificationsByUserIdInput {
 	user_id: String!
 }
@@ -8,10 +16,20 @@ query FetchNotificationsByUserId(
 	fetch_notifications_by_user_id(
 		fetchNotificationsByUserIdInput: $fetchNotificationsByUserIdInput
 	) {
-		id
-		created_at
-		updated_at
-		message
-		url
+		...Notification
+	}
+}
+
+input FetchNotificationByApplicationIdInput {
+	application_id: string
+}
+
+query FetchNotificationByApplicationId(
+	$fetchNotificationsByApplicationIdInput: FetchNotificationByApplicationIdInput!
+) {
+	fetch_notifications_by_application_id(
+		fetchNotificationsByApplicationIdInput: $fetchNotificationsByApplicationIdInput
+	) {
+		...Notification
 	}
 }
