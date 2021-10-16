@@ -24,6 +24,11 @@ export type AddModeratorInput = {
   moderator_id: Scalars['String'];
 };
 
+export type AddPinnedCommentInput = {
+  comment_id: Scalars['String'];
+  thread_id: Scalars['String'];
+};
+
 export type ApplicationModel = {
   __typename?: 'ApplicationModel';
   adult_content: Scalars['Boolean'];
@@ -67,6 +72,10 @@ export enum Category {
   Tech = 'TECH'
 }
 
+export type ClosePollInput = {
+  poll_id: Scalars['String'];
+};
+
 export type CommentModel = {
   __typename?: 'CommentModel';
   _count: CountModel;
@@ -85,6 +94,7 @@ export type CommentModel = {
   replied_to_id?: Maybe<Scalars['String']>;
   replied_to_user?: Maybe<UserModel>;
   replies: Array<CommentModel>;
+  reports: Array<ReportModel>;
   thread_id: Scalars['String'];
   threatening_content: Scalars['Boolean'];
   up_vote: Array<RatingModel>;
@@ -125,6 +135,12 @@ export type CreateOrderInput = {
   total_price: Scalars['Float'];
 };
 
+export type CreatePollInput = {
+  options: Array<OptionInput>;
+  thread_id: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type CreateReplyCommentInput = {
   application_id: Scalars['String'];
   json_body: Scalars['JSONObject'];
@@ -150,6 +166,11 @@ export type DeleteManyNotificationsInput = {
 
 export type DeleteNotificationInput = {
   id: Scalars['String'];
+};
+
+export type DeletePollInput = {
+  poll_id: Scalars['String'];
+  thread_id: Scalars['String'];
 };
 
 export type FetchAllComments = {
@@ -229,6 +250,10 @@ export type FindOrCreateOneThreadInput = {
   website_url: Scalars['String'];
 };
 
+export type FindThreadByIdInput = {
+  thread_id: Scalars['String'];
+};
+
 export enum Language {
   English = 'ENGLISH'
 }
@@ -245,18 +270,22 @@ export type LoginResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   add_application_moderator: ApplicationModel;
+  add_pinned_comment: ThreadModel;
   approve_comments: StandardResponseModel;
   block_user: StandardResponseModel;
+  close_poll: PollEntity;
   confirm_user: StandardResponseModel;
   create_application: ApplicationModel;
   create_comment: CommentModel;
   create_order: StandardResponseModel;
+  create_poll: PollEntity;
   create_reply_comment: CommentModel;
   create_report: StandardResponseModel;
   delete_comment: StandardResponseModel;
   delete_many_comments: StandardResponseModel;
   delete_many_notifications: StandardResponse;
   delete_notification: StandardResponse;
+  delete_poll: StandardResponseModel;
   delete_user: StandardResponseModel;
   down_vote_comment: CommentModel;
   forgot_password: StandardResponseModel;
@@ -272,11 +301,17 @@ export type Mutation = {
   update_application: ApplicationModel;
   update_application_comment_rules: ApplicationModel;
   update_comment: CommentModel;
+  update_poll_vote: PollEntity;
 };
 
 
 export type MutationAdd_Application_ModeratorArgs = {
   addModeratorInput: AddModeratorInput;
+};
+
+
+export type MutationAdd_Pinned_CommentArgs = {
+  addPinnedCommentInput: AddPinnedCommentInput;
 };
 
 
@@ -287,6 +322,11 @@ export type MutationApprove_CommentsArgs = {
 
 export type MutationBlock_UserArgs = {
   user_id: Scalars['String'];
+};
+
+
+export type MutationClose_PollArgs = {
+  closePollInput: ClosePollInput;
 };
 
 
@@ -307,6 +347,11 @@ export type MutationCreate_CommentArgs = {
 
 export type MutationCreate_OrderArgs = {
   CreateOrderInput: CreateOrderInput;
+};
+
+
+export type MutationCreate_PollArgs = {
+  createPollInput: CreatePollInput;
 };
 
 
@@ -337,6 +382,11 @@ export type MutationDelete_Many_NotificationsArgs = {
 
 export type MutationDelete_NotificationArgs = {
   deleteNotification: DeleteNotificationInput;
+};
+
+
+export type MutationDelete_PollArgs = {
+  deletePollInput: DeletePollInput;
 };
 
 
@@ -416,8 +466,14 @@ export type MutationUpdate_CommentArgs = {
   UpdateCommentInput: UpdateCommentInput;
 };
 
+
+export type MutationUpdate_Poll_VoteArgs = {
+  updatePollVoteInput: UpdatePollVoteInput;
+};
+
 export type Notification = {
   __typename?: 'Notification';
+  application_id?: Maybe<Scalars['String']>;
   created_at: Scalars['DateTime'];
   id: Scalars['String'];
   message: Scalars['String'];
@@ -425,11 +481,33 @@ export type Notification = {
   url: Scalars['String'];
 };
 
+export type OptionEntity = {
+  __typename?: 'OptionEntity';
+  id: Scalars['String'];
+  option: Scalars['String'];
+  votes: Array<VoteEntity>;
+};
+
+export type OptionInput = {
+  option: Scalars['String'];
+};
+
 export enum Pre_Comment_Moderation {
   All = 'ALL',
   NewComments = 'NEW_COMMENTS',
   None = 'NONE'
 }
+
+export type PollEntity = {
+  __typename?: 'PollEntity';
+  closed: Scalars['Boolean'];
+  created_at: Scalars['DateTime'];
+  id: Scalars['String'];
+  options: Array<OptionEntity>;
+  title: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+  voted: Array<Scalars['String']>;
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -442,6 +520,7 @@ export type Query = {
   fetch_comments_by_application_id: FetchCommentsByApplicationId;
   fetch_comments_by_application_short_name: FetchCommentByApplicationName;
   fetch_comments_by_thread_id: FetchCommentByThreadIdResponse;
+  fetch_notifications: Array<Notification>;
   fetch_notifications_by_application_id: Array<Notification>;
   fetch_notifications_by_short_name: Array<Notification>;
   fetch_notifications_by_user_id: Array<Notification>;
@@ -449,6 +528,7 @@ export type Query = {
   find_one_application_by_id: ApplicationModel;
   find_one_application_by_name: ApplicationModel;
   find_one_thread_or_create_one: ThreadModel;
+  find_thread_by_id: ThreadModel;
   resend_email_code: StandardResponseModel;
   search_user_by_email: UserModel;
 };
@@ -504,6 +584,11 @@ export type QueryFind_One_Thread_Or_Create_OneArgs = {
 };
 
 
+export type QueryFind_Thread_By_IdArgs = {
+  findThreadById: FindThreadByIdInput;
+};
+
+
 export type QueryResend_Email_CodeArgs = {
   email: Scalars['String'];
   redirect_url: Scalars['String'];
@@ -533,6 +618,15 @@ export type RemoveModeratorInput = {
   moderator_id: Scalars['String'];
 };
 
+export type ReportModel = {
+  __typename?: 'ReportModel';
+  created_at: Scalars['DateTime'];
+  id: Scalars['String'];
+  reason: Report_Reason;
+  updated_at: Scalars['DateTime'];
+  user_id: Scalars['String'];
+};
+
 export type StandardResponse = {
   __typename?: 'StandardResponse';
   message: Scalars['String'];
@@ -556,8 +650,9 @@ export type ThreadModel = {
   application_id: Scalars['String'];
   /** UUID for Thread */
   id: Scalars['String'];
-  pinned_comment: CommentModel;
-  pinned_comment_id: Scalars['String'];
+  pinned_comment?: Maybe<CommentModel>;
+  pinned_comment_id?: Maybe<Scalars['String']>;
+  poll?: Maybe<PollEntity>;
   thread_comments: FetchCommentByThreadIdResponse;
   title: Scalars['String'];
   website_url: Scalars['String'];
@@ -597,6 +692,11 @@ export type UpdateCommentInput = {
   plain_text_body: Scalars['String'];
 };
 
+export type UpdatePollVoteInput = {
+  options_id: Scalars['String'];
+  poll_id: Scalars['String'];
+};
+
 export type UserModel = {
   __typename?: 'UserModel';
   applications_joined_ids: Array<Scalars['String']>;
@@ -609,6 +709,12 @@ export type UserModel = {
   updated_at: Scalars['DateTime'];
   user_role: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type VoteEntity = {
+  __typename?: 'VoteEntity';
+  id: Scalars['String'];
+  user_id: Scalars['String'];
 };
 
 export enum Sort {
@@ -1627,7 +1733,7 @@ export type ApplicationModelFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
+export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
 export type CommentModelFieldPolicy = {
 	_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1645,6 +1751,7 @@ export type CommentModelFieldPolicy = {
 	replied_to_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	replied_to_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	replies?: FieldPolicy<any> | FieldReadFunction<any>,
+	reports?: FieldPolicy<any> | FieldReadFunction<any>,
 	thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	threatening_content?: FieldPolicy<any> | FieldReadFunction<any>,
 	up_vote?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1685,21 +1792,25 @@ export type LoginResponseFieldPolicy = {
 	token?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('add_application_moderator' | 'approve_comments' | 'block_user' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_reply_comment' | 'create_report' | 'delete_comment' | 'delete_many_comments' | 'delete_many_notifications' | 'delete_notification' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'logout_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'unblock_user' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('add_application_moderator' | 'add_pinned_comment' | 'approve_comments' | 'block_user' | 'close_poll' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_poll' | 'create_reply_comment' | 'create_report' | 'delete_comment' | 'delete_many_comments' | 'delete_many_notifications' | 'delete_notification' | 'delete_poll' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'logout_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'reset_password' | 'unblock_user' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | 'update_poll_vote' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	add_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
+	add_pinned_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	approve_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	block_user?: FieldPolicy<any> | FieldReadFunction<any>,
+	close_poll?: FieldPolicy<any> | FieldReadFunction<any>,
 	confirm_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_order?: FieldPolicy<any> | FieldReadFunction<any>,
+	create_poll?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_reply_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	create_report?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_many_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_many_notifications?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_notification?: FieldPolicy<any> | FieldReadFunction<any>,
+	delete_poll?: FieldPolicy<any> | FieldReadFunction<any>,
 	delete_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	down_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	forgot_password?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1714,17 +1825,35 @@ export type MutationFieldPolicy = {
 	up_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_application_comment_rules?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_comment?: FieldPolicy<any> | FieldReadFunction<any>
+	update_comment?: FieldPolicy<any> | FieldReadFunction<any>,
+	update_poll_vote?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type NotificationKeySpecifier = ('created_at' | 'id' | 'message' | 'updated_at' | 'url' | NotificationKeySpecifier)[];
+export type NotificationKeySpecifier = ('application_id' | 'created_at' | 'id' | 'message' | 'updated_at' | 'url' | NotificationKeySpecifier)[];
 export type NotificationFieldPolicy = {
+	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	message?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
+export type OptionEntityKeySpecifier = ('id' | 'option' | 'votes' | OptionEntityKeySpecifier)[];
+export type OptionEntityFieldPolicy = {
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	option?: FieldPolicy<any> | FieldReadFunction<any>,
+	votes?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type PollEntityKeySpecifier = ('closed' | 'created_at' | 'id' | 'options' | 'title' | 'updated_at' | 'voted' | PollEntityKeySpecifier)[];
+export type PollEntityFieldPolicy = {
+	closed?: FieldPolicy<any> | FieldReadFunction<any>,
+	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	options?: FieldPolicy<any> | FieldReadFunction<any>,
+	title?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	voted?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_thread_by_id' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	current_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_applications?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1735,6 +1864,7 @@ export type QueryFieldPolicy = {
 	fetch_comments_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_application_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_notifications?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1742,6 +1872,7 @@ export type QueryFieldPolicy = {
 	find_one_application_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_application_by_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_thread_or_create_one?: FieldPolicy<any> | FieldReadFunction<any>,
+	find_thread_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	resend_email_code?: FieldPolicy<any> | FieldReadFunction<any>,
 	search_user_by_email?: FieldPolicy<any> | FieldReadFunction<any>
 };
@@ -1749,6 +1880,14 @@ export type RatingModelKeySpecifier = ('author_id' | 'id' | RatingModelKeySpecif
 export type RatingModelFieldPolicy = {
 	author_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type ReportModelKeySpecifier = ('created_at' | 'id' | 'reason' | 'updated_at' | 'user_id' | ReportModelKeySpecifier)[];
+export type ReportModelFieldPolicy = {
+	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	reason?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	user_id?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StandardResponseKeySpecifier = ('message' | 'success' | StandardResponseKeySpecifier)[];
 export type StandardResponseFieldPolicy = {
@@ -1760,12 +1899,13 @@ export type StandardResponseModelFieldPolicy = {
 	message?: FieldPolicy<any> | FieldReadFunction<any>,
 	success?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type ThreadModelKeySpecifier = ('application_id' | 'id' | 'pinned_comment' | 'pinned_comment_id' | 'thread_comments' | 'title' | 'website_url' | ThreadModelKeySpecifier)[];
+export type ThreadModelKeySpecifier = ('application_id' | 'id' | 'pinned_comment' | 'pinned_comment_id' | 'poll' | 'thread_comments' | 'title' | 'website_url' | ThreadModelKeySpecifier)[];
 export type ThreadModelFieldPolicy = {
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	pinned_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	pinned_comment_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	poll?: FieldPolicy<any> | FieldReadFunction<any>,
 	thread_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
@@ -1782,6 +1922,11 @@ export type UserModelFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	user_role?: FieldPolicy<any> | FieldReadFunction<any>,
 	username?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type VoteEntityKeySpecifier = ('id' | 'user_id' | VoteEntityKeySpecifier)[];
+export type VoteEntityFieldPolicy = {
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	user_id?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type StrictTypedTypePolicies = {
 	ApplicationModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
@@ -1824,6 +1969,14 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | NotificationKeySpecifier | (() => undefined | NotificationKeySpecifier),
 		fields?: NotificationFieldPolicy,
 	},
+	OptionEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionEntityKeySpecifier | (() => undefined | OptionEntityKeySpecifier),
+		fields?: OptionEntityFieldPolicy,
+	},
+	PollEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | PollEntityKeySpecifier | (() => undefined | PollEntityKeySpecifier),
+		fields?: PollEntityFieldPolicy,
+	},
 	Query?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | QueryKeySpecifier | (() => undefined | QueryKeySpecifier),
 		fields?: QueryFieldPolicy,
@@ -1831,6 +1984,10 @@ export type StrictTypedTypePolicies = {
 	RatingModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | RatingModelKeySpecifier | (() => undefined | RatingModelKeySpecifier),
 		fields?: RatingModelFieldPolicy,
+	},
+	ReportModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | ReportModelKeySpecifier | (() => undefined | ReportModelKeySpecifier),
+		fields?: ReportModelFieldPolicy,
 	},
 	StandardResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | StandardResponseKeySpecifier | (() => undefined | StandardResponseKeySpecifier),
@@ -1847,6 +2004,10 @@ export type StrictTypedTypePolicies = {
 	UserModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | UserModelKeySpecifier | (() => undefined | UserModelKeySpecifier),
 		fields?: UserModelFieldPolicy,
+	},
+	VoteEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | VoteEntityKeySpecifier | (() => undefined | VoteEntityKeySpecifier),
+		fields?: VoteEntityFieldPolicy,
 	}
 };
 export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;
