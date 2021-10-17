@@ -22,7 +22,7 @@ export const NotificationContainer: React.FC<INotificationContainer> = ({ applic
 				},
 			})
 		}
-	}, [])
+	}, [application_id, getNotification])
 
 	console.log('DATA', data)
 

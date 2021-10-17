@@ -58,8 +58,6 @@ export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 
 	const { data } = useLoggedIn()
 
-	console.log('USERDATA', userData)
-
 	return data && !data.isLoggedIn ? (
 		<div></div>
 	) : (

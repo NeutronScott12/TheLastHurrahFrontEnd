@@ -68,12 +68,31 @@ export type ApproveCommentsInput = {
   comment_ids: Array<Scalars['String']>;
 };
 
+export type AvatarEntity = {
+  __typename?: 'AvatarEntity';
+  ETag: Scalars['String'];
+  created_at: Scalars['DateTime'];
+  default_avatar: Scalars['Boolean'];
+  encoding: Scalars['String'];
+  filename: Scalars['String'];
+  id: Scalars['String'];
+  key: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+  url: Scalars['String'];
+};
+
 export enum Category {
   Tech = 'TECH'
 }
 
 export type ClosePollInput = {
   poll_id: Scalars['String'];
+};
+
+export type CommentAndVoteCountEntity = {
+  __typename?: 'CommentAndVoteCountEntity';
+  comment_count: Scalars['Int'];
+  vote_count: Scalars['Int'];
 };
 
 export type CommentModel = {
@@ -185,6 +204,10 @@ export type FetchAllComments = {
 
 export type FetchApplicationByShortNameInput = {
   application_short_name: Scalars['String'];
+};
+
+export type FetchCommentAndVoteCountInput = {
+  user_id: Scalars['String'];
 };
 
 export type FetchCommentByApplicationName = {
@@ -535,6 +558,7 @@ export type Query = {
   fetch_all_threads: Array<ThreadModel>;
   fetch_application_by_short_name: ApplicationModel;
   fetch_applications_by_owner_id: Array<ApplicationModel>;
+  fetch_comment_and_vote_count: CommentAndVoteCountEntity;
   fetch_comments: FetchAllComments;
   fetch_comments_by_application_id: FetchCommentsByApplicationId;
   fetch_comments_by_application_short_name: FetchCommentByApplicationName;
@@ -557,6 +581,11 @@ export type Query = {
 
 export type QueryFetch_Application_By_Short_NameArgs = {
   fetchApplicationByShortNameInput: FetchApplicationByShortNameInput;
+};
+
+
+export type QueryFetch_Comment_And_Vote_CountArgs = {
+  fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput;
 };
 
 
@@ -658,6 +687,13 @@ export type ReportModel = {
   user_id: Scalars['String'];
 };
 
+export enum Status {
+  Away = 'AWAY',
+  Invisble = 'INVISBLE',
+  Offline = 'OFFLINE',
+  Online = 'ONLINE'
+}
+
 export type StandardResponse = {
   __typename?: 'StandardResponse';
   message: Scalars['String'];
@@ -734,12 +770,14 @@ export type UpdatePollVoteInput = {
 export type UserModel = {
   __typename?: 'UserModel';
   applications_joined_ids: Array<Scalars['String']>;
+  avatar: AvatarEntity;
   blocked_users: Array<UserModel>;
   confirmed: Scalars['Boolean'];
   created_at: Scalars['DateTime'];
   email: Scalars['String'];
   id: Scalars['String'];
   last_active: Scalars['DateTime'];
+  status: Status;
   updated_at: Scalars['DateTime'];
   user_role: Scalars['String'];
   username: Scalars['String'];
@@ -929,7 +967,14 @@ export type FindProfileQueryVariables = Exact<{
 }>;
 
 
-export type FindProfileQuery = { __typename?: 'Query', find_profile: { __typename?: 'ProfileEntity', id: string, user: { __typename?: 'UserModel', created_at: any, username: string, last_active: any } } };
+export type FindProfileQuery = { __typename?: 'Query', find_profile: { __typename?: 'ProfileEntity', id: string, user: { __typename?: 'UserModel', created_at: any, username: string, last_active: any, status: Status, avatar: { __typename?: 'AvatarEntity', url: string, filename: string, id: string } } } };
+
+export type FetchCommentAndVoteCountQueryVariables = Exact<{
+  fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput;
+}>;
+
+
+export type FetchCommentAndVoteCountQuery = { __typename?: 'Query', fetch_comment_and_vote_count: { __typename?: 'CommentAndVoteCountEntity', comment_count: number, vote_count: number } };
 
 export const ApplicationFieldsFragmentDoc = gql`
     fragment ApplicationFields on ApplicationModel {
@@ -1830,6 +1875,12 @@ export const FindProfileDocument = gql`
       created_at
       username
       last_active
+      status
+      avatar {
+        url
+        filename
+        id
+      }
     }
   }
 }
@@ -1862,6 +1913,44 @@ export function useFindProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type FindProfileQueryHookResult = ReturnType<typeof useFindProfileQuery>;
 export type FindProfileLazyQueryHookResult = ReturnType<typeof useFindProfileLazyQuery>;
 export type FindProfileQueryResult = Apollo.QueryResult<FindProfileQuery, FindProfileQueryVariables>;
+export const FetchCommentAndVoteCountDocument = gql`
+    query FetchCommentAndVoteCount($fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput!) {
+  fetch_comment_and_vote_count(
+    fetchCommentAndVoteCountInput: $fetchCommentAndVoteCountInput
+  ) {
+    comment_count
+    vote_count
+  }
+}
+    `;
+
+/**
+ * __useFetchCommentAndVoteCountQuery__
+ *
+ * To run a query within a React component, call `useFetchCommentAndVoteCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchCommentAndVoteCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchCommentAndVoteCountQuery({
+ *   variables: {
+ *      fetchCommentAndVoteCountInput: // value for 'fetchCommentAndVoteCountInput'
+ *   },
+ * });
+ */
+export function useFetchCommentAndVoteCountQuery(baseOptions: Apollo.QueryHookOptions<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>(FetchCommentAndVoteCountDocument, options);
+      }
+export function useFetchCommentAndVoteCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>(FetchCommentAndVoteCountDocument, options);
+        }
+export type FetchCommentAndVoteCountQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountQuery>;
+export type FetchCommentAndVoteCountLazyQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountLazyQuery>;
+export type FetchCommentAndVoteCountQueryResult = Apollo.QueryResult<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>;
 export type ApplicationModelKeySpecifier = ('adult_content' | 'allow_images_and_videos_on_comments' | 'application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'category' | 'comment_policy_summary' | 'comment_policy_url' | 'comments' | 'cost' | 'created_at' | 'default_avatar_url' | 'description' | 'display_comments_when_flagged' | 'email_mods_when_comments_flagged' | 'id' | 'language' | 'links_in_comments' | 'moderators' | 'moderators_ids' | 'plan' | 'pre_comment_moderation' | 'renewal' | 'short_name' | 'theme' | 'threads' | 'updated_at' | 'website_url' | ApplicationModelKeySpecifier)[];
 export type ApplicationModelFieldPolicy = {
 	adult_content?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1895,6 +1984,23 @@ export type ApplicationModelFieldPolicy = {
 	threads?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type AvatarEntityKeySpecifier = ('ETag' | 'created_at' | 'default_avatar' | 'encoding' | 'filename' | 'id' | 'key' | 'updated_at' | 'url' | AvatarEntityKeySpecifier)[];
+export type AvatarEntityFieldPolicy = {
+	ETag?: FieldPolicy<any> | FieldReadFunction<any>,
+	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	default_avatar?: FieldPolicy<any> | FieldReadFunction<any>,
+	encoding?: FieldPolicy<any> | FieldReadFunction<any>,
+	filename?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	key?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
+	url?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type CommentAndVoteCountEntityKeySpecifier = ('comment_count' | 'vote_count' | CommentAndVoteCountEntityKeySpecifier)[];
+export type CommentAndVoteCountEntityFieldPolicy = {
+	comment_count?: FieldPolicy<any> | FieldReadFunction<any>,
+	vote_count?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
 export type CommentModelFieldPolicy = {
@@ -2022,13 +2128,14 @@ export type ProfileEntityFieldPolicy = {
 	profile_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	user?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_threads_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_profile' | 'find_thread_by_id' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comment_and_vote_count' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_threads_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_profile' | 'find_thread_by_id' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	current_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_applications?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_threads?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_application_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_applications_by_owner_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_comment_and_vote_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_comments_by_application_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -2083,15 +2190,17 @@ export type ThreadModelFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	website_url?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type UserModelKeySpecifier = ('applications_joined_ids' | 'blocked_users' | 'confirmed' | 'created_at' | 'email' | 'id' | 'last_active' | 'updated_at' | 'user_role' | 'username' | UserModelKeySpecifier)[];
+export type UserModelKeySpecifier = ('applications_joined_ids' | 'avatar' | 'blocked_users' | 'confirmed' | 'created_at' | 'email' | 'id' | 'last_active' | 'status' | 'updated_at' | 'user_role' | 'username' | UserModelKeySpecifier)[];
 export type UserModelFieldPolicy = {
 	applications_joined_ids?: FieldPolicy<any> | FieldReadFunction<any>,
+	avatar?: FieldPolicy<any> | FieldReadFunction<any>,
 	blocked_users?: FieldPolicy<any> | FieldReadFunction<any>,
 	confirmed?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	email?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	last_active?: FieldPolicy<any> | FieldReadFunction<any>,
+	status?: FieldPolicy<any> | FieldReadFunction<any>,
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	user_role?: FieldPolicy<any> | FieldReadFunction<any>,
 	username?: FieldPolicy<any> | FieldReadFunction<any>
@@ -2105,6 +2214,14 @@ export type StrictTypedTypePolicies = {
 	ApplicationModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | ApplicationModelKeySpecifier | (() => undefined | ApplicationModelKeySpecifier),
 		fields?: ApplicationModelFieldPolicy,
+	},
+	AvatarEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | AvatarEntityKeySpecifier | (() => undefined | AvatarEntityKeySpecifier),
+		fields?: AvatarEntityFieldPolicy,
+	},
+	CommentAndVoteCountEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | CommentAndVoteCountEntityKeySpecifier | (() => undefined | CommentAndVoteCountEntityKeySpecifier),
+		fields?: CommentAndVoteCountEntityFieldPolicy,
 	},
 	CommentModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | CommentModelKeySpecifier | (() => undefined | CommentModelKeySpecifier),

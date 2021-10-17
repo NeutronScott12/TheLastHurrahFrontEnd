@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { DataGrid, GridColDef, GridRowId, GridState } from '@mui/x-data-grid'
 import { IComments } from '../types'
-import { Sort, Where } from '../../../generated/graphql'
+import { Where } from '../../../generated/graphql'
 
 const useStyles = makeStyles({
 	root: {

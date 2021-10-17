@@ -6,6 +6,8 @@ import { sha256 } from 'crypto-hash'
 import { cache } from './cache'
 import { typeDefs } from './typeDefs'
 
+// const uri = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:4000/graphql'
+
 const httpLink = createHttpLink({
 	uri: 'http://localhost:4000/graphql',
 })

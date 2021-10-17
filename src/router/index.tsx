@@ -1,7 +1,7 @@
 import React, { lazy } from 'react'
 import { useRoutes } from 'react-router-dom'
 
-import { useCurrentUserClient, useLoggedIn } from '../utils/hooks/customApolloHooks'
+import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 import { AboutContainer } from '../modules/About/AboutContainer'
 import { ConfirmedContainer } from '../modules/authentication/confirmed/ConfirmedContainer'
@@ -25,9 +25,9 @@ const LazyDashboard = lazy(() =>
 	}))
 )
 
-const LazyNotification = lazy(() =>
-	import('../modules/notifications').then((module) => ({ default: module.NotificationContainer }))
-)
+// const LazyNotification = lazy(() =>
+// 	import('../modules/notifications').then((module) => ({ default: module.NotificationContainer }))
+// )
 
 export const SiteRouter = () => {
 	const { data } = useLoggedIn()
@@ -44,7 +44,7 @@ export const SiteRouter = () => {
 		},
 		{
 			path: '/login',
-			element: data && data.isLoggedIn ? <LoginContainer /> : <DashboardLayout />,
+			element: data && data.isLoggedIn === false ? <LoginContainer /> : <DashboardLayout />,
 		},
 		{
 			path: '/about',
@@ -52,7 +52,7 @@ export const SiteRouter = () => {
 		},
 		{
 			path: ':username/*',
-			element: <ProfileContainer />,
+			element: data && data.isLoggedIn === false ? <LoginContainer /> : <ProfileContainer />,
 			children: [{ path: 'comments' }],
 		},
 		// {

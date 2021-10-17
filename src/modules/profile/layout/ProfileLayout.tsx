@@ -1,24 +1,17 @@
 import React from 'react'
 
+import { SideInfoBar } from '../containers/SideInfoBar'
+import { IProfile } from '../types'
+
 interface IProfileLayout {
-	profile: {
-		__typename?: 'ProfileEntity' | undefined
-		id: string
-		user:
-			| {
-					__typename?: 'UserModel' | undefined
-					created_at: any
-					username: string
-					last_active: any
-			  }
-			| undefined
-	}
+	profile: IProfile
 }
 
-export const ProfileLayout: React.FC<IProfileLayout> = () => {
+export const ProfileLayout: React.FC<IProfileLayout> = ({ profile }) => {
 	return (
 		<div>
 			<h2>Profile Layout</h2>
+			<SideInfoBar profile={profile} />
 		</div>
 	)
 }

@@ -16,6 +16,8 @@ export interface ICurrentUser {
 	current_user: {
 		id: string
 		username: string
+		isModerator: boolean
+		isOwner: boolean
 	}
 }
 

@@ -20,7 +20,7 @@ export const ProfileContainer = () => {
 	) : (
 		<div>
 			<DashboardHeader />
-			{/* <ProfileLayout profile={data && data.find_profile} /> */}
+			{data && data.find_profile ? <ProfileLayout profile={data.find_profile} /> : ''}
 		</div>
 	)
 }
