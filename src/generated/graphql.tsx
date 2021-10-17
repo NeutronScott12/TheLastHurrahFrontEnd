@@ -102,6 +102,10 @@ export type CommentModel = {
   user_id: Scalars['String'];
 };
 
+export type CommentsByUserIdInput = {
+  user_id?: Maybe<Scalars['String']>;
+};
+
 export type CountModel = {
   __typename?: 'CountModel';
   down_vote: Scalars['Int'];
@@ -190,8 +194,8 @@ export type FetchCommentByApplicationName = {
 };
 
 export type FetchCommentByThreadIdInput = {
-  limit: Scalars['Float'];
-  skip: Scalars['Float'];
+  limit: Scalars['Int'];
+  skip: Scalars['Int'];
   sort: Sort;
   thread_id: Scalars['String'];
 };
@@ -210,16 +214,16 @@ export type FetchCommentsByApplicationId = {
 
 export type FetchCommentsByApplicationIdInput = {
   application_id: Scalars['String'];
-  limit: Scalars['Float'];
-  skip: Scalars['Float'];
-  sort: Sort;
+  limit: Scalars['Int'];
+  skip: Scalars['Int'];
+  sort?: Maybe<Sort>;
 };
 
 export type FetchCommentsByApplicationShortNameInput = {
   application_short_name: Scalars['String'];
-  limit: Scalars['Float'];
-  skip: Scalars['Float'];
-  sort: Sort;
+  limit: Scalars['Int'];
+  skip: Scalars['Int'];
+  sort?: Maybe<Sort>;
   where: Where;
 };
 
@@ -235,10 +239,14 @@ export type FetchNotificationsByUserIdInput = {
   user_id: Scalars['String'];
 };
 
-export type FetchThreadCommentsById = {
+export type FetchThreadCommentsBySort = {
   limit: Scalars['Int'];
   skip: Scalars['Int'];
   sort?: Maybe<Sort>;
+};
+
+export type FetchThreadsByUserIdInput = {
+  user_id: Scalars['String'];
 };
 
 export type FindOrCreateOneThreadInput = {
@@ -248,6 +256,10 @@ export type FindOrCreateOneThreadInput = {
   title?: Maybe<Scalars['String']>;
   /** Thread website url */
   website_url: Scalars['String'];
+};
+
+export type FindProfileInput = {
+  username: Scalars['String'];
 };
 
 export type FindThreadByIdInput = {
@@ -509,6 +521,13 @@ export type PollEntity = {
   voted: Array<Scalars['String']>;
 };
 
+export type ProfileEntity = {
+  __typename?: 'ProfileEntity';
+  id: Scalars['String'];
+  profile_comments: Array<CommentModel>;
+  user: UserModel;
+};
+
 export type Query = {
   __typename?: 'Query';
   current_user: UserModel;
@@ -524,10 +543,12 @@ export type Query = {
   fetch_notifications_by_application_id: Array<Notification>;
   fetch_notifications_by_short_name: Array<Notification>;
   fetch_notifications_by_user_id: Array<Notification>;
+  fetch_threads_by_user_id: Array<ThreadModel>;
   fetch_users: Array<UserModel>;
   find_one_application_by_id: ApplicationModel;
   find_one_application_by_name: ApplicationModel;
   find_one_thread_or_create_one: ThreadModel;
+  find_profile: ProfileEntity;
   find_thread_by_id: ThreadModel;
   resend_email_code: StandardResponseModel;
   search_user_by_email: UserModel;
@@ -569,6 +590,11 @@ export type QueryFetch_Notifications_By_User_IdArgs = {
 };
 
 
+export type QueryFetch_Threads_By_User_IdArgs = {
+  fetchThreadsByUserIdInput: FetchThreadsByUserIdInput;
+};
+
+
 export type QueryFind_One_Application_By_IdArgs = {
   id: Scalars['String'];
 };
@@ -581,6 +607,11 @@ export type QueryFind_One_Application_By_NameArgs = {
 
 export type QueryFind_One_Thread_Or_Create_OneArgs = {
   findOrCreateOneThreadInput: FindOrCreateOneThreadInput;
+};
+
+
+export type QueryFind_ProfileArgs = {
+  findProfileInput: FindProfileInput;
 };
 
 
@@ -648,8 +679,10 @@ export enum Theme {
 export type ThreadModel = {
   __typename?: 'ThreadModel';
   application_id: Scalars['String'];
+  commenters_ids: Array<Scalars['String']>;
   /** UUID for Thread */
   id: Scalars['String'];
+  parent_application: ApplicationModel;
   pinned_comment?: Maybe<CommentModel>;
   pinned_comment_id?: Maybe<Scalars['String']>;
   poll?: Maybe<PollEntity>;
@@ -660,7 +693,8 @@ export type ThreadModel = {
 
 
 export type ThreadModelThread_CommentsArgs = {
-  FetchThreadCommentsById: FetchThreadCommentsById;
+  commentsByUserIdInput?: Maybe<CommentsByUserIdInput>;
+  fetchThreadCommentsBySort: FetchThreadCommentsBySort;
 };
 
 export type UpdateApplicationCommentRulesInput = {
@@ -880,6 +914,22 @@ export type FetchNotificationByApplicationIdQueryVariables = Exact<{
 
 
 export type FetchNotificationByApplicationIdQuery = { __typename?: 'Query', fetch_notifications_by_application_id: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
+
+export type FetchThreadsByUserIdQueryVariables = Exact<{
+  fetchThreadsByUserIdInput: FetchThreadsByUserIdInput;
+  commentsByUserIdInput: CommentsByUserIdInput;
+  fetchThreadCommentsBySort: FetchThreadCommentsBySort;
+}>;
+
+
+export type FetchThreadsByUserIdQuery = { __typename?: 'Query', fetch_threads_by_user_id: Array<{ __typename?: 'ThreadModel', application_id: string, id: string, commenters_ids: Array<string>, parent_application: { __typename?: 'ApplicationModel', id: string }, thread_comments: { __typename?: 'FetchCommentByThreadIdResponse', comments: Array<{ __typename?: 'CommentModel', thread_id: string, plain_text_body: string, json_body: Array<any>, application_id: string, _count: { __typename?: 'CountModel', down_vote: number, up_vote: number }, author: { __typename?: 'UserModel', username: string, id: string }, up_vote: Array<{ __typename?: 'RatingModel', author_id: string, id: string }>, replies: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, json_body: Array<any>, _count: { __typename?: 'CountModel', down_vote: number } }> }> } }> };
+
+export type FindProfileQueryVariables = Exact<{
+  findProfileInput: FindProfileInput;
+}>;
+
+
+export type FindProfileQuery = { __typename?: 'Query', find_profile: { __typename?: 'ProfileEntity', id: string, user: { __typename?: 'UserModel', created_at: any, username: string, last_active: any } } };
 
 export const ApplicationFieldsFragmentDoc = gql`
     fragment ApplicationFields on ApplicationModel {
@@ -1699,6 +1749,119 @@ export function useFetchNotificationByApplicationIdLazyQuery(baseOptions?: Apoll
 export type FetchNotificationByApplicationIdQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationIdQuery>;
 export type FetchNotificationByApplicationIdLazyQueryHookResult = ReturnType<typeof useFetchNotificationByApplicationIdLazyQuery>;
 export type FetchNotificationByApplicationIdQueryResult = Apollo.QueryResult<FetchNotificationByApplicationIdQuery, FetchNotificationByApplicationIdQueryVariables>;
+export const FetchThreadsByUserIdDocument = gql`
+    query FetchThreadsByUserId($fetchThreadsByUserIdInput: FetchThreadsByUserIdInput!, $commentsByUserIdInput: CommentsByUserIdInput!, $fetchThreadCommentsBySort: FetchThreadCommentsBySort!) {
+  fetch_threads_by_user_id(fetchThreadsByUserIdInput: $fetchThreadsByUserIdInput) {
+    application_id
+    id
+    commenters_ids
+    parent_application {
+      id
+    }
+    thread_comments(
+      commentsByUserIdInput: $commentsByUserIdInput
+      fetchThreadCommentsBySort: $fetchThreadCommentsBySort
+    ) {
+      comments {
+        thread_id
+        _count {
+          down_vote
+          up_vote
+        }
+        author {
+          username
+          id
+        }
+        up_vote {
+          author_id
+          id
+        }
+        plain_text_body
+        json_body
+        application_id
+        replies {
+          _count {
+            down_vote
+          }
+          id
+          plain_text_body
+          json_body
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchThreadsByUserIdQuery__
+ *
+ * To run a query within a React component, call `useFetchThreadsByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchThreadsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchThreadsByUserIdQuery({
+ *   variables: {
+ *      fetchThreadsByUserIdInput: // value for 'fetchThreadsByUserIdInput'
+ *      commentsByUserIdInput: // value for 'commentsByUserIdInput'
+ *      fetchThreadCommentsBySort: // value for 'fetchThreadCommentsBySort'
+ *   },
+ * });
+ */
+export function useFetchThreadsByUserIdQuery(baseOptions: Apollo.QueryHookOptions<FetchThreadsByUserIdQuery, FetchThreadsByUserIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchThreadsByUserIdQuery, FetchThreadsByUserIdQueryVariables>(FetchThreadsByUserIdDocument, options);
+      }
+export function useFetchThreadsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchThreadsByUserIdQuery, FetchThreadsByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchThreadsByUserIdQuery, FetchThreadsByUserIdQueryVariables>(FetchThreadsByUserIdDocument, options);
+        }
+export type FetchThreadsByUserIdQueryHookResult = ReturnType<typeof useFetchThreadsByUserIdQuery>;
+export type FetchThreadsByUserIdLazyQueryHookResult = ReturnType<typeof useFetchThreadsByUserIdLazyQuery>;
+export type FetchThreadsByUserIdQueryResult = Apollo.QueryResult<FetchThreadsByUserIdQuery, FetchThreadsByUserIdQueryVariables>;
+export const FindProfileDocument = gql`
+    query FindProfile($findProfileInput: FindProfileInput!) {
+  find_profile(findProfileInput: $findProfileInput) {
+    id
+    user {
+      created_at
+      username
+      last_active
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindProfileQuery__
+ *
+ * To run a query within a React component, call `useFindProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindProfileQuery({
+ *   variables: {
+ *      findProfileInput: // value for 'findProfileInput'
+ *   },
+ * });
+ */
+export function useFindProfileQuery(baseOptions: Apollo.QueryHookOptions<FindProfileQuery, FindProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindProfileQuery, FindProfileQueryVariables>(FindProfileDocument, options);
+      }
+export function useFindProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindProfileQuery, FindProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindProfileQuery, FindProfileQueryVariables>(FindProfileDocument, options);
+        }
+export type FindProfileQueryHookResult = ReturnType<typeof useFindProfileQuery>;
+export type FindProfileLazyQueryHookResult = ReturnType<typeof useFindProfileLazyQuery>;
+export type FindProfileQueryResult = Apollo.QueryResult<FindProfileQuery, FindProfileQueryVariables>;
 export type ApplicationModelKeySpecifier = ('adult_content' | 'allow_images_and_videos_on_comments' | 'application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'category' | 'comment_policy_summary' | 'comment_policy_url' | 'comments' | 'cost' | 'created_at' | 'default_avatar_url' | 'description' | 'display_comments_when_flagged' | 'email_mods_when_comments_flagged' | 'id' | 'language' | 'links_in_comments' | 'moderators' | 'moderators_ids' | 'plan' | 'pre_comment_moderation' | 'renewal' | 'short_name' | 'theme' | 'threads' | 'updated_at' | 'website_url' | ApplicationModelKeySpecifier)[];
 export type ApplicationModelFieldPolicy = {
 	adult_content?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1853,7 +2016,13 @@ export type PollEntityFieldPolicy = {
 	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	voted?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_thread_by_id' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
+export type ProfileEntityKeySpecifier = ('id' | 'profile_comments' | 'user' | ProfileEntityKeySpecifier)[];
+export type ProfileEntityFieldPolicy = {
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	profile_comments?: FieldPolicy<any> | FieldReadFunction<any>,
+	user?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_threads_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_profile' | 'find_thread_by_id' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	current_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_all_applications?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1868,10 +2037,12 @@ export type QueryFieldPolicy = {
 	fetch_notifications_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_notifications_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	fetch_threads_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	fetch_users?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_application_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_application_by_name?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_one_thread_or_create_one?: FieldPolicy<any> | FieldReadFunction<any>,
+	find_profile?: FieldPolicy<any> | FieldReadFunction<any>,
 	find_thread_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	resend_email_code?: FieldPolicy<any> | FieldReadFunction<any>,
 	search_user_by_email?: FieldPolicy<any> | FieldReadFunction<any>
@@ -1899,10 +2070,12 @@ export type StandardResponseModelFieldPolicy = {
 	message?: FieldPolicy<any> | FieldReadFunction<any>,
 	success?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type ThreadModelKeySpecifier = ('application_id' | 'id' | 'pinned_comment' | 'pinned_comment_id' | 'poll' | 'thread_comments' | 'title' | 'website_url' | ThreadModelKeySpecifier)[];
+export type ThreadModelKeySpecifier = ('application_id' | 'commenters_ids' | 'id' | 'parent_application' | 'pinned_comment' | 'pinned_comment_id' | 'poll' | 'thread_comments' | 'title' | 'website_url' | ThreadModelKeySpecifier)[];
 export type ThreadModelFieldPolicy = {
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
+	commenters_ids?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	parent_application?: FieldPolicy<any> | FieldReadFunction<any>,
 	pinned_comment?: FieldPolicy<any> | FieldReadFunction<any>,
 	pinned_comment_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	poll?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1976,6 +2149,10 @@ export type StrictTypedTypePolicies = {
 	PollEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | PollEntityKeySpecifier | (() => undefined | PollEntityKeySpecifier),
 		fields?: PollEntityFieldPolicy,
+	},
+	ProfileEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | ProfileEntityKeySpecifier | (() => undefined | ProfileEntityKeySpecifier),
+		fields?: ProfileEntityFieldPolicy,
 	},
 	Query?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | QueryKeySpecifier | (() => undefined | QueryKeySpecifier),

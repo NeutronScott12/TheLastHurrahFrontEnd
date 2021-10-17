@@ -17,6 +17,7 @@ import { UsersContainer } from '../modules/Dashboard/Containers/UsersContainer'
 import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'
 import { DashboardNotificationContainer } from '../modules/Dashboard/Containers/NotificationContainer'
+import { ProfileContainer } from '../modules/profile'
 
 const LazyDashboard = lazy(() =>
 	import('../modules/Dashboard/Layouts/DashboardLayout').then((module) => ({
@@ -48,6 +49,11 @@ export const SiteRouter = () => {
 		{
 			path: '/about',
 			element: <AboutContainer />,
+		},
+		{
+			path: ':username/*',
+			element: <ProfileContainer />,
+			children: [{ path: 'comments' }],
 		},
 		// {
 		// 	path: '/notifications',

@@ -17,7 +17,14 @@ const useStyles = makeStyles(() => ({
 	},
 }))
 
-export const MainListItems = () => {
+interface IMainListItems {
+	currentUser: {
+		id: string
+		username: string
+	}
+}
+
+export const MainListItems: React.FC<IMainListItems> = ({ currentUser }) => {
 	const classes = useStyles()
 
 	return (
@@ -30,7 +37,7 @@ export const MainListItems = () => {
 				</Link>
 				<ListItemText primary="Dashboard" />
 			</ListItem>
-			<Link to="/profile">
+			<Link to={`/${currentUser.username}`}>
 				<ListItem button>
 					<ListItemIcon>
 						<PeopleIcon className={classes.linkStyles} />

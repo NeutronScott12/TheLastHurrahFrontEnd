@@ -5,13 +5,13 @@ import UrlBreadcrumbs from '../../../utils/widgets/UrlBreadCrumb'
 import { DashboardHeader } from '../Views/DashboardHeader'
 
 export const DashboardLayout = () => {
-    return (
-        <div>
-            <UrlBreadcrumbs />
-            <DashboardHeader />
-            {/* {/* <Route exact path="/apps" component={DashBoardContainer} /> */}
-            {/* <Route path="/apps/:id" component={AppContainer} /> } */}
-            <Outlet />
-        </div>
-    )
+	return (
+		<div>
+			<DashboardHeader />
+			<UrlBreadcrumbs />
+			{/* {/* <Route exact path="/apps" component={DashBoardContainer} /> */}
+			{/* <Route path="/apps/:id" component={AppContainer} /> } */}
+			<Outlet />
+		</div>
+	)
 }

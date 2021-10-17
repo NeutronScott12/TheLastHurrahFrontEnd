@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import { MainListItems, SecondaryListItems } from './listItems'
-import { useLoggedIn } from '../utils/hooks/customApolloHooks'
+import { useCurrentUserClient, useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 const drawerWidth = 240
 
@@ -52,23 +52,30 @@ interface IMainHeader {
 	open: boolean
 }
 
-export const MainDrawer: React.FC<IMainHeader> = (props) => {
+export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 	const classes = useStyles()
+	const { data: userData } = useCurrentUserClient()
 
 	const { data } = useLoggedIn()
+
+	console.log('USERDATA', userData)
 
 	return data && !data.isLoggedIn ? (
 		<div></div>
 	) : (
-		<Drawer variant="permanent" open={props.open}>
+		<Drawer variant="permanent" open={open}>
 			<div className={classes.toolbarIcon}>
-				<IconButton onClick={props.handleDrawer}>
+				<IconButton onClick={handleDrawer}>
 					<ChevronLeftIcon style={{ color: '#f7f7f7' }} />
 				</IconButton>
 			</div>
 			<Divider />
 			<List>
-				<MainListItems />
+				{userData && userData.current_user ? (
+					<MainListItems currentUser={userData.current_user} />
+				) : (
+					''
+				)}
 			</List>
 			<Divider />
 			<List>

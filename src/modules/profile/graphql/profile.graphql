@@ -1,0 +1,74 @@
+input FetchThreadsByUserIdInput {
+	user_id: String!
+}
+
+input CommentsByUserIdInput {
+	user_id: String!
+}
+
+input FetchThreadCommentsBySort {
+	skip: Int!
+	limit: Int!
+	sort: Sort!
+}
+
+query FetchThreadsByUserId(
+	$fetchThreadsByUserIdInput: FetchThreadsByUserIdInput!
+	$commentsByUserIdInput: CommentsByUserIdInput!
+	$fetchThreadCommentsBySort: FetchThreadCommentsBySort!
+) {
+	fetch_threads_by_user_id(fetchThreadsByUserIdInput: $fetchThreadsByUserIdInput) {
+		application_id
+		id
+		commenters_ids
+		parent_application {
+			id
+		}
+		thread_comments(
+			commentsByUserIdInput: $commentsByUserIdInput
+			fetchThreadCommentsBySort: $fetchThreadCommentsBySort
+		) {
+			comments {
+				thread_id
+				_count {
+					down_vote
+					up_vote
+				}
+				author {
+					username
+					id
+				}
+				up_vote {
+					author_id
+					id
+				}
+				plain_text_body
+				json_body
+				application_id
+				replies {
+					_count {
+						down_vote
+					}
+					id
+					plain_text_body
+					json_body
+				}
+			}
+		}
+	}
+}
+
+input FindProfileInput {
+	username: String!
+}
+
+query FindProfile($findProfileInput: FindProfileInput!) {
+	find_profile(findProfileInput: $findProfileInput) {
+		id
+		user {
+			created_at
+			username
+			last_active
+		}
+	}
+}
