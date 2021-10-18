@@ -3,6 +3,7 @@ import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 
 import { Link } from 'react-router-dom'
+import { useCurrentUserClient } from '../../../utils/hooks/customApolloHooks'
 
 const useStyles = makeStyles((theme: Theme) => ({
 	root: {
@@ -20,14 +21,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }))
 
-export const DashboardHeader = () => {
+export const ProfileHeader = () => {
 	const classes = useStyles()
+	const { data } = useCurrentUserClient()
 
 	return (
 		<div className={classes.root}>
 			<AppBar position="static">
 				<Toolbar>
-					<Link className={classes.linkStyle} to="/profile/comments">
+					<Link
+						className={classes.linkStyle}
+						to={`/${data?.current_user.username}/comments`}
+					>
 						<Typography variant="h6">Comments</Typography>
 					</Link>
 					<Link className={classes.linkStyle} to="/dashboard/apps">

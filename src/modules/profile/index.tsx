@@ -1,9 +1,10 @@
+import { Grid } from '@mui/material'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useFindProfileQuery } from '../../generated/graphql'
 import { LoadingComponent } from '../../partials/Loading'
 import { ProfileLayout } from './layout/ProfileLayout'
-import { DashboardHeader } from './views/ProfileHeader'
+import { ProfileHeader } from './views/ProfileHeader'
 
 interface IProfileParams {
 	username: string
@@ -19,8 +20,10 @@ export const ProfileContainer = () => {
 		<LoadingComponent />
 	) : (
 		<div>
-			<DashboardHeader />
-			{data && data.find_profile ? <ProfileLayout profile={data.find_profile} /> : ''}
+			<ProfileHeader />
+			<Grid style={{ marginTop: '2rem' }}>
+				{data && data.find_profile ? <ProfileLayout profile={data.find_profile} /> : ''}
+			</Grid>
 		</div>
 	)
 }

@@ -21,15 +21,21 @@ query FetchThreadsByUserId(
 		application_id
 		id
 		commenters_ids
+		title
+		website_url
 		parent_application {
 			id
+			application_name
 		}
 		thread_comments(
 			commentsByUserIdInput: $commentsByUserIdInput
 			fetchThreadCommentsBySort: $fetchThreadCommentsBySort
 		) {
+			comments_count
 			comments {
 				thread_id
+				created_at
+				id
 				_count {
 					down_vote
 					up_vote
@@ -37,13 +43,15 @@ query FetchThreadsByUserId(
 				author {
 					username
 					id
+					avatar {
+						url
+					}
 				}
 				up_vote {
 					author_id
 					id
 				}
 				plain_text_body
-				json_body
 				application_id
 				replies {
 					_count {
@@ -51,7 +59,6 @@ query FetchThreadsByUserId(
 					}
 					id
 					plain_text_body
-					json_body
 				}
 			}
 		}
