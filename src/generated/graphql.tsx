@@ -307,6 +307,11 @@ export enum Language {
   English = 'ENGLISH'
 }
 
+export type LoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   message: Scalars['String'];
@@ -460,8 +465,7 @@ export type MutationForgot_PasswordArgs = {
 
 
 export type MutationLogin_UserArgs = {
-  email: Scalars['String'];
-  password: Scalars['String'];
+  loginInput: LoginInput;
 };
 
 
@@ -962,6 +966,13 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgot_password: { __typename?: 'StandardResponseModel', success: boolean, message: string } };
+
+export type LoginUserMutationVariables = Exact<{
+  loginInput: LoginInput;
+}>;
+
+
+export type LoginUserMutation = { __typename?: 'Mutation', login_user: { __typename?: 'LoginResponse', success: boolean, message: string, token: string, refresh_token: string, user: { __typename?: 'UserModel', username: string, id: string } } };
 
 export type NotificationFragment = { __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string };
 
@@ -1821,6 +1832,46 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const LoginUserDocument = gql`
+    mutation LoginUser($loginInput: LoginInput!) {
+  login_user(loginInput: $loginInput) {
+    success
+    message
+    token
+    refresh_token
+    user {
+      username
+      id
+    }
+  }
+}
+    `;
+export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
+
+/**
+ * __useLoginUserMutation__
+ *
+ * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
+ *   variables: {
+ *      loginInput: // value for 'loginInput'
+ *   },
+ * });
+ */
+export function useLoginUserMutation(baseOptions?: Apollo.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, options);
+      }
+export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
+export type LoginUserMutationResult = Apollo.MutationResult<LoginUserMutation>;
+export type LoginUserMutationOptions = Apollo.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
 export const FetchNotificationsByUserIdDocument = gql`
     query FetchNotificationsByUserId($fetchNotificationsByUserIdInput: FetchNotificationsByUserIdInput!) {
   fetch_notifications_by_user_id(

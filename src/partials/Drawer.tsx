@@ -58,6 +58,9 @@ export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 
 	const { data } = useLoggedIn()
 
+	console.log('SIDEDRAW', data)
+	console.log('SIDEDRAW', userData)
+
 	return data && !data.isLoggedIn ? (
 		<div></div>
 	) : (

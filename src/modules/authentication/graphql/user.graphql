@@ -45,3 +45,21 @@ mutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {
 		message
 	}
 }
+
+input LoginInput {
+	email: String!
+	password: String!
+}
+
+mutation LoginUser($loginInput: LoginInput!) {
+	login_user(loginInput: $loginInput) {
+		success
+		message
+		token
+		refresh_token
+		user {
+			username
+			id
+		}
+	}
+}

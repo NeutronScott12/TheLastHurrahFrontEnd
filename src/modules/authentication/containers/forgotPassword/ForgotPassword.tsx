@@ -34,7 +34,6 @@ export const ForgotPasswordContainer = () => {
 		},
 		validationSchema,
 		async onSubmit({ email }) {
-			console.log(email)
 			try {
 				const response = await forgotPassword({
 					variables: { forgotPasswordInput: { email } },

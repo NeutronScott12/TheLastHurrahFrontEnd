@@ -6,9 +6,10 @@ import { gql, useMutation } from '@apollo/client'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 
-import { IS_LOGGED_IN } from '../../../../graphql/graphql'
+import { CURRENT_USER_CLIENT, IS_LOGGED_IN } from '../../../../graphql/graphql'
 import { cache } from '../../../../apollo/cache'
 import { ILoginForm } from '../../utils/types'
+import { useLoginUserMutation } from '../../../../generated/graphql'
 
 const LOGIN_MUTATION = gql`
 	mutation Login($email: String!, $password: String!) {
@@ -34,7 +35,7 @@ const validationSchema = yup.object({
 })
 
 export const LoginContainer = () => {
-	const [createUser] = useMutation(LOGIN_MUTATION)
+	const [loginMutation] = useLoginUserMutation()
 	const navigate = useNavigate()
 	const [checkError, setError] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -45,19 +46,33 @@ export const LoginContainer = () => {
 			password: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: async (values) => {
+		onSubmit: async ({ email, password }) => {
 			try {
-				const response = await createUser({
+				const response = await loginMutation({
 					variables: {
-						password: values.password,
-						email: values.email,
+						loginInput: {
+							email,
+							password,
+						},
 					},
 				})
 
-				if (response.data.login_user) {
+				if (response.data && response.data.login_user) {
 					localStorage.setItem('token', response.data.login_user.token)
-					// isLoggedInVar(true)
 
+					const {
+						user: { id, username },
+					} = response.data.login_user
+					console.log('RESPONSE', id, username)
+
+					// isLoggedInVar(true)
+					cache.writeQuery({
+						query: CURRENT_USER_CLIENT,
+						data: {
+							id,
+							username,
+						},
+					})
 					cache.writeQuery({
 						query: IS_LOGGED_IN,
 						data: {
