@@ -3,12 +3,12 @@ import Alert from '@mui/material/Alert'
 import { useFormik } from 'formik'
 import { Button, Container, TextField } from '@mui/material'
 import { gql, useMutation } from '@apollo/client'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 
-import { IS_LOGGED_IN } from '../../../graphql/graphql'
-import { cache } from '../../../apollo/cache'
-import { ILoginForm } from '../utils/types'
+import { IS_LOGGED_IN } from '../../../../graphql/graphql'
+import { cache } from '../../../../apollo/cache'
+import { ILoginForm } from '../../utils/types'
 
 const LOGIN_MUTATION = gql`
 	mutation Login($email: String!, $password: String!) {
@@ -104,10 +104,18 @@ export const LoginContainer = () => {
 					error={formik.touched.password && Boolean(formik.errors.password)}
 					helperText={formik.touched.password && formik.errors.password}
 				/>
-				<Button color="primary" variant="contained" fullWidth type="submit">
+				<Button
+					disabled={formik.isSubmitting || formik.dirty === false}
+					color="primary"
+					variant="contained"
+					fullWidth
+					type="submit"
+				>
 					Submit
 				</Button>
 			</form>
+			<br />
+			<Link to="/auth/forgot_password">Forgot Password?</Link>
 		</Container>
 	)
 }

@@ -1,3 +1,4 @@
+import { List, ListItem } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useFetchNotificationByApplicationIdLazyQuery } from '../../generated/graphql'
 import { LoadingComponent } from '../../partials/Loading'
@@ -31,6 +32,12 @@ export const NotificationContainer: React.FC<INotificationContainer> = ({ applic
 	) : (
 		<div>
 			<h2>Notification Container</h2>
+			<List>
+				{data?.fetch_notifications_by_application_id.map((notification) => {
+					console.log('notification', notification)
+					return <ListItem key={notification.id}>{notification.message}</ListItem>
+				})}
+			</List>
 		</div>
 	)
 }

@@ -33,3 +33,14 @@ query FetchNotificationByApplicationId(
 		...Notification
 	}
 }
+
+input DeleteNotificationInput {
+	id: String!
+}
+
+mutation DeleteNotification($deleteNotificationInput: DeleteNotificationInput!) {
+	delete_notification(deleteNotification: $deleteNotificationInput) {
+		success
+		message
+	}
+}

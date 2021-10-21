@@ -1,23 +1,47 @@
 mutation ConfirmUser($token: String!) {
-    confirm_user(token: $token) {
-        success
-        message
-    }
+	confirm_user(token: $token) {
+		success
+		message
+	}
 }
 
 mutation RegisterUser(
-    $email: String!
-    $password: String!
-    $redirect_url: String
-    $username: String!
+	$email: String!
+	$password: String!
+	$redirect_url: String
+	$username: String!
 ) {
-    register_user(
-        email: $email
-        password: $password
-        redirect_url: $redirect_url
-        username: $username
-    ) {
-        success
-        message
-    }
+	register_user(
+		email: $email
+		password: $password
+		redirect_url: $redirect_url
+		username: $username
+	) {
+		success
+		message
+	}
+}
+
+input ChangePasswordInput {
+	email: String!
+	password: String!
+}
+
+mutation ChangePassword($changePasswordInput: ChangePasswordInput!) {
+	change_password(changePasswordInput: $changePasswordInput) {
+		success
+		message
+	}
+}
+
+input ForgotPasswordInput {
+	email: String!
+	redirect_url: String
+}
+
+mutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {
+	forgot_password(forgotPasswordInput: $forgotPasswordInput) {
+		success
+		message
+	}
 }

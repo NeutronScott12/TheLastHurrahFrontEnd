@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom'
 import { ProfileContainer } from '.'
-import { LoginContainer } from '../authentication/login/LoginContainer'
+import { LoginContainer } from '../authentication/containers/login/LoginContainer'
 
 interface IProfileRoutes {
 	isLoggedIn: boolean

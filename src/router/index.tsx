@@ -4,9 +4,9 @@ import { useRoutes } from 'react-router-dom'
 import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 
 import { AboutContainer } from '../modules/About/AboutContainer'
-import { ConfirmedContainer } from '../modules/authentication/confirmed/ConfirmedContainer'
-import { LoginContainer } from '../modules/authentication/login/LoginContainer'
-import { RegisterContainer } from '../modules/authentication/register/RegisterContainer'
+import { ConfirmedContainer } from '../modules/authentication/containers/confirmed/ConfirmedContainer'
+import { LoginContainer } from '../modules/authentication/containers/login/LoginContainer'
+import { RegisterContainer } from '../modules/authentication/containers/register/RegisterContainer'
 import { AddApplicationContainer } from '../modules/Dashboard/Containers/AddApplicationContainer'
 import { AppContainer } from '../modules/Dashboard/Containers/AppContainer'
 import { CommentContainer } from '../modules/Dashboard/Containers/CommentContainer'
@@ -18,8 +18,9 @@ import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'
 import { DashboardNotificationContainer } from '../modules/Dashboard/Containers/NotificationContainer'
 import { ProfileContainer } from '../modules/profile'
-import { profileRoutes } from '../modules/profile/routes'
 import { ProfileCommentList } from '../modules/profile/containers/ProfileCommentList'
+import { ChangePasswordContainer } from '../modules/authentication/containers/changePassword/ChangePassword'
+import { ForgotPasswordContainer } from '../modules/authentication/containers/forgotPassword/ForgotPassword'
 
 const LazyDashboard = lazy(() =>
 	import('../modules/Dashboard/Layouts/DashboardLayout').then((module) => ({
@@ -36,7 +37,7 @@ export const SiteRouter = () => {
 
 	const routes = useRoutes([
 		{
-			path: '/confirmed',
+			path: 'auth/confirmed',
 			element: <ConfirmedContainer />,
 		},
 		{
@@ -47,6 +48,14 @@ export const SiteRouter = () => {
 		{
 			path: '/login',
 			element: data && data.isLoggedIn === false ? <LoginContainer /> : <DashboardLayout />,
+		},
+		{
+			path: 'auth/change_password',
+			element: <ChangePasswordContainer />,
+		},
+		{
+			path: 'auth/forgot_password',
+			element: <ForgotPasswordContainer />,
 		},
 		{
 			path: '/about',
@@ -63,7 +72,7 @@ export const SiteRouter = () => {
 		},
 		// {
 		// 	path: '/notifications',
-		// 	element: data && data.isLoggedIn ? <LazyNotification /> : <LoginContainer />,
+		// 	element: data && data.isLoggedIn ? <NotificationContainer /> : <LoginContainer />,
 		// },
 		{
 			path: 'dashboard/*',

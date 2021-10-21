@@ -4,20 +4,9 @@ import Alert from '@mui/material/Alert'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { IRegisterForm } from '../utils/types'
-import { useRegisterUserMutation } from '../../../generated/graphql'
-
-const validationSchema = yup.object({
-	email: yup.string().email('Invalid Email').required('Email is required'),
-	password: yup
-		.string()
-		.min(3, 'Password should be of minimum 3 characters length')
-		.required('Password is required'),
-	repeat_password: yup.string().test('passwords-match', 'Passwords must match', function (value) {
-		return this.parent.password === value
-	}),
-	username: yup.string().required(),
-})
+import { IRegisterForm } from '../../utils/types'
+import { useRegisterUserMutation } from '../../../../generated/graphql'
+import { registrationValidation } from '../../helpers/validation'
 
 export const RegisterContainer = () => {
 	const [registerUser] = useRegisterUserMutation()
@@ -31,7 +20,7 @@ export const RegisterContainer = () => {
 			username: '',
 			repeat_password: '',
 		},
-		validationSchema: validationSchema,
+		validationSchema: registrationValidation,
 		onSubmit: async (
 			{ email, password, username },
 			{ setSubmitting, setFieldError, resetForm }
@@ -106,7 +95,7 @@ export const RegisterContainer = () => {
 					autoComplete="off"
 					id="repeat_password"
 					name="repeat_password"
-					label="repeat_password"
+					label="Repeat password"
 					type="password"
 					value={formik.values.repeat_password}
 					onChange={formik.handleChange}

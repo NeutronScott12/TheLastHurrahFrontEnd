@@ -1,5 +1,5 @@
-import { Grid } from '@mui/material'
 import React from 'react'
+import { Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { useFindProfileQuery } from '../../generated/graphql'
 import { LoadingComponent } from '../../partials/Loading'

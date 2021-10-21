@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, Card, CardMedia, Typography } from '@mui/material'
+import { Card, CardMedia, Typography } from '@mui/material'
 
 import { IProfile } from '../types'
 import { useFetchCommentAndVoteCountQuery } from '../../../generated/graphql'
@@ -26,6 +26,7 @@ export const SideInfoBar: React.FC<ISideInfoBar> = ({ profile }) => {
 		<Card>
 			<CardMedia component="img" image={profile.user.avatar.url} />
 			<Typography>{profile.user.username}</Typography>
+			<Typography>Joined {profile.user.created_at}</Typography>
 			Comments: {data?.fetch_comment_and_vote_count.comment_count}
 			Upvotes: {data?.fetch_comment_and_vote_count.vote_count}
 		</Card>

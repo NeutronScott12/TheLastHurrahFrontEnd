@@ -27,7 +27,7 @@ export const ProfileCommentList = () => {
 				},
 			})
 		}
-	}, [currentUserData])
+	}, [currentUserData, fetchThreadByUser])
 
 	console.log(currentUserData)
 	console.log('DATA', data)

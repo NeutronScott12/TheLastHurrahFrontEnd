@@ -1,7 +1,6 @@
 import { Grid } from '@mui/material'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import { ProfileCommentList } from '../containers/ProfileCommentList'
 
 import { SideInfoBar } from '../containers/SideInfoBar'
 import { IProfile } from '../types'
