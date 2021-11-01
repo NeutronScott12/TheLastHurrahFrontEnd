@@ -2,7 +2,7 @@ import { RouteObject } from 'react-router-dom'
 
 import { AboutContainer } from '../modules/About/AboutContainer'
 import { ConfirmedContainer } from '../modules/authentication/containers/confirmed/ConfirmedContainer'
-import { LoginContainer } from '../modules/authentication/containers/login/LoginContainer'
+import { LoginContainer } from '../modules/authentication/containers/login/containers/LoginContainer'
 import { RegisterContainer } from '../modules/authentication/containers/register/RegisterContainer'
 import { DashboardLayout } from '../modules/Dashboard/Layouts/DashboardLayout'
 import { HomeContainer } from '../modules/Home/HomeContainer'

@@ -5,18 +5,17 @@ mutation ConfirmUser($token: String!) {
 	}
 }
 
-mutation RegisterUser(
-	$email: String!
-	$password: String!
-	$redirect_url: String
-	$username: String!
-) {
-	register_user(
-		email: $email
-		password: $password
-		redirect_url: $redirect_url
-		username: $username
-	) {
+input RegistrationInput {
+	username: String!
+	email: String!
+	password: String!
+	application_id: String
+	redirect_url: String
+	two_factor_authentication: Boolean
+}
+
+mutation RegisterUser($registrationInput: RegistrationInput!) {
+	register_user(registrationInput: $registrationInput) {
 		success
 		message
 	}
@@ -51,12 +50,47 @@ input LoginInput {
 	password: String!
 }
 
+fragment LoginResponseFragment on LoginResponse {
+	success
+	message
+	token
+	refresh_token
+	two_factor_authentication
+	user {
+		username
+		id
+	}
+}
+
+fragment TwoFactorLoginResponseFragment on TwoFactorLoginResponse {
+	success
+	message
+	two_factor_authentication
+}
+
 mutation LoginUser($loginInput: LoginInput!) {
 	login_user(loginInput: $loginInput) {
+		... on LoginResponse {
+			...LoginResponseFragment
+		}
+		... on TwoFactorLoginResponse {
+			...TwoFactorLoginResponseFragment
+		}
+	}
+}
+
+input TwoFactorInput {
+	two_factor_id: String!
+	email: String!
+}
+
+mutation TwoFactorLogin($twoFactorInput: TwoFactorInput!) {
+	two_factor_login(twoFactorInput: $twoFactorInput) {
 		success
 		message
 		token
 		refresh_token
+		two_factor_authentication
 		user {
 			username
 			id

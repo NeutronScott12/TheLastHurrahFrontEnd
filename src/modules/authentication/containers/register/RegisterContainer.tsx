@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Container, TextField } from '@mui/material'
+import { Button, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
@@ -19,19 +19,23 @@ export const RegisterContainer = () => {
 			password: '',
 			username: '',
 			repeat_password: '',
+			two_factor_authentication: false,
 		},
 		validationSchema: registrationValidation,
 		onSubmit: async (
-			{ email, password, username },
+			{ email, password, username, two_factor_authentication },
 			{ setSubmitting, setFieldError, resetForm }
 		) => {
 			try {
 				await registerUser({
 					variables: {
-						email,
-						password,
-						username,
-						redirect_url: 'http://localhost:3000/confirmed',
+						registrationInput: {
+							email,
+							password,
+							username,
+							redirect_url: 'http://localhost:3000/confirmed',
+							two_factor_authentication,
+						},
 					},
 				})
 
@@ -101,6 +105,16 @@ export const RegisterContainer = () => {
 					onChange={formik.handleChange}
 					error={formik.touched.repeat_password && Boolean(formik.errors.repeat_password)}
 					helperText={formik.touched.repeat_password && formik.errors.repeat_password}
+				/>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={formik.values.two_factor_authentication}
+							onChange={formik.handleChange}
+							name="two_factor_authentication"
+						/>
+					}
+					label="Two Factor Authentication"
 				/>
 				<Button
 					color="primary"
