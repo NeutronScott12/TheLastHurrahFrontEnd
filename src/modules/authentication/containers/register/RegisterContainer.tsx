@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
-import * as yup from 'yup'
 import { useFormik } from 'formik'
 
 import { IRegisterForm } from '../../utils/types'

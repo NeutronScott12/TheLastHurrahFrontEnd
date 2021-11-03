@@ -2,31 +2,13 @@ import React, { useState } from 'react'
 import Alert from '@mui/material/Alert'
 import { useFormik } from 'formik'
 import { Button, Container, TextField } from '@mui/material'
-import { gql, useMutation } from '@apollo/client'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 
-import { CURRENT_USER_CLIENT, IS_LOGGED_IN } from '../../../../../graphql/graphql'
-import { cache } from '../../../../../apollo/cache'
 import { ILoginForm } from '../../../utils/types'
 import { useLoginUserMutation } from '../../../../../generated/graphql'
 import { TwoFactorComponent } from '../components/TwoFactorComponent'
 import { completeLogin } from '../helpers/login.helper'
-
-const LOGIN_MUTATION = gql`
-	mutation Login($email: String!, $password: String!) {
-		login_user(email: $email, password: $password) {
-			token
-			refresh_token
-			success
-			user {
-				confirmed
-				id
-				email
-			}
-		}
-	}
-`
 
 const validationSchema = yup.object({
 	email: yup.string().email('Enter a valid email').required('Email is required'),
