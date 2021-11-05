@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { GridRowId, GridState } from '@mui/x-data-grid'
+import { GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
 
 import {
 	Sort,
@@ -13,6 +13,8 @@ import { IParams } from './AppContainer'
 import { LoadingComponent } from '../../../partials/Loading'
 import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
+import { IComments } from '../types'
+import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
 
 export const CommentContainer = () => {
 	const { application_short_name } = useParams() as IParams
@@ -20,12 +22,12 @@ export const CommentContainer = () => {
 	const [approveComments] = useApproveCommentMutation()
 	const [where, changeWhere] = useState<Where>(Where.Pending)
 	const [selected, changeSelected] = useState<GridRowId[]>([])
-	const [checkError, setError] = useState(false)
-	const [errorMessage, setErrorMessage] = useState('')
 
-	let rows
+	const { errorMessage, setError, checkError, setErrorMessage } = useErrorAndSuccess()
 
-	const { data, loading, refetch } = useFetchCommentsByApplicationByShortNameQuery({
+	let rows: GridRowData | IComments
+
+	const { data, loading, refetch, error } = useFetchCommentsByApplicationByShortNameQuery({
 		variables: {
 			fetchCommentsByApplicationShortNameInput: {
 				application_short_name,
@@ -36,6 +38,13 @@ export const CommentContainer = () => {
 			},
 		},
 	})
+
+	useEffect(() => {
+		if (error && checkError !== false) {
+			setErrorMessage('An error in fetching comments occured')
+			setError(true)
+		}
+	}, [error, data, checkError, setError, setErrorMessage])
 
 	const onChange = (
 		params: GridState,
@@ -108,21 +117,25 @@ export const CommentContainer = () => {
 		data.fetch_comments_by_application_short_name.comments
 	) {
 		rows = formattedRows(data.fetch_comments_by_application_short_name.comments || [])
+	} else {
+		rows = []
 	}
 
 	return loading ? (
 		<LoadingComponent />
 	) : (
-		<CommentDataGrid
-			selected={selected}
-			approveSelected={approveSelected}
-			filterComments={filterComments}
-			onChange={onChange}
-			where={where}
-			deleteSelected={deleteSelected}
-			rows={rows}
-			checkError={checkError}
-			errorMessage={errorMessage}
-		/>
+		<div>
+			<CommentDataGrid
+				selected={selected}
+				approveSelected={approveSelected}
+				filterComments={filterComments}
+				onChange={onChange}
+				where={where}
+				deleteSelected={deleteSelected}
+				rows={rows}
+				checkError={checkError}
+				errorMessage={errorMessage}
+			/>
+		</div>
 	)
 }

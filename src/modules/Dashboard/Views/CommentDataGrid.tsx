@@ -1,10 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
-import Alert from '@mui/material/Alert'
-import { DataGrid, GridColDef, GridRowId, GridState } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
 import { IComments } from '../types'
 import { Where } from '../../../generated/graphql'
 import { Button } from '@mui/material'
+import { Alerts } from '../../../partials/Alerts'
 
 const useStyles = makeStyles({
 	root: {
@@ -60,7 +60,7 @@ const columns: GridColDef[] = [
 interface ICommentDataGrid {
 	checkError: boolean
 	errorMessage: string
-	rows: IComments | undefined
+	rows: IComments | undefined | GridRowData
 	selected: GridRowId[]
 	where: Where
 	onChange: (
@@ -89,7 +89,7 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 
 	return (
 		<div className={classes.root}>
-			{checkError ? <Alert severity="error">{errorMessage}</Alert> : ''}
+			<Alerts checkError={checkError} errorMessage={errorMessage} />
 			{selected.length > 0 ? (
 				<>
 					<Button
