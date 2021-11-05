@@ -42,7 +42,7 @@ interface IAuthenticatedUsers {
 export const UsersContainer = () => {
 	const { application_short_name } = useParams() as IParams
 	const classes = useStyles()
-	const { checkError, errorMessage, setError, setErrorMessage } = useErrorAndSuccess()
+	const { checkError, errorMessage } = useErrorAndSuccess()
 	const [selected, changeSelected] = useState<GridRowId[]>([])
 	const [choice, changeChoice] = useState<Choice>(Choice.All)
 	const { data, loading } = useFetchApplicationAuthenticatedUsersQuery({
@@ -68,6 +68,10 @@ export const UsersContainer = () => {
 		// console.log('EVENT', event)
 
 		changeSelected(params.selection)
+	}
+
+	const filterUsers = () => {
+		changeChoice(Choice.All)
 	}
 
 	let rows: GridRowData | IAuthenticatedUsers[]
@@ -133,6 +137,7 @@ export const UsersContainer = () => {
 						className={classes.buttonStyle}
 						onClick={() => {
 							if (choice === Choice.Blocked) {
+								filterUsers()
 								blockSelected()
 							}
 						}}

@@ -1,7 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { DataGrid, GridColDef, GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
-import { Where } from '../../generated/graphql'
 import { Alerts } from '../../partials/Alerts'
 
 const useStyles = makeStyles({
