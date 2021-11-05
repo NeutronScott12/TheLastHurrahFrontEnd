@@ -270,3 +270,32 @@ mutation ApproveComment($approveCommentsInput: ApproveCommentsInput!) {
 		message
 	}
 }
+
+enum CHOICE {
+	ALL
+	BLOCKED
+	REMOVED
+}
+
+input AuthenticatedUserInput {
+	choice: CHOICE!
+	limit: Int!
+	skip: Int!
+}
+
+query FetchApplicationAuthenticatedUsers(
+	$fetchApplicationByShortNameInput: FetchApplicationByShortNameInput!
+	$authenticatedUserInput: AuthenticatedUserInput!
+) {
+	fetch_application_by_short_name(
+		fetchApplicationByShortNameInput: $fetchApplicationByShortNameInput
+	) {
+		authenticated_users(authenticatedUserInput: $authenticatedUserInput) {
+			confirmed
+			last_active
+			username
+			id
+			created_at
+		}
+	}
+}

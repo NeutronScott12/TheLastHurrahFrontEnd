@@ -69,8 +69,19 @@ export type ApplicationModel = {
   website_url?: Maybe<Scalars['String']>;
 };
 
+
+export type ApplicationModelAuthenticated_UsersArgs = {
+  authenticatedUserInput: AuthenticatedUserInput;
+};
+
 export type ApproveCommentsInput = {
   comment_ids: Array<Scalars['String']>;
+};
+
+export type AuthenticatedUserInput = {
+  choice: Choice;
+  limit: Scalars['Int'];
+  skip: Scalars['Int'];
 };
 
 export type AvatarEntity = {
@@ -88,6 +99,12 @@ export type AvatarEntity = {
 
 export enum Category {
   Tech = 'TECH'
+}
+
+export enum Choice {
+  All = 'ALL',
+  Blocked = 'BLOCKED',
+  Removed = 'REMOVED'
 }
 
 export type ChangeCommentSettingsInput = {
@@ -129,6 +146,7 @@ export type CommentModel = {
   replied_to_id?: Maybe<Scalars['String']>;
   replied_to_user?: Maybe<UserModel>;
   replies: Array<CommentModel>;
+  reply_notification: Scalars['Boolean'];
   reports: Array<ReportModel>;
   thread_id: Scalars['String'];
   threatening_content: Scalars['Boolean'];
@@ -407,7 +425,7 @@ export type MutationBlock_UserArgs = {
 
 
 export type MutationChange_Comment_SettingsArgs = {
-  ChangeCommentSettingsInput: ChangeCommentSettingsInput;
+  changeCommentSettingsInput: ChangeCommentSettingsInput;
 };
 
 
@@ -1050,6 +1068,14 @@ export type ApproveCommentMutationVariables = Exact<{
 
 
 export type ApproveCommentMutation = { __typename?: 'Mutation', approve_comments: { __typename?: 'StandardResponseModel', success: boolean, message: string } };
+
+export type FetchApplicationAuthenticatedUsersQueryVariables = Exact<{
+  fetchApplicationByShortNameInput: FetchApplicationByShortNameInput;
+  authenticatedUserInput: AuthenticatedUserInput;
+}>;
+
+
+export type FetchApplicationAuthenticatedUsersQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', authenticated_users: Array<{ __typename?: 'UserModel', confirmed: boolean, last_active: any, username: string, id: string, created_at: any }> } };
 
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
@@ -1831,6 +1857,50 @@ export function useApproveCommentMutation(baseOptions?: Apollo.MutationHookOptio
 export type ApproveCommentMutationHookResult = ReturnType<typeof useApproveCommentMutation>;
 export type ApproveCommentMutationResult = Apollo.MutationResult<ApproveCommentMutation>;
 export type ApproveCommentMutationOptions = Apollo.BaseMutationOptions<ApproveCommentMutation, ApproveCommentMutationVariables>;
+export const FetchApplicationAuthenticatedUsersDocument = gql`
+    query FetchApplicationAuthenticatedUsers($fetchApplicationByShortNameInput: FetchApplicationByShortNameInput!, $authenticatedUserInput: AuthenticatedUserInput!) {
+  fetch_application_by_short_name(
+    fetchApplicationByShortNameInput: $fetchApplicationByShortNameInput
+  ) {
+    authenticated_users(authenticatedUserInput: $authenticatedUserInput) {
+      confirmed
+      last_active
+      username
+      id
+      created_at
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchApplicationAuthenticatedUsersQuery__
+ *
+ * To run a query within a React component, call `useFetchApplicationAuthenticatedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchApplicationAuthenticatedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchApplicationAuthenticatedUsersQuery({
+ *   variables: {
+ *      fetchApplicationByShortNameInput: // value for 'fetchApplicationByShortNameInput'
+ *      authenticatedUserInput: // value for 'authenticatedUserInput'
+ *   },
+ * });
+ */
+export function useFetchApplicationAuthenticatedUsersQuery(baseOptions: Apollo.QueryHookOptions<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>(FetchApplicationAuthenticatedUsersDocument, options);
+      }
+export function useFetchApplicationAuthenticatedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>(FetchApplicationAuthenticatedUsersDocument, options);
+        }
+export type FetchApplicationAuthenticatedUsersQueryHookResult = ReturnType<typeof useFetchApplicationAuthenticatedUsersQuery>;
+export type FetchApplicationAuthenticatedUsersLazyQueryHookResult = ReturnType<typeof useFetchApplicationAuthenticatedUsersLazyQuery>;
+export type FetchApplicationAuthenticatedUsersQueryResult = Apollo.QueryResult<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirm_user(token: $token) {
@@ -2371,7 +2441,7 @@ export type CommentAndVoteCountEntityFieldPolicy = {
 	comment_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	vote_count?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'approved' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
+export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'approved' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reply_notification' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
 export type CommentModelFieldPolicy = {
 	_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -2390,6 +2460,7 @@ export type CommentModelFieldPolicy = {
 	replied_to_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	replied_to_user?: FieldPolicy<any> | FieldReadFunction<any>,
 	replies?: FieldPolicy<any> | FieldReadFunction<any>,
+	reply_notification?: FieldPolicy<any> | FieldReadFunction<any>,
 	reports?: FieldPolicy<any> | FieldReadFunction<any>,
 	thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	threatening_content?: FieldPolicy<any> | FieldReadFunction<any>,

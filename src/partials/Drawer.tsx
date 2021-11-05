@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import { MainListItems, SecondaryListItems } from './listItems'
-import { useCurrentUserClient, useLoggedIn } from '../utils/hooks/customApolloHooks'
+import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 import { useCurrentUserQuery } from '../generated/graphql'
 
 const drawerWidth = 240
@@ -58,9 +58,6 @@ export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 	const { data: userData } = useCurrentUserQuery()
 
 	const { data } = useLoggedIn()
-
-	console.log('SIDEDRAW', data)
-	console.log('SIDEDRAW', userData)
 
 	return data && !data.isLoggedIn ? (
 		<div></div>
