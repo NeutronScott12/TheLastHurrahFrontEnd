@@ -42,7 +42,7 @@ export const LoginContainer = () => {
 					},
 				})
 
-				console.log(response)
+				console.log('RESPONSE', response)
 
 				if (response.data && response.data.login_user.two_factor_authentication) {
 					setTwoFactor(true)
@@ -52,7 +52,7 @@ export const LoginContainer = () => {
 						token,
 						//@ts-ignore
 						user: { username, id },
-					} = response.data
+					} = response.data.login_user
 
 					const success = completeLogin(token, username, id)
 

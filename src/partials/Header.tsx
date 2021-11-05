@@ -7,11 +7,13 @@ import {
 	Theme,
 	Toolbar,
 } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import clsx from 'clsx'
 import NotificationsIcon from '@material-ui/icons/Notifications'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
+import Brightness7Icon from '@mui/icons-material/Brightness7'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import LockIcon from '@material-ui/icons/Lock'
@@ -21,6 +23,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IS_LOGGED_IN } from '../graphql/graphql'
 import { cache } from '../apollo/cache'
 import { useLoggedIn } from '../utils/hooks/customApolloHooks'
+import { ColorModeContext } from '../App'
 
 const drawerWidth = 240
 
@@ -76,9 +79,12 @@ interface IMainHeader {
 }
 
 export const MainHeader: React.FC<IMainHeader> = (props) => {
+	const theme = useTheme()
 	const classes = useStyles()
 	const history = useNavigate()
 	const { data } = useLoggedIn()
+	const colorMode = React.useContext(ColorModeContext)
+
 	let show
 	let drawer
 
@@ -166,6 +172,9 @@ export const MainHeader: React.FC<IMainHeader> = (props) => {
 					</Link>
 				</IconButton>
 				{show}
+				<IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
+					{theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+				</IconButton>
 			</Toolbar>
 		</AppBar>
 	)

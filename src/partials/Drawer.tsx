@@ -6,6 +6,7 @@ import { makeStyles } from '@mui/styles'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import { MainListItems, SecondaryListItems } from './listItems'
 import { useCurrentUserClient, useLoggedIn } from '../utils/hooks/customApolloHooks'
+import { useCurrentUserQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
@@ -54,7 +55,7 @@ interface IMainHeader {
 
 export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 	const classes = useStyles()
-	const { data: userData } = useCurrentUserClient()
+	const { data: userData } = useCurrentUserQuery()
 
 	const { data } = useLoggedIn()
 
