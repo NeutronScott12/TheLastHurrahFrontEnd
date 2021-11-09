@@ -8,7 +8,7 @@ import { typeDefs } from './typeDefs'
 
 const uri =
 	process.env.NODE_ENV === 'production'
-		? 'https://lasthurrah/graphql'
+		? 'https://lasthurrah.co.uk/graphql'
 		: 'http://localhost:4000/graphql'
 
 const httpLink = createHttpLink({
