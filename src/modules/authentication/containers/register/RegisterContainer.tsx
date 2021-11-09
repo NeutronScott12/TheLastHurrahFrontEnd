@@ -13,6 +13,7 @@ export const RegisterContainer = () => {
 	const [alertEmail, changeEmail] = useState('')
 
 	const formik = useFormik<IRegisterForm>({
+		validateOnChange: true,
 		initialValues: {
 			email: '',
 			password: '',
@@ -120,7 +121,7 @@ export const RegisterContainer = () => {
 					variant="contained"
 					fullWidth
 					type="submit"
-					disabled={!formik.isValid && formik.dirty && !formik.isSubmitting}
+					disabled={formik.isSubmitting || formik.dirty === false || formik.isValid}
 				>
 					Submit
 				</Button>
