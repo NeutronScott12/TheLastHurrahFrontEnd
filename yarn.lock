@@ -2786,10 +2786,10 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.5.tgz#75a2a8e7d8ab4b230414505d92335d1dcb53a6df"
   integrity sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ==
 
-"@types/ramda@^0.27.47":
-  version "0.27.47"
-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.47.tgz#b3655eb2be5e21dd692d5c95db03a450275d094b"
-  integrity sha512-kWB51Q/R+5jS6StvaZq2Q4+EFlUPAB5Av6OwgWddAEkjXMdrefRwR2/B5B9V7xYFO37dwwZ/q2iMLQHFIcOwDw==
+"@types/ramda@^0.27.48":
+  version "0.27.48"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.48.tgz#9df2458d6c7b160be6b012060d5ddd24b977fb53"
+  integrity sha512-hm3lnlok4snJWHgZ2oVmPxebsUF7+EN+7c0v7nq+EdkHhkLt3wBceXqy9vE45pLaK2yH+QZnZI4JEVnPiODwLQ==
   dependencies:
     ts-toolbelt "^6.15.1"
 
@@ -11488,18 +11488,18 @@ react-refresh@^0.8.3:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
 
-react-router-dom@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.0.1.tgz#958d5deac8932ce209001ba7a11d5ae605148856"
-  integrity sha512-fiE+PzFTrof5q8Z/+RHzuiin9/U/q5KY2adlHClwYexbY0DqJnHcC/0U9yv3Amz9em2/bcK7X8mk7+zxB+qhvg==
+react-router-dom@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.0.2.tgz#860cefa697b9d4965eced3f91e82cdbc5995f3ad"
+  integrity sha512-cOpJ4B6raFutr0EG8O/M2fEoyQmwvZWomf1c6W2YXBZuFBx8oTk/zqjXghwScyhfrtnt0lANXV2182NQblRxFA==
   dependencies:
     history "^5.1.0"
-    react-router "6.0.1"
+    react-router "6.0.2"
 
-react-router@6.0.1, react-router@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.0.1.tgz#3fe93ad11f91fb55e242a42628414cb47219e652"
-  integrity sha512-O3iab52icFnQaHWONZr50CcjRlf3gx8CCjPQ0YxN8xEuEklRJNgoZSeoYFYz0fLvA4cpnhc306Nd8BYgL4QZrQ==
+react-router@6.0.2, react-router@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.0.2.tgz#bd2b0fa84fd1d152671e9f654d9c0b1f5a7c86da"
+  integrity sha512-8/Wm3Ed8t7TuedXjAvV39+c8j0vwrI5qVsYqjFr5WkJjsJpEvNSoLRUbtqSEYzqaTUj1IV+sbPJxvO+accvU0Q==
   dependencies:
     history "^5.1.0"
 

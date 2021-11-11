@@ -37,7 +37,7 @@ export const SiteRouter = () => {
 
 	const routes = useRoutes([
 		{
-			path: 'auth/confirmed',
+			path: 'auth/confirmation',
 			element: <ConfirmedContainer />,
 		},
 		{
