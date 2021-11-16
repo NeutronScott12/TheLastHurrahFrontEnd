@@ -9,6 +9,7 @@ interface IProfileCommentView {
 }
 
 export const ProfileThreadsView: React.FC<IProfileCommentView> = ({ threads }) => {
+	console.log('THREAD', threads)
 	return (
 		<div>
 			{threads.map((thread) => {
@@ -17,9 +18,9 @@ export const ProfileThreadsView: React.FC<IProfileCommentView> = ({ threads }) =
 						Discussion on <b>{thread.parent_application.application_name}</b> ||{' '}
 						{thread.thread_comments.comments_count} comments
 						<br />
-						<Link to={thread.website_url}>
+						<a target="_blank" href={thread.website_url}>
 							<h2>{thread.title}</h2>
-						</Link>{' '}
+						</a>
 						<ProfileComments comments={thread.thread_comments.comments} />
 					</Paper>
 				)

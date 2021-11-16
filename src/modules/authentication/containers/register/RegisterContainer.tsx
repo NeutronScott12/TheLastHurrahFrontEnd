@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
+import { Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useFormik } from 'formik'
+import { Button } from 'antd'
 
 import { IRegisterForm } from '../../utils/types'
 import { useRegisterUserMutation } from '../../../../generated/graphql'
 import { registrationValidation } from '../../helpers/validation'
 
 export const RegisterContainer = () => {
-	const [registerUser] = useRegisterUserMutation()
+	const [registerUser, { loading }] = useRegisterUserMutation()
 	const [alertToggle, changeToggle] = useState(false)
 	const [alertEmail, changeEmail] = useState('')
 
@@ -27,7 +28,6 @@ export const RegisterContainer = () => {
 			{ setSubmitting, setFieldError, resetForm }
 		) => {
 			try {
-				console.log('RUNNING')
 				await registerUser({
 					variables: {
 						registrationInput: {
@@ -62,6 +62,37 @@ export const RegisterContainer = () => {
 				''
 			)}
 
+			{/* <Form autoComplete="off" onFinish={formik.handleSubmit}>
+				<Form.Item
+					name="email"
+					id="email"
+					label="Email"
+					help={formik.touched.email && formik.errors.email ? formik.errors.email : ''}
+					validateStatus={
+						formik.touched.email && formik.errors.email ? 'error' : 'success'
+					}
+				>
+					<Input
+						value={formik.values.email}
+						onChange={formik.handleChange}
+						onTouchStart={(event) => {
+							console.log(event)
+							return event
+							// formik.setFieldTouched('email', true)
+						}}
+					/>
+				</Form.Item>
+				<Button
+					disabled={formik.isSubmitting || formik.dirty === false || !formik.isValid}
+					type="primary"
+					block
+					loading={loading}
+					htmlType="submit"
+				>
+					Submit
+				</Button>
+			</Form> */}
+
 			<form onSubmit={formik.handleSubmit}>
 				<TextField
 					fullWidth
@@ -71,7 +102,10 @@ export const RegisterContainer = () => {
 					value={formik.values.email}
 					onChange={formik.handleChange}
 					error={formik.touched.email && Boolean(formik.errors.email)}
-					helperText={formik.touched.email && formik.errors.email}
+					helperText={
+						formik.touched.email && formik.errors.email ? formik.errors.email : ''
+					}
+					onBlur={formik.handleBlur}
 				/>
 				<TextField
 					fullWidth
@@ -82,6 +116,7 @@ export const RegisterContainer = () => {
 					onChange={formik.handleChange}
 					error={formik.touched.username && Boolean(formik.errors.username)}
 					helperText={formik.touched.username && formik.errors.username}
+					onBlur={formik.handleBlur}
 				/>
 				<TextField
 					fullWidth
@@ -94,6 +129,7 @@ export const RegisterContainer = () => {
 					onChange={formik.handleChange}
 					error={formik.touched.password && Boolean(formik.errors.password)}
 					helperText={formik.touched.password && formik.errors.password}
+					onBlur={formik.handleBlur}
 				/>
 				<TextField
 					fullWidth
@@ -106,6 +142,7 @@ export const RegisterContainer = () => {
 					onChange={formik.handleChange}
 					error={formik.touched.repeat_password && Boolean(formik.errors.repeat_password)}
 					helperText={formik.touched.repeat_password && formik.errors.repeat_password}
+					onBlur={formik.handleBlur}
 				/>
 				<FormControlLabel
 					control={
@@ -119,10 +156,9 @@ export const RegisterContainer = () => {
 				/>
 				<Button
 					disabled={formik.isSubmitting || formik.dirty === false || !formik.isValid}
-					color="primary"
-					variant="contained"
-					fullWidth
-					type="submit"
+					type="primary"
+					block
+					loading={loading}
 				>
 					Submit
 				</Button>

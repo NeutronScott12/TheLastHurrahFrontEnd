@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
 
 import {
 	Sort,
@@ -15,6 +14,7 @@ import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
 import { IComments } from '../types'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
+import { GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
 
 export const CommentContainer = () => {
 	const { application_short_name } = useParams() as IParams
