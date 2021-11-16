@@ -15,5 +15,5 @@ export const validationSchema = yup.object({
 export const changePasswordValidation = validationSchema
 
 export const registrationValidation = validationSchema.concat(
-	yup.object().shape({ age: yup.string().required() })
+	yup.object().shape({ username: yup.string().required() })
 )

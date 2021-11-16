@@ -27,6 +27,7 @@ export const RegisterContainer = () => {
 			{ setSubmitting, setFieldError, resetForm }
 		) => {
 			try {
+				console.log('RUNNING')
 				await registerUser({
 					variables: {
 						registrationInput: {
@@ -117,11 +118,11 @@ export const RegisterContainer = () => {
 					label="Two Factor Authentication"
 				/>
 				<Button
+					disabled={formik.isSubmitting || formik.dirty === false || !formik.isValid}
 					color="primary"
 					variant="contained"
 					fullWidth
 					type="submit"
-					disabled={formik.isSubmitting || formik.dirty === false || formik.isValid}
 				>
 					Submit
 				</Button>

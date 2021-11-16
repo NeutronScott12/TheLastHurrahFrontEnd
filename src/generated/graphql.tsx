@@ -136,6 +136,7 @@ export type CommentModel = {
   created_at: Scalars['DateTime'];
   deleted: Scalars['Boolean'];
   down_vote: Array<RatingModel>;
+  edited: Scalars['Boolean'];
   flagged: Scalars['Boolean'];
   id: Scalars['String'];
   json_body: Array<Scalars['JSONObject']>;
@@ -530,7 +531,7 @@ export type MutationRegister_UserArgs = {
 
 
 export type MutationRemove_ApplicationArgs = {
-  id: Scalars['String'];
+  removeApplicationInput: RemoveApplicationInput;
 };
 
 
@@ -588,8 +589,8 @@ export type MutationUpdate_UserArgs = {
   UpdateUserInput: UpdateUserInput;
 };
 
-export type Notification = {
-  __typename?: 'Notification';
+export type NotificationEntity = {
+  __typename?: 'NotificationEntity';
   application_id?: Maybe<Scalars['String']>;
   created_at: Scalars['DateTime'];
   id: Scalars['String'];
@@ -645,10 +646,10 @@ export type Query = {
   fetch_comments_by_application_id: FetchCommentsByApplicationId;
   fetch_comments_by_application_short_name: FetchCommentByApplicationName;
   fetch_comments_by_thread_id: FetchCommentByThreadIdResponse;
-  fetch_notifications: Array<Notification>;
-  fetch_notifications_by_application_id: Array<Notification>;
-  fetch_notifications_by_short_name: Array<Notification>;
-  fetch_notifications_by_user_id: Array<Notification>;
+  fetch_notifications: Array<NotificationEntity>;
+  fetch_notifications_by_application_id: Array<NotificationEntity>;
+  fetch_notifications_by_short_name: Array<NotificationEntity>;
+  fetch_notifications_by_user_id: Array<NotificationEntity>;
   fetch_threads_by_user_id: Array<ThreadModel>;
   fetch_users: Array<UserModel>;
   find_one_application_by_id: ApplicationModel;
@@ -767,6 +768,10 @@ export type RegistrationInput = {
   redirect_url?: Maybe<Scalars['String']>;
   two_factor_authentication?: Maybe<Scalars['Boolean']>;
   username: Scalars['String'];
+};
+
+export type RemoveApplicationInput = {
+  application_id: Scalars['String'];
 };
 
 export type RemoveModeratorInput = {
@@ -990,7 +995,7 @@ export type FetchNotificationByApplicationShortNameQueryVariables = Exact<{
 }>;
 
 
-export type FetchNotificationByApplicationShortNameQuery = { __typename?: 'Query', fetch_notifications_by_short_name: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
+export type FetchNotificationByApplicationShortNameQuery = { __typename?: 'Query', fetch_notifications_by_short_name: Array<{ __typename?: 'NotificationEntity', id: string, created_at: any, updated_at: any, message: string, url: string }> };
 
 export type FetchApplicationByNameQueryVariables = Exact<{
   name: Scalars['String'];
@@ -1123,21 +1128,21 @@ export type TwoFactorLoginMutationVariables = Exact<{
 
 export type TwoFactorLoginMutation = { __typename?: 'Mutation', two_factor_login: { __typename?: 'TwoFactorLoginSuccessResponse', success: boolean, message: string, token: string, refresh_token: string, two_factor_authentication: boolean, user: { __typename?: 'UserModel', username: string, id: string } } };
 
-export type NotificationFragment = { __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string };
+export type NotificationFragment = { __typename?: 'NotificationEntity', id: string, created_at: any, updated_at: any, message: string, url: string };
 
 export type FetchNotificationsByUserIdQueryVariables = Exact<{
   fetchNotificationsByUserIdInput: FetchNotificationsByUserIdInput;
 }>;
 
 
-export type FetchNotificationsByUserIdQuery = { __typename?: 'Query', fetch_notifications_by_user_id: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
+export type FetchNotificationsByUserIdQuery = { __typename?: 'Query', fetch_notifications_by_user_id: Array<{ __typename?: 'NotificationEntity', id: string, created_at: any, updated_at: any, message: string, url: string }> };
 
 export type FetchNotificationByApplicationIdQueryVariables = Exact<{
   fetchNotificationsByApplicationIdInput: FetchNotificationByApplicationIdInput;
 }>;
 
 
-export type FetchNotificationByApplicationIdQuery = { __typename?: 'Query', fetch_notifications_by_application_id: Array<{ __typename?: 'Notification', id: string, created_at: any, updated_at: any, message: string, url: string }> };
+export type FetchNotificationByApplicationIdQuery = { __typename?: 'Query', fetch_notifications_by_application_id: Array<{ __typename?: 'NotificationEntity', id: string, created_at: any, updated_at: any, message: string, url: string }> };
 
 export type DeleteNotificationMutationVariables = Exact<{
   deleteNotificationInput: DeleteNotificationInput;
@@ -1236,7 +1241,7 @@ export const TwoFactorLoginResponseFragmentFragmentDoc = gql`
 }
     `;
 export const NotificationFragmentDoc = gql`
-    fragment Notification on Notification {
+    fragment Notification on NotificationEntity {
   id
   created_at
   updated_at
@@ -2441,7 +2446,7 @@ export type CommentAndVoteCountEntityFieldPolicy = {
 	comment_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	vote_count?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'approved' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reply_notification' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
+export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'approved' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'edited' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reply_notification' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
 export type CommentModelFieldPolicy = {
 	_count?: FieldPolicy<any> | FieldReadFunction<any>,
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -2450,6 +2455,7 @@ export type CommentModelFieldPolicy = {
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleted?: FieldPolicy<any> | FieldReadFunction<any>,
 	down_vote?: FieldPolicy<any> | FieldReadFunction<any>,
+	edited?: FieldPolicy<any> | FieldReadFunction<any>,
 	flagged?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	json_body?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -2545,8 +2551,8 @@ export type MutationFieldPolicy = {
 	update_poll_vote?: FieldPolicy<any> | FieldReadFunction<any>,
 	update_user?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type NotificationKeySpecifier = ('application_id' | 'created_at' | 'id' | 'message' | 'updated_at' | 'url' | NotificationKeySpecifier)[];
-export type NotificationFieldPolicy = {
+export type NotificationEntityKeySpecifier = ('application_id' | 'created_at' | 'id' | 'message' | 'updated_at' | 'url' | NotificationEntityKeySpecifier)[];
+export type NotificationEntityFieldPolicy = {
 	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
 	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -2722,9 +2728,9 @@ export type StrictTypedTypePolicies = {
 		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
 		fields?: MutationFieldPolicy,
 	},
-	Notification?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | NotificationKeySpecifier | (() => undefined | NotificationKeySpecifier),
-		fields?: NotificationFieldPolicy,
+	NotificationEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | NotificationEntityKeySpecifier | (() => undefined | NotificationEntityKeySpecifier),
+		fields?: NotificationEntityFieldPolicy,
 	},
 	OptionEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | OptionEntityKeySpecifier | (() => undefined | OptionEntityKeySpecifier),

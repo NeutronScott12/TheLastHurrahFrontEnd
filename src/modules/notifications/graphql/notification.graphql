@@ -1,4 +1,4 @@
-fragment Notification on Notification {
+fragment Notification on NotificationEntity {
 	id
 	created_at
 	updated_at

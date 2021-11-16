@@ -1280,6 +1280,22 @@
             "deprecationReason": null
           },
           {
+            "name": "edited",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "flagged",
             "description": null,
             "args": [],
@@ -4274,14 +4290,14 @@
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "removeApplicationInput",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "INPUT_OBJECT",
+                    "name": "RemoveApplicationInput",
                     "ofType": null
                   }
                 },
@@ -4673,7 +4689,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Notification",
+        "name": "NotificationEntity",
         "description": null,
         "fields": [
           {
@@ -5392,7 +5408,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Notification",
+                    "name": "NotificationEntity",
                     "ofType": null
                   }
                 }
@@ -5433,7 +5449,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Notification",
+                    "name": "NotificationEntity",
                     "ofType": null
                   }
                 }
@@ -5474,7 +5490,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Notification",
+                    "name": "NotificationEntity",
                     "ofType": null
                   }
                 }
@@ -5515,7 +5531,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Notification",
+                    "name": "NotificationEntity",
                     "ofType": null
                   }
                 }
@@ -6019,6 +6035,33 @@
           },
           {
             "name": "username",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "RemoveApplicationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "application_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
