@@ -25,7 +25,7 @@ export const CommentContainer = () => {
 
 	const { errorMessage, setError, checkError, setErrorMessage } = useErrorAndSuccess()
 
-	let rows: GridRowData | IComments
+	let rows: IComments | []
 
 	const { data, loading, refetch, error } = useFetchCommentsByApplicationByShortNameQuery({
 		variables: {
@@ -125,6 +125,7 @@ export const CommentContainer = () => {
 		<LoadingComponent />
 	) : (
 		<div>
+			<h2>Comment Table</h2>
 			<CommentDataGrid
 				selected={selected}
 				approveSelected={approveSelected}

@@ -4,7 +4,7 @@ import { Divider, IconButton, List, Theme, Drawer as MuiDrawer } from '@mui/mate
 import { styled } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import { MainListItems, SecondaryListItems } from './listItems'
+import { MainListItems } from './listItems'
 import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 import { useCurrentUserQuery } from '../generated/graphql'
 
@@ -59,6 +59,9 @@ export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 
 	const { data } = useLoggedIn()
 
+	console.log('MAIN_DRAWER', data)
+	console.log('USER_DATA', userData)
+
 	return data && !data.isLoggedIn ? (
 		<div></div>
 	) : (
@@ -76,10 +79,10 @@ export const MainDrawer: React.FC<IMainHeader> = ({ handleDrawer, open }) => {
 					''
 				)}
 			</List>
-			<Divider />
+			{/* <Divider />
 			<List>
 				<SecondaryListItems />
-			</List>
+			</List> */}
 		</Drawer>
 	)
 }

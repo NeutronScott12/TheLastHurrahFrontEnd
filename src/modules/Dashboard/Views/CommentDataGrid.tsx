@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
-import { DataGrid, GridColDef, GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridRowId, GridState } from '@mui/x-data-grid'
 import { Button } from '@mui/material'
 
 import { IComments } from '../types'
@@ -61,7 +61,7 @@ const columns: GridColDef[] = [
 interface ICommentDataGrid {
 	checkError: boolean
 	errorMessage: string
-	rows: IComments | undefined | GridRowData
+	rows: IComments | []
 	selected: GridRowId[]
 	where: Where
 	onChange: (

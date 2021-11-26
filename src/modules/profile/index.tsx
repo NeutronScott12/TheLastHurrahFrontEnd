@@ -14,7 +14,7 @@ export const ProfileContainer = () => {
 	const { username } = useParams() as IProfileParams
 	const { loading, data } = useFindProfileQuery({ variables: { findProfileInput: { username } } })
 
-	console.log('DATA', data)
+	// console.log('DATA', data)
 
 	return loading ? (
 		<LoadingComponent />

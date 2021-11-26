@@ -21,6 +21,7 @@ import { ProfileContainer } from '../modules/profile'
 import { ProfileCommentList } from '../modules/profile/containers/ProfileCommentList'
 import { ChangePasswordContainer } from '../modules/authentication/containers/changePassword/ChangePassword'
 import { ForgotPasswordContainer } from '../modules/authentication/containers/forgotPassword/ForgotPassword'
+import { SubscriptionContainer } from '../modules/Dashboard/Containers/SubscriptionContainer'
 
 const LazyDashboard = lazy(() =>
 	import('../modules/Dashboard/Layouts/DashboardLayout').then((module) => ({
@@ -109,6 +110,10 @@ export const SiteRouter = () => {
 				{
 					path: 'apps/:application_short_name/notifications',
 					element: <DashboardNotificationContainer />,
+				},
+				{
+					path: 'apps/:application_short_name/subscriptions',
+					element: <SubscriptionContainer />,
 				},
 			],
 		},
