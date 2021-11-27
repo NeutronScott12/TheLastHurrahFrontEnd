@@ -1,10 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
-import ReactDataGrid, { Column, SelectColumn } from 'react-data-grid'
-import { DataGrid, GridColDef, GridRowId, GridState } from '@mui/x-data-grid'
+import ReactDataGrid, { SelectColumn } from 'react-data-grid'
 import { Button } from '@mui/material'
 
-import { Maybe, Where } from '../../../generated/graphql'
+import { Where } from '../../../generated/graphql'
 import { Alerts } from '../../../partials/Alerts'
 import { IFormattedRow } from '../types'
 
@@ -73,8 +72,8 @@ interface ICommentDataGrid {
 	// 		defaultMuiPrevented?: boolean | undefined
 	// 	}
 	// ) => void
-	// deleteSelected: (permanent_delete: boolean) => Promise<void>
-	// approveSelected: () => Promise<void>
+	deleteSelected: (permanent_delete: boolean) => Promise<void>
+	approveSelected: () => Promise<void>
 	filterComments: (where: Where) => Promise<void>
 }
 
@@ -88,9 +87,9 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 	where,
 	onSelectedRowsChange,
 	// onChange,
-	// deleteSelected,
+	deleteSelected,
 	filterComments,
-	// approveSelected,
+	approveSelected,
 }) => {
 	const classes = useStyles()
 
@@ -103,9 +102,9 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 						className={classes.buttonStyle}
 						onClick={() => {
 							if (where === Where.Deleted) {
-								// deleteSelected(true)
+								deleteSelected(true)
 							} else {
-								// deleteSelected(false)
+								deleteSelected(false)
 							}
 						}}
 					>

@@ -14,7 +14,6 @@ import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
 import { IFormattedRow } from '../types'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
-import { GridRowId, GridState } from '@mui/x-data-grid'
 
 export const CommentContainer = () => {
 	const { application_short_name } = useParams() as IParams
@@ -59,44 +58,42 @@ export const CommentContainer = () => {
 		})
 	}
 
-	// const deleteSelected = async (permanent_delete: boolean) => {
-	// 	console.log('SELECTED', selected)
+	const deleteSelected = async (permanent_delete: boolean) => {
+		let result = Array.from(selected)
 
-	// 	console.log('PERMANENT_DELETE', permanent_delete)
+		try {
+			await deleteManyComments({
+				variables: {
+					deleteManyCommentsInput: { comment_ids: result, permanent_delete },
+				},
+			})
+			await refetch()
+		} catch (error) {
+			if (error instanceof Error) {
+				setErrorMessage(error.message)
+				setError(true)
+			}
+		}
+	}
 
-	// 	try {
-	// 		await deleteManyComments({
-	// 			variables: {
-	// 				deleteManyCommentsInput: { comment_ids: arr, permanent_delete },
-	// 			},
-	// 		})
-	// 		await refetch()
-	// 	} catch (error) {
-	// 		if (error instanceof Error) {
-	// 			setErrorMessage(error.message)
-	// 			setError(true)
-	// 		}
-	// 	}
-	// }
-
-	// const approveSelected = async () => {
-	// 	try {
-	// 		const arr = selected as string[]
-	// 		await approveComments({
-	// 			variables: {
-	// 				approveCommentsInput: {
-	// 					comment_ids: arr,
-	// 				},
-	// 			},
-	// 		})
-	// 		await refetch()
-	// 	} catch (error) {
-	// 		if (error instanceof Error) {
-	// 			setErrorMessage(error.message)
-	// 			setError(true)
-	// 		}
-	// 	}
-	// }
+	const approveSelected = async () => {
+		try {
+			const arr = Array.from(selected)
+			await approveComments({
+				variables: {
+					approveCommentsInput: {
+						comment_ids: arr,
+					},
+				},
+			})
+			await refetch()
+		} catch (error) {
+			if (error instanceof Error) {
+				setErrorMessage(error.message)
+				setError(true)
+			}
+		}
+	}
 
 	if (
 		data?.fetch_comments_by_application_short_name &&
@@ -107,8 +104,6 @@ export const CommentContainer = () => {
 		rows = []
 	}
 
-	console.log('ROWS', rows)
-
 	return loading ? (
 		<LoadingComponent />
 	) : (
@@ -116,11 +111,11 @@ export const CommentContainer = () => {
 			<h2>Comment Table</h2>
 			<CommentDataGrid
 				selected={selected}
-				// approveSelected={approveSelected}
+				approveSelected={approveSelected}
 				filterComments={filterComments}
 				onSelectedRowsChange={setSelectedRows}
 				where={where}
-				// deleteSelected={deleteSelected}
+				deleteSelected={deleteSelected}
 				rows={rows}
 				checkError={checkError}
 				errorMessage={errorMessage}

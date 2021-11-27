@@ -1,22 +1,25 @@
 import React, { useState } from 'react'
-import { GridColDef, GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
+import { GridState } from '@mui/x-data-grid'
 import { useParams } from 'react-router-dom'
 import { Button } from '@mui/material'
 import { makeStyles } from '@mui/styles'
+import ReactDataGrid, { Column, SelectColumn } from 'react-data-grid'
 
 import { LoadingComponent } from '../../../partials/Loading'
 import { omit } from 'ramda'
-import { DataGridGenerator } from '../../../utils/widgets/DataGridGenerator'
 import { IParams } from './AppContainer'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
 import { Choice, useFetchApplicationAuthenticatedUsersQuery } from '../../../generated/graphql'
 
-const columns: GridColDef[] = [
-	{ field: 'username', headerName: 'Username', width: 200 },
-	{ field: 'confirmed', headerName: 'Confirmed', width: 200 },
-	{ field: 'created_at', headerName: 'Created At', width: 200 },
-	{ field: 'last_active', headerName: 'Last Active', width: 200 },
-	{ field: 'status', headerName: 'Status', width: 200 },
+// { key: 'body', name: 'Body', width: '50%', resizable: true },
+
+const columns: Column<IAuthenticatedUsers>[] = [
+	SelectColumn,
+	{ key: 'username', name: 'Username', width: '20%' },
+	{ key: 'confirmed', name: 'Confirmed', width: '20%' },
+	{ key: 'created_at', name: 'Created At', width: '20%' },
+	{ key: 'last_active', name: 'Last Active', width: '20%' },
+	{ key: 'status', name: 'Status', width: '20%' },
 ]
 
 const useStyles = makeStyles({
@@ -43,7 +46,7 @@ export const UsersContainer = () => {
 	const { application_short_name } = useParams() as IParams
 	const classes = useStyles()
 	const { checkError, errorMessage } = useErrorAndSuccess()
-	const [selected, changeSelected] = useState<GridRowId[]>([])
+	const [selected, changeSelected] = useState<ReadonlySet<string>>(() => new Set())
 	const [choice, changeChoice] = useState<Choice>(Choice.All)
 	const { data, loading } = useFetchApplicationAuthenticatedUsersQuery({
 		variables: {
@@ -58,23 +61,23 @@ export const UsersContainer = () => {
 		},
 	})
 
-	const onChange = (
-		params: GridState,
-		event: {
-			defaultMuiPrevented?: boolean | undefined
-		}
-	) => {
-		// console.log('PARAMS', params)
-		// console.log('EVENT', event)
+	// const onChange = (
+	// 	params: GridState,
+	// 	event: {
+	// 		defaultMuiPrevented?: boolean | undefined
+	// 	}
+	// ) => {
+	// 	// console.log('PARAMS', params)
+	// 	// console.log('EVENT', event)
 
-		changeSelected(params.selection)
-	}
+	// 	changeSelected(params.selection)
+	// }
 
 	const filterUsers = () => {
 		changeChoice(Choice.All)
 	}
 
-	let rows: GridRowData | IAuthenticatedUsers[]
+	let rows: IAuthenticatedUsers[]
 
 	console.log('DATA', data?.fetch_application_by_short_name.authenticated_users)
 
@@ -96,56 +99,44 @@ export const UsersContainer = () => {
 		<LoadingComponent />
 	) : (
 		<div style={{ marginTop: '1rem' }}>
-			<DataGridGenerator
-				checkError={checkError}
-				errorMessage={errorMessage}
-				rows={rows}
-				columns={columns}
-				onChange={onChange}
-				//@ts-ignore
-				selected={(data: any) => {
-					console.log(data)
-					return columns
-				}}
-			>
-				<>
-					{selected.length > 0 ? (
-						<Button
-							className={classes.buttonStyle}
-							onClick={() => {
-								if (choice === Choice.Blocked) {
-									blockSelected()
-								}
-							}}
-						>
-							Block
-						</Button>
-					) : (
-						''
-					)}
-					<Button
-						className={classes.buttonStyle}
-						onClick={() => {
-							if (choice === Choice.All) {
-								blockSelected()
-							}
-						}}
-					>
-						All
-					</Button>
+			<>
+				{selected.size > 0 ? (
 					<Button
 						className={classes.buttonStyle}
 						onClick={() => {
 							if (choice === Choice.Blocked) {
-								filterUsers()
 								blockSelected()
 							}
 						}}
 					>
-						Blocked
+						Block
 					</Button>
-				</>
-			</DataGridGenerator>
+				) : (
+					''
+				)}
+				<Button
+					className={classes.buttonStyle}
+					onClick={() => {
+						if (choice === Choice.All) {
+							blockSelected()
+						}
+					}}
+				>
+					All
+				</Button>
+				<Button
+					className={classes.buttonStyle}
+					onClick={() => {
+						if (choice === Choice.Blocked) {
+							filterUsers()
+							blockSelected()
+						}
+					}}
+				>
+					Blocked
+				</Button>
+				<ReactDataGrid rows={rows} columns={columns} />
+			</>
 		</div>
 	)
 }
