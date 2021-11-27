@@ -1,6 +1,8 @@
 import moment from 'moment'
+import { reduce } from 'ramda'
+import { CommentModel } from '../../../generated/graphql'
 
-import { IComments } from '../types'
+import { IComment, IFormattedRow } from '../types'
 
 // interface IFormattedRowsResponse {
 //     body: string,
@@ -9,20 +11,29 @@ import { IComments } from '../types'
 //     created_at: Date
 // }
 
-export const formattedRows = (comments: IComments[]): IComments => {
-	return comments.reduce(
-		// @ts-ignore
-		(prev, curr: CommentModel, key) => {
-			return [
-				...prev,
-				{
-					body: curr.plain_text_body,
-					username: curr.author.username,
-					id: curr.id,
-					created_at: moment(curr.created_at).format('l'),
-				},
-			]
-		},
-		[]
-	)
+export const formattedRows = (comments: IComment[]): IFormattedRow[] => {
+	return comments.map((comment) => {
+		return {
+			body: comment.plain_text_body,
+			username: comment.author.username,
+			id: comment.id,
+			created_at: moment(comment.created_at).format('l'),
+		}
+	})
+
+	// return reduce(
+	// 	(prev, curr) => {
+	// 		return [
+	// 			...prev,
+	// 			{
+	// 				body: curr.plain_text_body,
+	// 				username: curr.author.username,
+	// 				id: curr.id,
+	// 				created_at: moment(curr.created_at).format('l'),
+	// 			},
+	// 		]
+	// 	},
+	// 	[],
+	// 	comments
+	// )
 }

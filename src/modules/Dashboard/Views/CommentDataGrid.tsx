@@ -1,11 +1,12 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
+import ReactDataGrid, { Column, SelectColumn } from 'react-data-grid'
 import { DataGrid, GridColDef, GridRowId, GridState } from '@mui/x-data-grid'
 import { Button } from '@mui/material'
 
-import { IComments } from '../types'
-import { Where } from '../../../generated/graphql'
+import { Maybe, Where } from '../../../generated/graphql'
 import { Alerts } from '../../../partials/Alerts'
+import { IFormattedRow } from '../types'
 
 const useStyles = makeStyles({
 	root: {
@@ -51,29 +52,33 @@ const useStyles = makeStyles({
 	},
 })
 
-const columns: GridColDef[] = [
-	{ field: 'body', headerName: 'Body', width: 500 },
-	{ field: 'username', headerName: 'Username', width: 200 },
-	{ field: 'reports', headerName: 'Reports', width: 200 },
-	{ field: 'created_at', headerName: 'Created At', width: 200 },
+const columns = [
+	SelectColumn,
+	{ key: 'body', name: 'Body', width: '50%', resizable: true },
+	{ key: 'username', name: 'Username', width: '20%', resizable: true },
+	{ key: 'reports', name: 'Reports', width: '20%', resizable: true },
+	{ key: 'created_at', name: 'Created At', width: '10%', resizable: true },
 ]
 
 interface ICommentDataGrid {
 	checkError: boolean
 	errorMessage: string
-	rows: IComments | []
-	selected: GridRowId[]
+	rows: IFormattedRow[] | []
+	selected: ReadonlySet<string>
 	where: Where
-	onChange: (
-		params: GridState,
-		event: {
-			defaultMuiPrevented?: boolean | undefined
-		}
-	) => void
-	deleteSelected: (permanent_delete: boolean) => Promise<void>
-	approveSelected: () => Promise<void>
+	onSelectedRowsChange: React.Dispatch<React.SetStateAction<ReadonlySet<string>>>
+	// onChange: (
+	// 	params: GridState,
+	// 	event: {
+	// 		defaultMuiPrevented?: boolean | undefined
+	// 	}
+	// ) => void
+	// deleteSelected: (permanent_delete: boolean) => Promise<void>
+	// approveSelected: () => Promise<void>
 	filterComments: (where: Where) => Promise<void>
 }
+
+const rowKeyGetter = (row: IFormattedRow) => row.id
 
 export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 	checkError,
@@ -81,33 +86,32 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 	rows,
 	selected,
 	where,
-	onChange,
-	deleteSelected,
+	onSelectedRowsChange,
+	// onChange,
+	// deleteSelected,
 	filterComments,
-	approveSelected,
+	// approveSelected,
 }) => {
 	const classes = useStyles()
 
 	return (
 		<div className={classes.root}>
 			<Alerts checkError={checkError} errorMessage={errorMessage} />
-			{selected.length > 0 ? (
+			{selected.size > 0 ? (
 				<>
 					<Button
 						className={classes.buttonStyle}
 						onClick={() => {
 							if (where === Where.Deleted) {
-								deleteSelected(true)
+								// deleteSelected(true)
 							} else {
-								deleteSelected(false)
+								// deleteSelected(false)
 							}
 						}}
 					>
 						Delete
 					</Button>
-					<Button className={classes.buttonStyle} onClick={approveSelected}>
-						Approve
-					</Button>
+					<Button className={classes.buttonStyle}>Approve</Button>
 				</>
 			) : (
 				''
@@ -153,18 +157,14 @@ export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 			>
 				All
 			</Button>
-			<DataGrid
-				className={classes.tableStyle}
-				getRowId={(rows) => rows.id}
-				//@ts-ignore
+			<ReactDataGrid
+				selectedRows={selected}
+				onSelectedRowsChange={onSelectedRowsChange}
 				rows={rows}
 				columns={columns}
-				pageSize={5}
-				rowsPerPageOptions={[5]}
-				checkboxSelection
-				disableSelectionOnClick
-				onStateChange={onChange}
-			></DataGrid>
+				onRowsChange={(data) => console.log('CHANGE', data)}
+				rowKeyGetter={rowKeyGetter}
+			/>
 		</div>
 	)
 }

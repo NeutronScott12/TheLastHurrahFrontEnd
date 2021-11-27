@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import { FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy } from '@apollo/client/cache';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Big Int Custom Scalar */
+  BigInt: any;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: any;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
@@ -64,6 +66,7 @@ export type ApplicationModel = {
   renewal?: Maybe<Scalars['DateTime']>;
   short_name: Scalars['String'];
   theme: Theme;
+  thread_ids: Array<Scalars['String']>;
   threads: Array<ThreadModel>;
   updated_at: Scalars['DateTime'];
   website_url?: Maybe<Scalars['String']>;
@@ -106,6 +109,26 @@ export enum Choice {
   Blocked = 'BLOCKED',
   Removed = 'REMOVED'
 }
+
+export type CardDetailEntity = {
+  __typename?: 'CardDetailEntity';
+  authorised_at: Scalars['String'];
+  avs_status: Scalars['String'];
+  bin: Scalars['String'];
+  captured_at: Scalars['String'];
+  card_brand: Scalars['String'];
+  card_type: Scalars['String'];
+  cvv_status: Scalars['String'];
+  entry_method: Scalars['String'];
+  exp_month: Scalars['BigInt'];
+  exp_year: Scalars['BigInt'];
+  fingerprint: Scalars['String'];
+  id: Scalars['String'];
+  last_4: Scalars['String'];
+  prepaid_type: Scalars['String'];
+  statement_description: Scalars['String'];
+  status: Scalars['String'];
+};
 
 export type ChangeCommentSettingsInput = {
   comment_id: Scalars['String'];
@@ -157,7 +180,7 @@ export type CommentModel = {
 };
 
 export type CommentsByUserIdInput = {
-  user_id?: Maybe<Scalars['String']>;
+  user_id?: InputMaybe<Scalars['String']>;
 };
 
 export type CountModel = {
@@ -172,13 +195,13 @@ export type CreateApplicationInput = {
   application_name: Scalars['String'];
   application_short_name: Scalars['String'];
   category: Category;
-  comment_policy_summary?: Maybe<Scalars['String']>;
-  comment_policy_url?: Maybe<Scalars['String']>;
-  default_avatar_url?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  comment_policy_summary?: InputMaybe<Scalars['String']>;
+  comment_policy_url?: InputMaybe<Scalars['String']>;
+  default_avatar_url?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   language: Language;
   theme: Theme;
-  website_url?: Maybe<Scalars['String']>;
+  website_url?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateCommentInput = {
@@ -189,6 +212,9 @@ export type CreateCommentInput = {
 };
 
 export type CreateOrderInput = {
+  currency: Scalars['String'];
+  idempotency_key: Scalars['String'];
+  source_id: Scalars['String'];
   /** Total cost */
   total_price: Scalars['Float'];
 };
@@ -276,14 +302,14 @@ export type FetchCommentsByApplicationIdInput = {
   application_short_name: Scalars['String'];
   limit: Scalars['Int'];
   skip: Scalars['Int'];
-  sort?: Maybe<Sort>;
+  sort?: InputMaybe<Sort>;
 };
 
 export type FetchCommentsByApplicationShortNameInput = {
   application_short_name: Scalars['String'];
   limit: Scalars['Int'];
   skip: Scalars['Int'];
-  sort?: Maybe<Sort>;
+  sort?: InputMaybe<Sort>;
   where: Where;
 };
 
@@ -302,7 +328,7 @@ export type FetchNotificationsByUserIdInput = {
 export type FetchThreadCommentsBySort = {
   limit: Scalars['Int'];
   skip: Scalars['Int'];
-  sort?: Maybe<Sort>;
+  sort?: InputMaybe<Sort>;
 };
 
 export type FetchThreadsByUserIdInput = {
@@ -313,7 +339,7 @@ export type FindOrCreateOneThreadInput = {
   /** Application ID */
   application_id: Scalars['String'];
   /** Thread Title */
-  title?: Maybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
   /** Thread website url */
   website_url: Scalars['String'];
 };
@@ -328,7 +354,7 @@ export type FindThreadByIdInput = {
 
 export type ForgotPasswordInput = {
   email: Scalars['String'];
-  redirect_url?: Maybe<Scalars['String']>;
+  redirect_url?: InputMaybe<Scalars['String']>;
 };
 
 export type IsUserSubscribedToThreadInput = {
@@ -360,9 +386,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   add_application_moderator: ApplicationModel;
   add_pinned_comment: ThreadModel;
+  add_user_to_shadow_ban: StandardResponseModel;
   add_user_to_threads_active_users: StandardResponseModel;
   approve_comments: StandardResponseModel;
   block_user: StandardResponseModel;
+  cancel_order: StandardResponseModel;
   change_comment_settings: CommentModel;
   change_password: StandardResponseModel;
   close_poll: PollEntity;
@@ -383,10 +411,12 @@ export type Mutation = {
   forgot_password: StandardResponseModel;
   login_user: LoginResponseUnion;
   logout_user: StandardResponseModel;
+  refund_order: StandardResponseModel;
   regenerate_new_auth_secret: ApplicationModel;
   register_user: StandardResponseModel;
   remove_application: StandardResponseModel;
   remove_application_moderator: ApplicationModel;
+  remove_user_from_shadow_ban: StandardResponseModel;
   remove_user_from_threads_active_users: StandardResponseModel;
   toggle_subscription_to_thread: StandardResponseModel;
   two_factor_login: TwoFactorLoginSuccessResponse;
@@ -410,6 +440,11 @@ export type MutationAdd_Pinned_CommentArgs = {
 };
 
 
+export type MutationAdd_User_To_Shadow_BanArgs = {
+  addUserToShadowBan: ShadowBanUserByIdInput;
+};
+
+
 export type MutationAdd_User_To_Threads_Active_UsersArgs = {
   addUserToActiveUsersInput: AddUserToActiveUsersInput;
 };
@@ -422,6 +457,11 @@ export type MutationApprove_CommentsArgs = {
 
 export type MutationBlock_UserArgs = {
   user_id: Scalars['String'];
+};
+
+
+export type MutationCancel_OrderArgs = {
+  idempotency_key: Scalars['String'];
 };
 
 
@@ -520,6 +560,11 @@ export type MutationLogin_UserArgs = {
 };
 
 
+export type MutationRefund_OrderArgs = {
+  refundOrderInput: RefundOrderInput;
+};
+
+
 export type MutationRegenerate_New_Auth_SecretArgs = {
   application_id: Scalars['String'];
 };
@@ -537,6 +582,11 @@ export type MutationRemove_ApplicationArgs = {
 
 export type MutationRemove_Application_ModeratorArgs = {
   removeModeratorInput: RemoveModeratorInput;
+};
+
+
+export type MutationRemove_User_From_Shadow_BanArgs = {
+  removeUserToShadowBan: ShadowBanUserByIdInput;
 };
 
 
@@ -610,11 +660,48 @@ export type OptionInput = {
   option: Scalars['String'];
 };
 
+export type OrderEntity = {
+  __typename?: 'OrderEntity';
+  confirmed: Scalars['Boolean'];
+  created_at: Scalars['DateTime'];
+  customer: UserModel;
+  customer_id: Scalars['String'];
+  id: Scalars['String'];
+  payment: PaymentEntity;
+  total_price: Scalars['BigInt'];
+  updated_at: Scalars['DateTime'];
+};
+
 export enum Pre_Comment_Moderation {
   All = 'ALL',
   NewComments = 'NEW_COMMENTS',
   None = 'NONE'
 }
+
+export type PaymentEntity = {
+  __typename?: 'PaymentEntity';
+  application_details: Scalars['String'];
+  approved_mount: Scalars['BigInt'];
+  cardDetailsId: Scalars['String'];
+  card_details: CardDetailEntity;
+  created_at: Scalars['DateTime'];
+  currency: Scalars['String'];
+  customer_id: Scalars['String'];
+  delay_action: Scalars['String'];
+  delay_duration: Scalars['String'];
+  delayed_until: Scalars['String'];
+  id: Scalars['String'];
+  location_id: Scalars['String'];
+  receipt_number: Scalars['String'];
+  receipt_url: Scalars['String'];
+  risk_level: Scalars['String'];
+  source_type: Scalars['String'];
+  square_product: Scalars['String'];
+  status: Scalars['String'];
+  total_mount: Scalars['BigInt'];
+  updated_at: Scalars['DateTime'];
+  version_token: Scalars['String'];
+};
 
 export type PollEntity = {
   __typename?: 'PollEntity';
@@ -638,6 +725,7 @@ export type Query = {
   __typename?: 'Query';
   current_user: UserModel;
   fetch_all_applications: Array<ApplicationModel>;
+  fetch_all_orders: Array<OrderEntity>;
   fetch_all_threads: Array<ThreadModel>;
   fetch_application_by_short_name: ApplicationModel;
   fetch_applications_by_owner_id: Array<ApplicationModel>;
@@ -761,12 +849,20 @@ export type RatingModel = {
   id: Scalars['String'];
 };
 
+export type RefundOrderInput = {
+  amount_money: Scalars['BigInt'];
+  currency: Scalars['String'];
+  idempotency_key: Scalars['String'];
+  payment_id: Scalars['String'];
+  reason: Scalars['String'];
+};
+
 export type RegistrationInput = {
-  application_id?: Maybe<Scalars['String']>;
+  application_id?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
-  redirect_url?: Maybe<Scalars['String']>;
-  two_factor_authentication?: Maybe<Scalars['Boolean']>;
+  redirect_url?: InputMaybe<Scalars['String']>;
+  two_factor_authentication?: InputMaybe<Scalars['Boolean']>;
   username: Scalars['String'];
 };
 
@@ -803,6 +899,11 @@ export enum Status {
   Offline = 'OFFLINE',
   Online = 'ONLINE'
 }
+
+export type ShadowBanUserByIdInput = {
+  application_short_name: Scalars['String'];
+  user_id: Scalars['String'];
+};
 
 export type StandardResponse = {
   __typename?: 'StandardResponse';
@@ -841,7 +942,7 @@ export type ThreadModel = {
 
 
 export type ThreadModelThread_CommentsArgs = {
-  commentsByUserIdInput?: Maybe<CommentsByUserIdInput>;
+  commentsByUserIdInput?: InputMaybe<CommentsByUserIdInput>;
   fetchThreadCommentsBySort: FetchThreadCommentsBySort;
 };
 
@@ -892,14 +993,14 @@ export type UpdateApplicationInput = {
   adult_content: Scalars['Boolean'];
   application_short_name: Scalars['String'];
   category: Category;
-  comment_policy_summary?: Maybe<Scalars['String']>;
-  comment_policy_url?: Maybe<Scalars['String']>;
-  default_avatar_url?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  comment_policy_summary?: InputMaybe<Scalars['String']>;
+  comment_policy_url?: InputMaybe<Scalars['String']>;
+  default_avatar_url?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
   language: Language;
   theme: Theme;
-  website_url?: Maybe<Scalars['String']>;
+  website_url?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateCommentInput = {
@@ -914,10 +1015,10 @@ export type UpdatePollVoteInput = {
 };
 
 export type UpdateUserInput = {
-  email?: Maybe<Scalars['String']>;
-  two_factor_authentication?: Maybe<Scalars['Boolean']>;
-  user_role?: Maybe<User_Role>;
-  username?: Maybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  two_factor_authentication?: InputMaybe<Scalars['Boolean']>;
+  user_role?: InputMaybe<User_Role>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type UserModel = {
@@ -981,7 +1082,7 @@ export type FetchCommentsByApplicationByShortNameQueryVariables = Exact<{
 }>;
 
 
-export type FetchCommentsByApplicationByShortNameQuery = { __typename?: 'Query', fetch_comments_by_application_short_name: { __typename?: 'FetchCommentByApplicationName', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } };
+export type FetchCommentsByApplicationByShortNameQuery = { __typename?: 'Query', fetch_comments_by_application_short_name: { __typename?: 'FetchCommentByApplicationName', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, created_at: any, updated_at: any, author: { __typename?: 'UserModel', id: string, username: string } }> } };
 
 export type FetchApplicationByShortNameQueryVariables = Exact<{
   fetchApplicationByShortNameInput: FetchApplicationByShortNameInput;
@@ -1004,14 +1105,14 @@ export type FetchApplicationByNameQueryVariables = Exact<{
 
 export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
-export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } };
+export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, created_at: any, updated_at: any, author: { __typename?: 'UserModel', id: string, username: string } };
 
 export type FetchCommentsByApplicationIdQueryVariables = Exact<{
   fetchCommentsByApplicationIdInput: FetchCommentsByApplicationIdInput;
 }>;
 
 
-export type FetchCommentsByApplicationIdQuery = { __typename?: 'Query', fetch_comments_by_application_id: { __typename?: 'FetchCommentsByApplicationId', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, author: { __typename?: 'UserModel', id: string, username: string } }> } };
+export type FetchCommentsByApplicationIdQuery = { __typename?: 'Query', fetch_comments_by_application_id: { __typename?: 'FetchCommentsByApplicationId', comments_count: number, comments: Array<{ __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, created_at: any, updated_at: any, author: { __typename?: 'UserModel', id: string, username: string } }> } };
 
 export type FetchApplicationsByOwnerQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1214,6 +1315,8 @@ export const CommentFragmentFragmentDoc = gql`
   id
   plain_text_body
   application_id
+  created_at
+  updated_at
   author {
     id
     username
@@ -2394,395 +2497,3 @@ export function useFetchCommentAndVoteCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type FetchCommentAndVoteCountQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountQuery>;
 export type FetchCommentAndVoteCountLazyQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountLazyQuery>;
 export type FetchCommentAndVoteCountQueryResult = Apollo.QueryResult<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>;
-export type ApplicationModelKeySpecifier = ('adult_content' | 'allow_images_and_videos_on_comments' | 'application_name' | 'application_owner' | 'application_owner_id' | 'auth_secret' | 'authenticated_users' | 'authenticated_users_ids' | 'category' | 'comment_policy_summary' | 'comment_policy_url' | 'commenters_users_ids' | 'comments' | 'cost' | 'created_at' | 'default_avatar_url' | 'description' | 'display_comments_when_flagged' | 'email_mods_when_comments_flagged' | 'id' | 'language' | 'links_in_comments' | 'moderators' | 'moderators_ids' | 'plan' | 'pre_comment_moderation' | 'renewal' | 'short_name' | 'theme' | 'threads' | 'updated_at' | 'website_url' | ApplicationModelKeySpecifier)[];
-export type ApplicationModelFieldPolicy = {
-	adult_content?: FieldPolicy<any> | FieldReadFunction<any>,
-	allow_images_and_videos_on_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	application_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	application_owner?: FieldPolicy<any> | FieldReadFunction<any>,
-	application_owner_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	auth_secret?: FieldPolicy<any> | FieldReadFunction<any>,
-	authenticated_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	authenticated_users_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	category?: FieldPolicy<any> | FieldReadFunction<any>,
-	comment_policy_summary?: FieldPolicy<any> | FieldReadFunction<any>,
-	comment_policy_url?: FieldPolicy<any> | FieldReadFunction<any>,
-	commenters_users_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	cost?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	default_avatar_url?: FieldPolicy<any> | FieldReadFunction<any>,
-	description?: FieldPolicy<any> | FieldReadFunction<any>,
-	display_comments_when_flagged?: FieldPolicy<any> | FieldReadFunction<any>,
-	email_mods_when_comments_flagged?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	language?: FieldPolicy<any> | FieldReadFunction<any>,
-	links_in_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	moderators?: FieldPolicy<any> | FieldReadFunction<any>,
-	moderators_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	plan?: FieldPolicy<any> | FieldReadFunction<any>,
-	pre_comment_moderation?: FieldPolicy<any> | FieldReadFunction<any>,
-	renewal?: FieldPolicy<any> | FieldReadFunction<any>,
-	short_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	theme?: FieldPolicy<any> | FieldReadFunction<any>,
-	threads?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	website_url?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type AvatarEntityKeySpecifier = ('ETag' | 'created_at' | 'default_avatar' | 'encoding' | 'filename' | 'id' | 'key' | 'updated_at' | 'url' | AvatarEntityKeySpecifier)[];
-export type AvatarEntityFieldPolicy = {
-	ETag?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	default_avatar?: FieldPolicy<any> | FieldReadFunction<any>,
-	encoding?: FieldPolicy<any> | FieldReadFunction<any>,
-	filename?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	key?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	url?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type CommentAndVoteCountEntityKeySpecifier = ('comment_count' | 'vote_count' | CommentAndVoteCountEntityKeySpecifier)[];
-export type CommentAndVoteCountEntityFieldPolicy = {
-	comment_count?: FieldPolicy<any> | FieldReadFunction<any>,
-	vote_count?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type CommentModelKeySpecifier = ('_count' | 'application_id' | 'approved' | 'author' | 'created_at' | 'deleted' | 'down_vote' | 'edited' | 'flagged' | 'id' | 'json_body' | 'parent_id' | 'pending' | 'plain_text_body' | 'private_information' | 'replied_to_id' | 'replied_to_user' | 'replies' | 'reply_notification' | 'reports' | 'thread_id' | 'threatening_content' | 'up_vote' | 'updated_at' | 'user_id' | CommentModelKeySpecifier)[];
-export type CommentModelFieldPolicy = {
-	_count?: FieldPolicy<any> | FieldReadFunction<any>,
-	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	approved?: FieldPolicy<any> | FieldReadFunction<any>,
-	author?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	deleted?: FieldPolicy<any> | FieldReadFunction<any>,
-	down_vote?: FieldPolicy<any> | FieldReadFunction<any>,
-	edited?: FieldPolicy<any> | FieldReadFunction<any>,
-	flagged?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	json_body?: FieldPolicy<any> | FieldReadFunction<any>,
-	parent_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	pending?: FieldPolicy<any> | FieldReadFunction<any>,
-	plain_text_body?: FieldPolicy<any> | FieldReadFunction<any>,
-	private_information?: FieldPolicy<any> | FieldReadFunction<any>,
-	replied_to_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	replied_to_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	replies?: FieldPolicy<any> | FieldReadFunction<any>,
-	reply_notification?: FieldPolicy<any> | FieldReadFunction<any>,
-	reports?: FieldPolicy<any> | FieldReadFunction<any>,
-	thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	threatening_content?: FieldPolicy<any> | FieldReadFunction<any>,
-	up_vote?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	user_id?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type CountModelKeySpecifier = ('down_vote' | 'replies' | 'up_vote' | CountModelKeySpecifier)[];
-export type CountModelFieldPolicy = {
-	down_vote?: FieldPolicy<any> | FieldReadFunction<any>,
-	replies?: FieldPolicy<any> | FieldReadFunction<any>,
-	up_vote?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type FetchAllCommentsKeySpecifier = ('comments' | 'comments_count' | FetchAllCommentsKeySpecifier)[];
-export type FetchAllCommentsFieldPolicy = {
-	comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	comments_count?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type FetchCommentByApplicationNameKeySpecifier = ('comments' | 'comments_count' | FetchCommentByApplicationNameKeySpecifier)[];
-export type FetchCommentByApplicationNameFieldPolicy = {
-	comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	comments_count?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type FetchCommentByThreadIdResponseKeySpecifier = ('comments' | 'comments_count' | FetchCommentByThreadIdResponseKeySpecifier)[];
-export type FetchCommentByThreadIdResponseFieldPolicy = {
-	comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	comments_count?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type FetchCommentsByApplicationIdKeySpecifier = ('comments' | 'comments_count' | FetchCommentsByApplicationIdKeySpecifier)[];
-export type FetchCommentsByApplicationIdFieldPolicy = {
-	comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	comments_count?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type LoginResponseKeySpecifier = ('message' | 'refresh_token' | 'success' | 'token' | 'two_factor_authentication' | 'user' | LoginResponseKeySpecifier)[];
-export type LoginResponseFieldPolicy = {
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	refresh_token?: FieldPolicy<any> | FieldReadFunction<any>,
-	success?: FieldPolicy<any> | FieldReadFunction<any>,
-	token?: FieldPolicy<any> | FieldReadFunction<any>,
-	two_factor_authentication?: FieldPolicy<any> | FieldReadFunction<any>,
-	user?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type MutationKeySpecifier = ('add_application_moderator' | 'add_pinned_comment' | 'add_user_to_threads_active_users' | 'approve_comments' | 'block_user' | 'change_comment_settings' | 'change_password' | 'close_poll' | 'confirm_user' | 'create_application' | 'create_comment' | 'create_order' | 'create_poll' | 'create_reply_comment' | 'create_report' | 'delete_comment' | 'delete_many_comments' | 'delete_many_notifications' | 'delete_notification' | 'delete_poll' | 'delete_user' | 'down_vote_comment' | 'forgot_password' | 'login_user' | 'logout_user' | 'regenerate_new_auth_secret' | 'register_user' | 'remove_application' | 'remove_application_moderator' | 'remove_user_from_threads_active_users' | 'toggle_subscription_to_thread' | 'two_factor_login' | 'unblock_user' | 'up_vote_comment' | 'update_application' | 'update_application_comment_rules' | 'update_comment' | 'update_poll_vote' | 'update_user' | MutationKeySpecifier)[];
-export type MutationFieldPolicy = {
-	add_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
-	add_pinned_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	add_user_to_threads_active_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	approve_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	block_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	change_comment_settings?: FieldPolicy<any> | FieldReadFunction<any>,
-	change_password?: FieldPolicy<any> | FieldReadFunction<any>,
-	close_poll?: FieldPolicy<any> | FieldReadFunction<any>,
-	confirm_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_application?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_order?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_poll?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_reply_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	create_report?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_many_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_many_notifications?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_notification?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_poll?: FieldPolicy<any> | FieldReadFunction<any>,
-	delete_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	down_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	forgot_password?: FieldPolicy<any> | FieldReadFunction<any>,
-	login_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	logout_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	regenerate_new_auth_secret?: FieldPolicy<any> | FieldReadFunction<any>,
-	register_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	remove_application?: FieldPolicy<any> | FieldReadFunction<any>,
-	remove_application_moderator?: FieldPolicy<any> | FieldReadFunction<any>,
-	remove_user_from_threads_active_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	toggle_subscription_to_thread?: FieldPolicy<any> | FieldReadFunction<any>,
-	two_factor_login?: FieldPolicy<any> | FieldReadFunction<any>,
-	unblock_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	up_vote_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_application?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_application_comment_rules?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_poll_vote?: FieldPolicy<any> | FieldReadFunction<any>,
-	update_user?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type NotificationEntityKeySpecifier = ('application_id' | 'created_at' | 'id' | 'message' | 'updated_at' | 'url' | NotificationEntityKeySpecifier)[];
-export type NotificationEntityFieldPolicy = {
-	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	url?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type OptionEntityKeySpecifier = ('id' | 'option' | 'votes' | OptionEntityKeySpecifier)[];
-export type OptionEntityFieldPolicy = {
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	option?: FieldPolicy<any> | FieldReadFunction<any>,
-	votes?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type PollEntityKeySpecifier = ('closed' | 'created_at' | 'id' | 'options' | 'title' | 'updated_at' | 'voted' | PollEntityKeySpecifier)[];
-export type PollEntityFieldPolicy = {
-	closed?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	options?: FieldPolicy<any> | FieldReadFunction<any>,
-	title?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	voted?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type ProfileEntityKeySpecifier = ('id' | 'profile_comments' | 'user' | ProfileEntityKeySpecifier)[];
-export type ProfileEntityFieldPolicy = {
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	profile_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	user?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type QueryKeySpecifier = ('current_user' | 'fetch_all_applications' | 'fetch_all_threads' | 'fetch_application_by_short_name' | 'fetch_applications_by_owner_id' | 'fetch_comment_and_vote_count' | 'fetch_comments' | 'fetch_comments_by_application_id' | 'fetch_comments_by_application_short_name' | 'fetch_comments_by_thread_id' | 'fetch_notifications' | 'fetch_notifications_by_application_id' | 'fetch_notifications_by_short_name' | 'fetch_notifications_by_user_id' | 'fetch_threads_by_user_id' | 'fetch_users' | 'find_one_application_by_id' | 'find_one_application_by_name' | 'find_one_thread_or_create_one' | 'find_profile' | 'find_thread_by_id' | 'is_user_subscribed_to_thread' | 'resend_email_code' | 'search_user_by_email' | QueryKeySpecifier)[];
-export type QueryFieldPolicy = {
-	current_user?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_all_applications?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_all_threads?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_application_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_applications_by_owner_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comment_and_vote_count?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comments_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comments_by_application_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_comments_by_thread_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_notifications?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_notifications_by_application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_notifications_by_short_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_notifications_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_threads_by_user_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	fetch_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	find_one_application_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	find_one_application_by_name?: FieldPolicy<any> | FieldReadFunction<any>,
-	find_one_thread_or_create_one?: FieldPolicy<any> | FieldReadFunction<any>,
-	find_profile?: FieldPolicy<any> | FieldReadFunction<any>,
-	find_thread_by_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	is_user_subscribed_to_thread?: FieldPolicy<any> | FieldReadFunction<any>,
-	resend_email_code?: FieldPolicy<any> | FieldReadFunction<any>,
-	search_user_by_email?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type RatingModelKeySpecifier = ('author_id' | 'id' | RatingModelKeySpecifier)[];
-export type RatingModelFieldPolicy = {
-	author_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type ReportModelKeySpecifier = ('created_at' | 'id' | 'reason' | 'updated_at' | 'user_id' | ReportModelKeySpecifier)[];
-export type ReportModelFieldPolicy = {
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	reason?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	user_id?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type StandardResponseKeySpecifier = ('message' | 'success' | StandardResponseKeySpecifier)[];
-export type StandardResponseFieldPolicy = {
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	success?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type StandardResponseModelKeySpecifier = ('message' | 'success' | StandardResponseModelKeySpecifier)[];
-export type StandardResponseModelFieldPolicy = {
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	success?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type ThreadModelKeySpecifier = ('application_id' | 'commenters_ids' | 'id' | 'parent_application' | 'pinned_comment' | 'pinned_comment_id' | 'poll' | 'subscribed_users' | 'subscribed_users_ids' | 'thread_comments' | 'title' | 'website_url' | ThreadModelKeySpecifier)[];
-export type ThreadModelFieldPolicy = {
-	application_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	commenters_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	parent_application?: FieldPolicy<any> | FieldReadFunction<any>,
-	pinned_comment?: FieldPolicy<any> | FieldReadFunction<any>,
-	pinned_comment_id?: FieldPolicy<any> | FieldReadFunction<any>,
-	poll?: FieldPolicy<any> | FieldReadFunction<any>,
-	subscribed_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	subscribed_users_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	thread_comments?: FieldPolicy<any> | FieldReadFunction<any>,
-	title?: FieldPolicy<any> | FieldReadFunction<any>,
-	website_url?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type TwoFactorLoginResponseKeySpecifier = ('message' | 'success' | 'two_factor_authentication' | TwoFactorLoginResponseKeySpecifier)[];
-export type TwoFactorLoginResponseFieldPolicy = {
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	success?: FieldPolicy<any> | FieldReadFunction<any>,
-	two_factor_authentication?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type TwoFactorLoginSuccessResponseKeySpecifier = ('message' | 'refresh_token' | 'success' | 'token' | 'two_factor_authentication' | 'user' | TwoFactorLoginSuccessResponseKeySpecifier)[];
-export type TwoFactorLoginSuccessResponseFieldPolicy = {
-	message?: FieldPolicy<any> | FieldReadFunction<any>,
-	refresh_token?: FieldPolicy<any> | FieldReadFunction<any>,
-	success?: FieldPolicy<any> | FieldReadFunction<any>,
-	token?: FieldPolicy<any> | FieldReadFunction<any>,
-	two_factor_authentication?: FieldPolicy<any> | FieldReadFunction<any>,
-	user?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type UserModelKeySpecifier = ('applications_joined_ids' | 'avatar' | 'blocked_users' | 'confirmed' | 'created_at' | 'email' | 'id' | 'last_active' | 'status' | 'two_factor_authentication' | 'updated_at' | 'user_role' | 'username' | UserModelKeySpecifier)[];
-export type UserModelFieldPolicy = {
-	applications_joined_ids?: FieldPolicy<any> | FieldReadFunction<any>,
-	avatar?: FieldPolicy<any> | FieldReadFunction<any>,
-	blocked_users?: FieldPolicy<any> | FieldReadFunction<any>,
-	confirmed?: FieldPolicy<any> | FieldReadFunction<any>,
-	created_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	email?: FieldPolicy<any> | FieldReadFunction<any>,
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	last_active?: FieldPolicy<any> | FieldReadFunction<any>,
-	status?: FieldPolicy<any> | FieldReadFunction<any>,
-	two_factor_authentication?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated_at?: FieldPolicy<any> | FieldReadFunction<any>,
-	user_role?: FieldPolicy<any> | FieldReadFunction<any>,
-	username?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type VoteEntityKeySpecifier = ('id' | 'user_id' | VoteEntityKeySpecifier)[];
-export type VoteEntityFieldPolicy = {
-	id?: FieldPolicy<any> | FieldReadFunction<any>,
-	user_id?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type StrictTypedTypePolicies = {
-	ApplicationModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ApplicationModelKeySpecifier | (() => undefined | ApplicationModelKeySpecifier),
-		fields?: ApplicationModelFieldPolicy,
-	},
-	AvatarEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | AvatarEntityKeySpecifier | (() => undefined | AvatarEntityKeySpecifier),
-		fields?: AvatarEntityFieldPolicy,
-	},
-	CommentAndVoteCountEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | CommentAndVoteCountEntityKeySpecifier | (() => undefined | CommentAndVoteCountEntityKeySpecifier),
-		fields?: CommentAndVoteCountEntityFieldPolicy,
-	},
-	CommentModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | CommentModelKeySpecifier | (() => undefined | CommentModelKeySpecifier),
-		fields?: CommentModelFieldPolicy,
-	},
-	CountModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | CountModelKeySpecifier | (() => undefined | CountModelKeySpecifier),
-		fields?: CountModelFieldPolicy,
-	},
-	FetchAllComments?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | FetchAllCommentsKeySpecifier | (() => undefined | FetchAllCommentsKeySpecifier),
-		fields?: FetchAllCommentsFieldPolicy,
-	},
-	FetchCommentByApplicationName?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | FetchCommentByApplicationNameKeySpecifier | (() => undefined | FetchCommentByApplicationNameKeySpecifier),
-		fields?: FetchCommentByApplicationNameFieldPolicy,
-	},
-	FetchCommentByThreadIdResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | FetchCommentByThreadIdResponseKeySpecifier | (() => undefined | FetchCommentByThreadIdResponseKeySpecifier),
-		fields?: FetchCommentByThreadIdResponseFieldPolicy,
-	},
-	FetchCommentsByApplicationId?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | FetchCommentsByApplicationIdKeySpecifier | (() => undefined | FetchCommentsByApplicationIdKeySpecifier),
-		fields?: FetchCommentsByApplicationIdFieldPolicy,
-	},
-	LoginResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | LoginResponseKeySpecifier | (() => undefined | LoginResponseKeySpecifier),
-		fields?: LoginResponseFieldPolicy,
-	},
-	Mutation?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
-		fields?: MutationFieldPolicy,
-	},
-	NotificationEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | NotificationEntityKeySpecifier | (() => undefined | NotificationEntityKeySpecifier),
-		fields?: NotificationEntityFieldPolicy,
-	},
-	OptionEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | OptionEntityKeySpecifier | (() => undefined | OptionEntityKeySpecifier),
-		fields?: OptionEntityFieldPolicy,
-	},
-	PollEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | PollEntityKeySpecifier | (() => undefined | PollEntityKeySpecifier),
-		fields?: PollEntityFieldPolicy,
-	},
-	ProfileEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ProfileEntityKeySpecifier | (() => undefined | ProfileEntityKeySpecifier),
-		fields?: ProfileEntityFieldPolicy,
-	},
-	Query?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | QueryKeySpecifier | (() => undefined | QueryKeySpecifier),
-		fields?: QueryFieldPolicy,
-	},
-	RatingModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | RatingModelKeySpecifier | (() => undefined | RatingModelKeySpecifier),
-		fields?: RatingModelFieldPolicy,
-	},
-	ReportModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ReportModelKeySpecifier | (() => undefined | ReportModelKeySpecifier),
-		fields?: ReportModelFieldPolicy,
-	},
-	StandardResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | StandardResponseKeySpecifier | (() => undefined | StandardResponseKeySpecifier),
-		fields?: StandardResponseFieldPolicy,
-	},
-	StandardResponseModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | StandardResponseModelKeySpecifier | (() => undefined | StandardResponseModelKeySpecifier),
-		fields?: StandardResponseModelFieldPolicy,
-	},
-	ThreadModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | ThreadModelKeySpecifier | (() => undefined | ThreadModelKeySpecifier),
-		fields?: ThreadModelFieldPolicy,
-	},
-	TwoFactorLoginResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | TwoFactorLoginResponseKeySpecifier | (() => undefined | TwoFactorLoginResponseKeySpecifier),
-		fields?: TwoFactorLoginResponseFieldPolicy,
-	},
-	TwoFactorLoginSuccessResponse?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | TwoFactorLoginSuccessResponseKeySpecifier | (() => undefined | TwoFactorLoginSuccessResponseKeySpecifier),
-		fields?: TwoFactorLoginSuccessResponseFieldPolicy,
-	},
-	UserModel?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | UserModelKeySpecifier | (() => undefined | UserModelKeySpecifier),
-		fields?: UserModelFieldPolicy,
-	},
-	VoteEntity?: Omit<TypePolicy, "fields" | "keyFields"> & {
-		keyFields?: false | VoteEntityKeySpecifier | (() => undefined | VoteEntityKeySpecifier),
-		fields?: VoteEntityFieldPolicy,
-	}
-};
-export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;

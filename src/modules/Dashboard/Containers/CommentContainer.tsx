@@ -12,20 +12,20 @@ import { IParams } from './AppContainer'
 import { LoadingComponent } from '../../../partials/Loading'
 import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
-import { IComments } from '../types'
+import { IFormattedRow } from '../types'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
-import { GridRowData, GridRowId, GridState } from '@mui/x-data-grid'
+import { GridRowId, GridState } from '@mui/x-data-grid'
 
 export const CommentContainer = () => {
 	const { application_short_name } = useParams() as IParams
 	const [deleteManyComments] = useDeleteManyCommentsMutation()
 	const [approveComments] = useApproveCommentMutation()
-	const [where, changeWhere] = useState<Where>(Where.Pending)
-	const [selected, changeSelected] = useState<GridRowId[]>([])
+	const [where, changeWhere] = useState<Where>(Where.All)
+	const [selected, setSelectedRows] = useState<ReadonlySet<string>>(() => new Set())
 
 	const { errorMessage, setError, checkError, setErrorMessage } = useErrorAndSuccess()
 
-	let rows: IComments | []
+	let rows: IFormattedRow[] | []
 
 	const { data, loading, refetch, error } = useFetchCommentsByApplicationByShortNameQuery({
 		variables: {
@@ -46,18 +46,6 @@ export const CommentContainer = () => {
 		}
 	}, [error, data, checkError, setError, setErrorMessage])
 
-	const onChange = (
-		params: GridState,
-		event: {
-			defaultMuiPrevented?: boolean | undefined
-		}
-	) => {
-		// console.log('PARAMS', params)
-		// console.log('EVENT', event)
-
-		changeSelected(params.selection)
-	}
-
 	const filterComments = async (where: Where) => {
 		changeWhere(where)
 		await refetch({
@@ -71,55 +59,55 @@ export const CommentContainer = () => {
 		})
 	}
 
-	const deleteSelected = async (permanent_delete: boolean) => {
-		console.log('SELECTED', selected)
+	// const deleteSelected = async (permanent_delete: boolean) => {
+	// 	console.log('SELECTED', selected)
 
-		const arr = selected as string[]
+	// 	console.log('PERMANENT_DELETE', permanent_delete)
 
-		console.log('PERMANENT_DELETE', permanent_delete)
+	// 	try {
+	// 		await deleteManyComments({
+	// 			variables: {
+	// 				deleteManyCommentsInput: { comment_ids: arr, permanent_delete },
+	// 			},
+	// 		})
+	// 		await refetch()
+	// 	} catch (error) {
+	// 		if (error instanceof Error) {
+	// 			setErrorMessage(error.message)
+	// 			setError(true)
+	// 		}
+	// 	}
+	// }
 
-		try {
-			await deleteManyComments({
-				variables: {
-					deleteManyCommentsInput: { comment_ids: arr, permanent_delete },
-				},
-			})
-			await refetch()
-		} catch (error) {
-			if (error instanceof Error) {
-				setErrorMessage(error.message)
-				setError(true)
-			}
-		}
-	}
-
-	const approveSelected = async () => {
-		try {
-			const arr = selected as string[]
-			await approveComments({
-				variables: {
-					approveCommentsInput: {
-						comment_ids: arr,
-					},
-				},
-			})
-			await refetch()
-		} catch (error) {
-			if (error instanceof Error) {
-				setErrorMessage(error.message)
-				setError(true)
-			}
-		}
-	}
+	// const approveSelected = async () => {
+	// 	try {
+	// 		const arr = selected as string[]
+	// 		await approveComments({
+	// 			variables: {
+	// 				approveCommentsInput: {
+	// 					comment_ids: arr,
+	// 				},
+	// 			},
+	// 		})
+	// 		await refetch()
+	// 	} catch (error) {
+	// 		if (error instanceof Error) {
+	// 			setErrorMessage(error.message)
+	// 			setError(true)
+	// 		}
+	// 	}
+	// }
 
 	if (
 		data?.fetch_comments_by_application_short_name &&
 		data.fetch_comments_by_application_short_name.comments
 	) {
-		rows = formattedRows(data.fetch_comments_by_application_short_name.comments || [])
+		rows = formattedRows(data.fetch_comments_by_application_short_name.comments)
 	} else {
 		rows = []
 	}
+
+	console.log('ROWS', rows)
 
 	return loading ? (
 		<LoadingComponent />
@@ -128,11 +116,11 @@ export const CommentContainer = () => {
 			<h2>Comment Table</h2>
 			<CommentDataGrid
 				selected={selected}
-				approveSelected={approveSelected}
+				// approveSelected={approveSelected}
 				filterComments={filterComments}
-				onChange={onChange}
+				onSelectedRowsChange={setSelectedRows}
 				where={where}
-				deleteSelected={deleteSelected}
+				// deleteSelected={deleteSelected}
 				rows={rows}
 				checkError={checkError}
 				errorMessage={errorMessage}
