@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { GridState } from '@mui/x-data-grid'
 import { useParams } from 'react-router-dom'
 import { Button } from '@mui/material'
 import { makeStyles } from '@mui/styles'
@@ -9,7 +8,12 @@ import { LoadingComponent } from '../../../partials/Loading'
 import { omit } from 'ramda'
 import { IParams } from './AppContainer'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
-import { Choice, useFetchApplicationAuthenticatedUsersQuery } from '../../../generated/graphql'
+import {
+	Choice,
+	useBlockUsersFromApplicationMutation,
+	useFetchApplicationAuthenticatedUsersQuery,
+} from '../../../generated/graphql'
+import { rowKeyGetter } from '../helpers'
 
 // { key: 'body', name: 'Body', width: '50%', resizable: true },
 
@@ -48,18 +52,21 @@ export const UsersContainer = () => {
 	const { checkError, errorMessage } = useErrorAndSuccess()
 	const [selected, changeSelected] = useState<ReadonlySet<string>>(() => new Set())
 	const [choice, changeChoice] = useState<Choice>(Choice.All)
+
 	const { data, loading } = useFetchApplicationAuthenticatedUsersQuery({
 		variables: {
 			fetchApplicationByShortNameInput: {
 				application_short_name,
 			},
 			authenticatedUserInput: {
-				choice: Choice.All,
+				choice: choice,
 				limit: 10,
 				skip: 0,
 			},
 		},
 	})
+
+	const [blockUsers] = useBlockUsersFromApplicationMutation()
 
 	// const onChange = (
 	// 	params: GridState,
@@ -73,8 +80,8 @@ export const UsersContainer = () => {
 	// 	changeSelected(params.selection)
 	// }
 
-	const filterUsers = () => {
-		changeChoice(Choice.All)
+	const filterUsers = (choice: Choice) => {
+		changeChoice(choice)
 	}
 
 	let rows: IAuthenticatedUsers[]
@@ -89,11 +96,11 @@ export const UsersContainer = () => {
 		rows = []
 	}
 
-	const blockSelected = () => {}
+	const blockSelected = async () => {
+		console.log('SELECTED', selected)
+	}
 
-	console.log('SELECTED', selected)
-
-	console.log('ROWS', rows)
+	console.log('CHOICE', choice)
 
 	return loading ? (
 		<LoadingComponent />
@@ -116,26 +123,25 @@ export const UsersContainer = () => {
 				)}
 				<Button
 					className={classes.buttonStyle}
-					onClick={() => {
-						if (choice === Choice.All) {
-							blockSelected()
-						}
-					}}
+					variant={choice === Choice.All ? 'contained' : 'text'}
+					onClick={() => filterUsers(Choice.All)}
 				>
 					All
 				</Button>
 				<Button
 					className={classes.buttonStyle}
-					onClick={() => {
-						if (choice === Choice.Blocked) {
-							filterUsers()
-							blockSelected()
-						}
-					}}
+					variant={choice === Choice.Blocked ? 'contained' : 'text'}
+					onClick={() => filterUsers(Choice.Blocked)}
 				>
 					Blocked
 				</Button>
-				<ReactDataGrid rows={rows} columns={columns} />
+				<ReactDataGrid
+					onSelectedRowsChange={changeSelected}
+					selectedRows={selected}
+					rows={rows}
+					columns={columns}
+					rowKeyGetter={rowKeyGetter}
+				/>
 			</>
 		</div>
 	)

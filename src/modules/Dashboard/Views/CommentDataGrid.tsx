@@ -6,6 +6,7 @@ import { Button } from '@mui/material'
 import { Where } from '../../../generated/graphql'
 import { Alerts } from '../../../partials/Alerts'
 import { IFormattedRow } from '../types'
+import { rowKeyGetter } from '../helpers'
 
 const useStyles = makeStyles({
 	root: {
@@ -76,8 +77,6 @@ interface ICommentDataGrid {
 	approveSelected: () => Promise<void>
 	filterComments: (where: Where) => Promise<void>
 }
-
-const rowKeyGetter = (row: IFormattedRow) => row.id
 
 export const CommentDataGrid: React.FC<ICommentDataGrid> = ({
 	checkError,

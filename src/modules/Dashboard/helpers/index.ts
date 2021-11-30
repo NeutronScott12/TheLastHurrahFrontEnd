@@ -12,3 +12,5 @@ export const formattedRows = (comments: IComment[]): IFormattedRow[] => {
 		}
 	})
 }
+
+export const rowKeyGetter = (row: { id: string }) => row.id

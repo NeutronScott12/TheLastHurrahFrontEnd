@@ -301,3 +301,27 @@ query FetchApplicationAuthenticatedUsers(
 		}
 	}
 }
+
+input BlockUserFromApplicationInput {
+	application_id: String!
+	user_ids: [String!]!
+}
+
+mutation BlockUsersFromApplication($blockUsersFromApplication: BlockUserFromApplicationInput!) {
+	block_users_from_application(blockUsersFromApplication: $blockUsersFromApplication) {
+		...ApplicationFields
+	}
+}
+
+input UnBlockUserFromApplicationInput {
+	application_id: String!
+	user_ids: [String!]!
+}
+
+mutation UnBlockUsersFromApplication(
+	$unBlockUsersFromApplication: UnBlockUserFromApplicationInput!
+) {
+	unblock_users_from_application(unBlockUsersFromApplication: $unBlockUsersFromApplication) {
+		...ApplicationFields
+	}
+}

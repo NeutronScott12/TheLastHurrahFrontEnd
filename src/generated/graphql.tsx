@@ -100,6 +100,11 @@ export type AvatarEntity = {
   url: Scalars['String'];
 };
 
+export type BlockUserFromApplicationInput = {
+  application_id: Scalars['String'];
+  user_ids: Array<Scalars['String']>;
+};
+
 export enum Category {
   Tech = 'TECH'
 }
@@ -257,6 +262,10 @@ export type DeletePollInput = {
   thread_id: Scalars['String'];
 };
 
+export type DeleteUserInput = {
+  email: Scalars['String'];
+};
+
 export type FetchAllComments = {
   __typename?: 'FetchAllComments';
   comments: Array<CommentModel>;
@@ -390,6 +399,7 @@ export type Mutation = {
   add_user_to_threads_active_users: StandardResponseModel;
   approve_comments: StandardResponseModel;
   block_user: StandardResponseModel;
+  block_users_from_application: ApplicationModel;
   cancel_order: StandardResponseModel;
   change_comment_settings: CommentModel;
   change_password: StandardResponseModel;
@@ -416,11 +426,12 @@ export type Mutation = {
   register_user: StandardResponseModel;
   remove_application: StandardResponseModel;
   remove_application_moderator: ApplicationModel;
-  remove_user_from_shadow_ban: StandardResponseModel;
   remove_user_from_threads_active_users: StandardResponseModel;
+  remove_users_from_shadow_ban: StandardResponseModel;
   toggle_subscription_to_thread: StandardResponseModel;
   two_factor_login: TwoFactorLoginSuccessResponse;
   unblock_user: StandardResponseModel;
+  unblock_users_from_application: ApplicationModel;
   up_vote_comment: CommentModel;
   update_application: ApplicationModel;
   update_application_comment_rules: ApplicationModel;
@@ -457,6 +468,11 @@ export type MutationApprove_CommentsArgs = {
 
 export type MutationBlock_UserArgs = {
   user_id: Scalars['String'];
+};
+
+
+export type MutationBlock_Users_From_ApplicationArgs = {
+  blockUsersFromApplication: BlockUserFromApplicationInput;
 };
 
 
@@ -541,7 +557,7 @@ export type MutationDelete_PollArgs = {
 
 
 export type MutationDelete_UserArgs = {
-  email: Scalars['String'];
+  deleteUserInput: DeleteUserInput;
 };
 
 
@@ -585,13 +601,13 @@ export type MutationRemove_Application_ModeratorArgs = {
 };
 
 
-export type MutationRemove_User_From_Shadow_BanArgs = {
-  removeUserToShadowBan: ShadowBanUserByIdInput;
+export type MutationRemove_User_From_Threads_Active_UsersArgs = {
+  removeUserFromThreadsActiveUsersInput: RemoveUserFromThreadsActiveUsersInput;
 };
 
 
-export type MutationRemove_User_From_Threads_Active_UsersArgs = {
-  removeUserFromThreadsActiveUsersInput: RemoveUserFromThreadsActiveUsersInput;
+export type MutationRemove_Users_From_Shadow_BanArgs = {
+  removeUserToShadowBan: ShadowBanUserByIdInput;
 };
 
 
@@ -607,6 +623,11 @@ export type MutationTwo_Factor_LoginArgs = {
 
 export type MutationUnblock_UserArgs = {
   user_id: Scalars['String'];
+};
+
+
+export type MutationUnblock_Users_From_ApplicationArgs = {
+  unBlockUsersFromApplication: UnBlockUserFromApplicationInput;
 };
 
 
@@ -636,7 +657,7 @@ export type MutationUpdate_Poll_VoteArgs = {
 
 
 export type MutationUpdate_UserArgs = {
-  UpdateUserInput: UpdateUserInput;
+  updateUserInput: UpdateUserInput;
 };
 
 export type NotificationEntity = {
@@ -980,6 +1001,11 @@ export enum User_Role {
   User = 'USER'
 }
 
+export type UnBlockUserFromApplicationInput = {
+  application_id: Scalars['String'];
+  user_ids: Array<Scalars['String']>;
+};
+
 export type UpdateApplicationCommentRulesInput = {
   allow_images_and_videos_on_comments: Scalars['Boolean'];
   application_short_name: Scalars['String'];
@@ -1182,6 +1208,20 @@ export type FetchApplicationAuthenticatedUsersQueryVariables = Exact<{
 
 
 export type FetchApplicationAuthenticatedUsersQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', authenticated_users: Array<{ __typename?: 'UserModel', confirmed: boolean, last_active: any, username: string, id: string, created_at: any }> } };
+
+export type BlockUsersFromApplicationMutationVariables = Exact<{
+  blockUsersFromApplication: BlockUserFromApplicationInput;
+}>;
+
+
+export type BlockUsersFromApplicationMutation = { __typename?: 'Mutation', block_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+
+export type UnBlockUsersFromApplicationMutationVariables = Exact<{
+  unBlockUsersFromApplication: UnBlockUserFromApplicationInput;
+}>;
+
+
+export type UnBlockUsersFromApplicationMutation = { __typename?: 'Mutation', unblock_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
@@ -2009,6 +2049,76 @@ export function useFetchApplicationAuthenticatedUsersLazyQuery(baseOptions?: Apo
 export type FetchApplicationAuthenticatedUsersQueryHookResult = ReturnType<typeof useFetchApplicationAuthenticatedUsersQuery>;
 export type FetchApplicationAuthenticatedUsersLazyQueryHookResult = ReturnType<typeof useFetchApplicationAuthenticatedUsersLazyQuery>;
 export type FetchApplicationAuthenticatedUsersQueryResult = Apollo.QueryResult<FetchApplicationAuthenticatedUsersQuery, FetchApplicationAuthenticatedUsersQueryVariables>;
+export const BlockUsersFromApplicationDocument = gql`
+    mutation BlockUsersFromApplication($blockUsersFromApplication: BlockUserFromApplicationInput!) {
+  block_users_from_application(
+    blockUsersFromApplication: $blockUsersFromApplication
+  ) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+export type BlockUsersFromApplicationMutationFn = Apollo.MutationFunction<BlockUsersFromApplicationMutation, BlockUsersFromApplicationMutationVariables>;
+
+/**
+ * __useBlockUsersFromApplicationMutation__
+ *
+ * To run a mutation, you first call `useBlockUsersFromApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockUsersFromApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockUsersFromApplicationMutation, { data, loading, error }] = useBlockUsersFromApplicationMutation({
+ *   variables: {
+ *      blockUsersFromApplication: // value for 'blockUsersFromApplication'
+ *   },
+ * });
+ */
+export function useBlockUsersFromApplicationMutation(baseOptions?: Apollo.MutationHookOptions<BlockUsersFromApplicationMutation, BlockUsersFromApplicationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BlockUsersFromApplicationMutation, BlockUsersFromApplicationMutationVariables>(BlockUsersFromApplicationDocument, options);
+      }
+export type BlockUsersFromApplicationMutationHookResult = ReturnType<typeof useBlockUsersFromApplicationMutation>;
+export type BlockUsersFromApplicationMutationResult = Apollo.MutationResult<BlockUsersFromApplicationMutation>;
+export type BlockUsersFromApplicationMutationOptions = Apollo.BaseMutationOptions<BlockUsersFromApplicationMutation, BlockUsersFromApplicationMutationVariables>;
+export const UnBlockUsersFromApplicationDocument = gql`
+    mutation UnBlockUsersFromApplication($unBlockUsersFromApplication: UnBlockUserFromApplicationInput!) {
+  unblock_users_from_application(
+    unBlockUsersFromApplication: $unBlockUsersFromApplication
+  ) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+export type UnBlockUsersFromApplicationMutationFn = Apollo.MutationFunction<UnBlockUsersFromApplicationMutation, UnBlockUsersFromApplicationMutationVariables>;
+
+/**
+ * __useUnBlockUsersFromApplicationMutation__
+ *
+ * To run a mutation, you first call `useUnBlockUsersFromApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnBlockUsersFromApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unBlockUsersFromApplicationMutation, { data, loading, error }] = useUnBlockUsersFromApplicationMutation({
+ *   variables: {
+ *      unBlockUsersFromApplication: // value for 'unBlockUsersFromApplication'
+ *   },
+ * });
+ */
+export function useUnBlockUsersFromApplicationMutation(baseOptions?: Apollo.MutationHookOptions<UnBlockUsersFromApplicationMutation, UnBlockUsersFromApplicationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnBlockUsersFromApplicationMutation, UnBlockUsersFromApplicationMutationVariables>(UnBlockUsersFromApplicationDocument, options);
+      }
+export type UnBlockUsersFromApplicationMutationHookResult = ReturnType<typeof useUnBlockUsersFromApplicationMutation>;
+export type UnBlockUsersFromApplicationMutationResult = Apollo.MutationResult<UnBlockUsersFromApplicationMutation>;
+export type UnBlockUsersFromApplicationMutationOptions = Apollo.BaseMutationOptions<UnBlockUsersFromApplicationMutation, UnBlockUsersFromApplicationMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirm_user(token: $token) {

@@ -67,6 +67,7 @@ export const CommentContainer = () => {
 					deleteManyCommentsInput: { comment_ids: result, permanent_delete },
 				},
 			})
+			setSelectedRows(() => new Set())
 			await refetch()
 		} catch (error) {
 			if (error instanceof Error) {
