@@ -13,3 +13,11 @@ export interface IFormattedRow {
 	username: string
 	created_at: string
 }
+
+export interface IAuthenticatedUsers {
+	confirmed: boolean
+	last_active: Date
+	username: string
+	id: string
+	created_at: Date
+}
