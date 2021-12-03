@@ -14,6 +14,7 @@ import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
 import { IFormattedRow } from '../types'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
+import { CommentGraph } from '../Views/CommentGraph'
 
 export const CommentContainer = () => {
 	const { application_short_name } = useParams() as IParams
@@ -121,6 +122,7 @@ export const CommentContainer = () => {
 				checkError={checkError}
 				errorMessage={errorMessage}
 			/>
+			<CommentGraph />
 		</div>
 	)
 }

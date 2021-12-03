@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { omit } from 'ramda'
 
 import { LoadingComponent } from '../../../partials/Loading'
-import { omit } from 'ramda'
 import { IParams } from './AppContainer'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
 import {
