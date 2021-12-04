@@ -325,3 +325,17 @@ mutation UnBlockUsersFromApplication(
 		...ApplicationFields
 	}
 }
+
+input FetchCommentStatsInput {
+	start_date: DateTime!
+	end_date: DateTime!
+}
+
+query FetchCommentStats($fetchCommentStatsInput: FetchCommentStatsInput!) {
+	fetch_comment_stats(fetchCommentStatsInput: $fetchCommentStatsInput) {
+		comments_per_day {
+			count
+			date
+		}
+	}
+}

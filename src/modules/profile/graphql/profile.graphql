@@ -85,14 +85,3 @@ query FindProfile($findProfileInput: FindProfileInput!) {
 		}
 	}
 }
-
-input FetchCommentAndVoteCountInput {
-	user_id: String!
-}
-
-query FetchCommentAndVoteCount($fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput!) {
-	fetch_comment_and_vote_count(fetchCommentAndVoteCountInput: $fetchCommentAndVoteCountInput) {
-		comment_count
-		vote_count
-	}
-}

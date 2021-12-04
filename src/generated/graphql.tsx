@@ -45,6 +45,7 @@ export type ApplicationModel = {
   auth_secret: Scalars['String'];
   authenticated_users: Array<UserModel>;
   authenticated_users_ids: Array<Scalars['String']>;
+  banned_users_by_id: Array<Scalars['String']>;
   category: Category;
   comment_policy_summary?: Maybe<Scalars['String']>;
   comment_policy_url?: Maybe<Scalars['String']>;
@@ -149,12 +150,6 @@ export type ClosePollInput = {
   poll_id: Scalars['String'];
 };
 
-export type CommentAndVoteCountEntity = {
-  __typename?: 'CommentAndVoteCountEntity';
-  comment_count: Scalars['Int'];
-  vote_count: Scalars['Int'];
-};
-
 export type CommentModel = {
   __typename?: 'CommentModel';
   _count: CountModel;
@@ -184,8 +179,19 @@ export type CommentModel = {
   user_id: Scalars['String'];
 };
 
+export type CommentStatsEntity = {
+  __typename?: 'CommentStatsEntity';
+  comments_per_day: Array<CommentsPerDay>;
+};
+
 export type CommentsByUserIdInput = {
   user_id?: InputMaybe<Scalars['String']>;
+};
+
+export type CommentsPerDay = {
+  __typename?: 'CommentsPerDay';
+  count: Scalars['Int'];
+  date: Scalars['DateTime'];
 };
 
 export type CountModel = {
@@ -276,10 +282,6 @@ export type FetchApplicationByShortNameInput = {
   application_short_name: Scalars['String'];
 };
 
-export type FetchCommentAndVoteCountInput = {
-  user_id: Scalars['String'];
-};
-
 export type FetchCommentByApplicationName = {
   __typename?: 'FetchCommentByApplicationName';
   comments: Array<CommentModel>;
@@ -298,6 +300,11 @@ export type FetchCommentByThreadIdResponse = {
   __typename?: 'FetchCommentByThreadIdResponse';
   comments: Array<CommentModel>;
   comments_count: Scalars['Float'];
+};
+
+export type FetchCommentStatsInput = {
+  end_date: Scalars['DateTime'];
+  start_date: Scalars['DateTime'];
 };
 
 export type FetchCommentsByApplicationId = {
@@ -338,6 +345,11 @@ export type FetchThreadCommentsBySort = {
   limit: Scalars['Int'];
   skip: Scalars['Int'];
   sort?: InputMaybe<Sort>;
+};
+
+export type FetchThreadStats = {
+  limit: Scalars['Int'];
+  skip: Scalars['Int'];
 };
 
 export type FetchThreadsByUserIdInput = {
@@ -750,7 +762,7 @@ export type Query = {
   fetch_all_threads: Array<ThreadModel>;
   fetch_application_by_short_name: ApplicationModel;
   fetch_applications_by_owner_id: Array<ApplicationModel>;
-  fetch_comment_and_vote_count: CommentAndVoteCountEntity;
+  fetch_comment_stats: CommentStatsEntity;
   fetch_comments: FetchAllComments;
   fetch_comments_by_application_id: FetchCommentsByApplicationId;
   fetch_comments_by_application_short_name: FetchCommentByApplicationName;
@@ -777,8 +789,8 @@ export type QueryFetch_Application_By_Short_NameArgs = {
 };
 
 
-export type QueryFetch_Comment_And_Vote_CountArgs = {
-  fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput;
+export type QueryFetch_Comment_StatsArgs = {
+  fetchCommentStatsInput: FetchCommentStatsInput;
 };
 
 
@@ -957,6 +969,7 @@ export type ThreadModel = {
   subscribed_users: Array<UserModel>;
   subscribed_users_ids: Array<Scalars['String']>;
   thread_comments: FetchCommentByThreadIdResponse;
+  thread_stats: ViewEntity;
   title: Scalars['String'];
   website_url: Scalars['String'];
 };
@@ -965,6 +978,11 @@ export type ThreadModel = {
 export type ThreadModelThread_CommentsArgs = {
   commentsByUserIdInput?: InputMaybe<CommentsByUserIdInput>;
   fetchThreadCommentsBySort: FetchThreadCommentsBySort;
+};
+
+
+export type ThreadModelThread_StatsArgs = {
+  fetchThreadStats: FetchThreadStats;
 };
 
 export type ToggleSubscriptionToThreadInput = {
@@ -1064,9 +1082,20 @@ export type UserModel = {
   username: Scalars['String'];
 };
 
+export type ViewEntity = {
+  __typename?: 'ViewEntity';
+  created_at: Scalars['DateTime'];
+  id: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+  user_id: Scalars['String'];
+  view_count: Scalars['Int'];
+};
+
 export type VoteEntity = {
   __typename?: 'VoteEntity';
+  created_at: Scalars['DateTime'];
   id: Scalars['String'];
+  updated_at: Scalars['DateTime'];
   user_id: Scalars['String'];
 };
 
@@ -1223,6 +1252,13 @@ export type UnBlockUsersFromApplicationMutationVariables = Exact<{
 
 export type UnBlockUsersFromApplicationMutation = { __typename?: 'Mutation', unblock_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
+export type FetchCommentStatsQueryVariables = Exact<{
+  fetchCommentStatsInput: FetchCommentStatsInput;
+}>;
+
+
+export type FetchCommentStatsQuery = { __typename?: 'Query', fetch_comment_stats: { __typename?: 'CommentStatsEntity', comments_per_day: Array<{ __typename?: 'CommentsPerDay', count: number, date: any }> } };
+
 export type ConfirmUserMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -1307,13 +1343,6 @@ export type FindProfileQueryVariables = Exact<{
 
 
 export type FindProfileQuery = { __typename?: 'Query', find_profile: { __typename?: 'ProfileEntity', id: string, user: { __typename?: 'UserModel', created_at: any, username: string, last_active: any, status: Status, avatar: { __typename?: 'AvatarEntity', url: string, filename: string, id: string } } } };
-
-export type FetchCommentAndVoteCountQueryVariables = Exact<{
-  fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput;
-}>;
-
-
-export type FetchCommentAndVoteCountQuery = { __typename?: 'Query', fetch_comment_and_vote_count: { __typename?: 'CommentAndVoteCountEntity', comment_count: number, vote_count: number } };
 
 export const ApplicationFieldsFragmentDoc = gql`
     fragment ApplicationFields on ApplicationModel {
@@ -2119,6 +2148,44 @@ export function useUnBlockUsersFromApplicationMutation(baseOptions?: Apollo.Muta
 export type UnBlockUsersFromApplicationMutationHookResult = ReturnType<typeof useUnBlockUsersFromApplicationMutation>;
 export type UnBlockUsersFromApplicationMutationResult = Apollo.MutationResult<UnBlockUsersFromApplicationMutation>;
 export type UnBlockUsersFromApplicationMutationOptions = Apollo.BaseMutationOptions<UnBlockUsersFromApplicationMutation, UnBlockUsersFromApplicationMutationVariables>;
+export const FetchCommentStatsDocument = gql`
+    query FetchCommentStats($fetchCommentStatsInput: FetchCommentStatsInput!) {
+  fetch_comment_stats(fetchCommentStatsInput: $fetchCommentStatsInput) {
+    comments_per_day {
+      count
+      date
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchCommentStatsQuery__
+ *
+ * To run a query within a React component, call `useFetchCommentStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchCommentStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchCommentStatsQuery({
+ *   variables: {
+ *      fetchCommentStatsInput: // value for 'fetchCommentStatsInput'
+ *   },
+ * });
+ */
+export function useFetchCommentStatsQuery(baseOptions: Apollo.QueryHookOptions<FetchCommentStatsQuery, FetchCommentStatsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchCommentStatsQuery, FetchCommentStatsQueryVariables>(FetchCommentStatsDocument, options);
+      }
+export function useFetchCommentStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchCommentStatsQuery, FetchCommentStatsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchCommentStatsQuery, FetchCommentStatsQueryVariables>(FetchCommentStatsDocument, options);
+        }
+export type FetchCommentStatsQueryHookResult = ReturnType<typeof useFetchCommentStatsQuery>;
+export type FetchCommentStatsLazyQueryHookResult = ReturnType<typeof useFetchCommentStatsLazyQuery>;
+export type FetchCommentStatsQueryResult = Apollo.QueryResult<FetchCommentStatsQuery, FetchCommentStatsQueryVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   confirm_user(token: $token) {
@@ -2569,41 +2636,3 @@ export function useFindProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type FindProfileQueryHookResult = ReturnType<typeof useFindProfileQuery>;
 export type FindProfileLazyQueryHookResult = ReturnType<typeof useFindProfileLazyQuery>;
 export type FindProfileQueryResult = Apollo.QueryResult<FindProfileQuery, FindProfileQueryVariables>;
-export const FetchCommentAndVoteCountDocument = gql`
-    query FetchCommentAndVoteCount($fetchCommentAndVoteCountInput: FetchCommentAndVoteCountInput!) {
-  fetch_comment_and_vote_count(
-    fetchCommentAndVoteCountInput: $fetchCommentAndVoteCountInput
-  ) {
-    comment_count
-    vote_count
-  }
-}
-    `;
-
-/**
- * __useFetchCommentAndVoteCountQuery__
- *
- * To run a query within a React component, call `useFetchCommentAndVoteCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useFetchCommentAndVoteCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFetchCommentAndVoteCountQuery({
- *   variables: {
- *      fetchCommentAndVoteCountInput: // value for 'fetchCommentAndVoteCountInput'
- *   },
- * });
- */
-export function useFetchCommentAndVoteCountQuery(baseOptions: Apollo.QueryHookOptions<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>(FetchCommentAndVoteCountDocument, options);
-      }
-export function useFetchCommentAndVoteCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>(FetchCommentAndVoteCountDocument, options);
-        }
-export type FetchCommentAndVoteCountQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountQuery>;
-export type FetchCommentAndVoteCountLazyQueryHookResult = ReturnType<typeof useFetchCommentAndVoteCountLazyQuery>;
-export type FetchCommentAndVoteCountQueryResult = Apollo.QueryResult<FetchCommentAndVoteCountQuery, FetchCommentAndVoteCountQueryVariables>;

@@ -55,7 +55,7 @@ export const CommentGraph = () => {
 	return (
 		<div>
 			<h2>Comment Graph</h2>
-			<Line options={options} data={data} />;
+			<Line options={options} data={data} />
 		</div>
 	)
 }
