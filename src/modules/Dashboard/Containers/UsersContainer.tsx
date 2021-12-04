@@ -4,10 +4,10 @@ import { omit } from 'ramda'
 
 import { LoadingComponent } from '../../../partials/Loading'
 import { IParams } from './AppContainer'
-import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
+// import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
 import {
 	Choice,
-	useBlockUsersFromApplicationMutation,
+	// useBlockUsersFromApplicationMutation,
 	useFetchApplicationAuthenticatedUsersQuery,
 } from '../../../generated/graphql'
 import { UserDataGrid } from '../Views/UserDataGrid'
@@ -17,7 +17,7 @@ import { IAuthenticatedUsers } from '../types'
 
 export const UsersContainer = () => {
 	const { application_short_name } = useParams() as IParams
-	const { checkError, errorMessage } = useErrorAndSuccess()
+	// const { checkError, errorMessage } = useErrorAndSuccess()
 	const [selected, changeSelected] = useState<ReadonlySet<string>>(() => new Set())
 	const [choice, changeChoice] = useState<Choice>(Choice.All)
 
@@ -34,7 +34,7 @@ export const UsersContainer = () => {
 		},
 	})
 
-	const [blockUsers] = useBlockUsersFromApplicationMutation()
+	// const [blockUsers] = useBlockUsersFromApplicationMutation()
 
 	// const onChange = (
 	// 	params: GridState,
