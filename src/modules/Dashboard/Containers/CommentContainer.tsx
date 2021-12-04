@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import moment from 'moment'
 
 import {
 	Sort,
 	useApproveCommentMutation,
 	useDeleteManyCommentsMutation,
 	useFetchCommentsByApplicationByShortNameQuery,
+	useFetchCommentStatsQuery,
 	Where,
 } from '../../../generated/graphql'
 import { IParams } from './AppContainer'
@@ -38,6 +40,18 @@ export const CommentContainer = () => {
 			},
 		},
 	})
+
+	const { loading: commentStatLoading, data: commentStatsData } = useFetchCommentStatsQuery({
+		variables: {
+			fetchCommentStatsInput: {
+				start_date: moment().startOf('month').format('YYYY-MM-DD'),
+				end_date: moment(new Date()).format('YYYY-MM-DD'),
+			},
+		},
+	})
+
+	console.log('LOADING', commentStatLoading)
+	console.log('DATA', commentStatsData)
 
 	useEffect(() => {
 		if (error && checkError !== false) {
@@ -122,7 +136,19 @@ export const CommentContainer = () => {
 				checkError={checkError}
 				errorMessage={errorMessage}
 			/>
-			<CommentGraph />
+			{commentStatLoading ? (
+				<LoadingComponent />
+			) : (
+				<div>
+					{commentStatsData ? (
+						<CommentGraph
+							info={commentStatsData.fetch_comment_stats.comments_per_day}
+						/>
+					) : (
+						''
+					)}
+				</div>
+			)}
 		</div>
 	)
 }
