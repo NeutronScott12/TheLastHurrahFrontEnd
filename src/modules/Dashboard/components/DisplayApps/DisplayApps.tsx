@@ -15,7 +15,7 @@ export const DisplayApps = () => {
 	) : (
 		<>
 			{data && loading === false ? (
-				<Button component={Link} style={{}} to="/dashboard/apps/add_application">
+				<Button component={Link} style={{}} to="/dashboard/add_application">
 					Add Application
 				</Button>
 			) : (
@@ -43,7 +43,7 @@ export const DisplayApps = () => {
 													textDecoration: 'none',
 													color: 'white',
 												}}
-												to={`/dashboard/apps/${short_name}`}
+												to={`/dashboard/${short_name}`}
 												state={{
 													application_id: id,
 												}}

@@ -27,7 +27,7 @@ export const UsersContainer = () => {
 				application_short_name,
 			},
 			authenticatedUserInput: {
-				choice: choice,
+				choice,
 				limit: 10,
 				skip: 0,
 			},

@@ -3,9 +3,14 @@ import {
 	AppBar as MuiAppBar,
 	AppBarProps as MuiAppBarProps,
 	Badge,
+	Divider,
+	Grid,
 	IconButton,
+	Menu,
+	MenuItem,
 	Theme,
 	Toolbar,
+	Typography,
 } from '@mui/material'
 import { styled, useTheme } from '@mui/material/styles'
 import { makeStyles } from '@mui/styles'
@@ -24,6 +29,8 @@ import { IS_LOGGED_IN } from '../graphql/graphql'
 import { cache } from '../apollo/cache'
 import { useLoggedIn } from '../utils/hooks/customApolloHooks'
 import { ColorModeContext } from '../App'
+import { LoadingComponent } from './Loading'
+import { useFetchApplicationsByOwnerIdQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
@@ -79,14 +86,28 @@ interface IMainHeader {
 }
 
 export const MainHeader: React.FC<IMainHeader> = (props) => {
+	const { loading, data: applicationData } = useFetchApplicationsByOwnerIdQuery()
+
 	const theme = useTheme()
 	const classes = useStyles()
 	const history = useNavigate()
 	const { data } = useLoggedIn()
+	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
+
 	const colorMode = React.useContext(ColorModeContext)
+
+	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElUser(event.currentTarget)
+	}
+
+	const handleCloseUserMenu = () => {
+		setAnchorElUser(null)
+	}
 
 	let show
 	let drawer
+
+	console.log('DATA', applicationData)
 
 	const logOut = () => {
 		// isLoggedInVar(false)
@@ -105,6 +126,51 @@ export const MainHeader: React.FC<IMainHeader> = (props) => {
 		if (data.isLoggedIn) {
 			show = (
 				<>
+					<Typography
+						onClick={handleOpenUserMenu}
+						style={{ margin: '0 2rem', cursor: 'pointer', fontWeight: 'bold' }}
+					>
+						Application
+					</Typography>
+					<Menu
+						style={{ minWidth: '400px' }}
+						sx={{ mt: '45px', ml: '25px' }}
+						id="menu-appbar"
+						anchorEl={anchorElUser}
+						anchorOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+						}}
+						keepMounted
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+						}}
+						open={Boolean(anchorElUser)}
+						onClose={handleCloseUserMenu}
+					>
+						{loading ? (
+							<LoadingComponent />
+						) : (
+							<span>
+								<Grid
+									style={{ width: '20rem', padding: '1rem' }}
+									direction="row"
+									container
+									spacing={2}
+								>
+									<Grid item xs={8}>
+										Applications
+									</Grid>
+									<Grid item xs={4}>
+										<Link to="/add_application">Add</Link>
+									</Grid>
+								</Grid>
+
+								<Divider />
+							</span>
+						)}
+					</Menu>
 					<Link style={{ color: '#f7f7f7' }} to="notifications">
 						<IconButton
 							style={{ paddingLeft: '2rem' }}

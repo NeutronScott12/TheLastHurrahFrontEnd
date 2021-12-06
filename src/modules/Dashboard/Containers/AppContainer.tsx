@@ -27,40 +27,40 @@ export const AppContainer = () => {
 			<Button
 				component={Link}
 				style={{}}
-				to={`/dashboard/apps/${application_short_name}/settings`}
+				to={`/dashboard/${application_short_name}/settings`}
 			>
 				Settings
 			</Button>
 			<Button
 				component={Link}
 				style={{}}
-				to={`/dashboard/apps/${application_short_name}/moderation`}
+				to={`/dashboard/${application_short_name}/moderation`}
 			>
 				Moderation
 			</Button>
 			<Button
 				component={Link}
 				style={{}}
-				to={`/dashboard/apps/${application_short_name}/notifications`}
+				to={`/dashboard/${application_short_name}/notifications`}
 			>
 				Notifications
 			</Button>
 			<Button
 				component={Link}
 				style={{}}
-				to={`/dashboard/apps/${application_short_name}/subscriptions`}
+				to={`/dashboard/${application_short_name}/subscriptions`}
 			>
 				Subscription
 			</Button>
 			<br />
 			<Link
 				state={{ application_id: data && data.fetch_application_by_short_name.id }}
-				to={`/dashboard/apps/${application_short_name}/comments`}
+				to={`/dashboard/${application_short_name}/comments`}
 			>
 				Comments
 			</Link>
 			<br />
-			<Link to={`/dashboard/apps/${application_short_name}/users`}>Users</Link>
+			<Link to={`/dashboard/${application_short_name}/users`}>Users</Link>
 			{/* <Outlet /> */}
 		</div>
 	)

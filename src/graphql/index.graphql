@@ -25,3 +25,10 @@ query SearchUserByEmail($email: String!) {
 # query IsUserLoggedIn {
 #     isLoggedIn @client
 # }
+
+query FetchApplicationsByOwnerId {
+	fetch_applications_by_owner_id {
+		id
+		application_name
+	}
+}

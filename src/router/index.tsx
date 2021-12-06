@@ -10,7 +10,6 @@ import { RegisterContainer } from '../modules/authentication/containers/register
 import { AddApplicationContainer } from '../modules/Dashboard/Containers/AddApplicationContainer'
 import { AppContainer } from '../modules/Dashboard/Containers/AppContainer'
 import { CommentContainer } from '../modules/Dashboard/Containers/CommentContainer'
-import { AccountContainer } from '../modules/Dashboard/Containers/DashboardContainer'
 import { ModeratorContainer } from '../modules/Dashboard/Containers/ModeratorContainer/ModeratorContainer'
 import { SettingApplicationContainer } from '../modules/Dashboard/Containers/SettingsContainer/SettingApplicationContainer'
 import { UsersContainer } from '../modules/Dashboard/Containers/UsersContainer'
@@ -62,7 +61,10 @@ export const SiteRouter = () => {
 			path: '/about',
 			element: <AboutContainer />,
 		},
-
+		{
+			path: '/add_application',
+			element: <AddApplicationContainer />,
+		},
 		{
 			path: ':username/*',
 			element: data && data.isLoggedIn === false ? <LoginContainer /> : <ProfileContainer />,
@@ -80,39 +82,36 @@ export const SiteRouter = () => {
 			element: data && data.isLoggedIn ? <LazyDashboard /> : <LoginContainer />,
 			children: [
 				{
-					path: 'apps/add_application',
+					path: 'add_application',
 					element: <AddApplicationContainer />,
 				},
+
 				{
-					path: 'apps',
-					element: <AccountContainer />,
-				},
-				{
-					path: 'apps/:application_short_name',
+					path: ':application_short_name',
 					element: <AppContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/comments',
+					path: ':application_short_name/comments',
 					element: <CommentContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/users',
+					path: ':application_short_name/users',
 					element: <UsersContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/settings',
+					path: ':application_short_name/settings',
 					element: <SettingApplicationContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/moderation',
+					path: ':application_short_name/moderation',
 					element: <ModeratorContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/notifications',
+					path: ':application_short_name/notifications',
 					element: <DashboardNotificationContainer />,
 				},
 				{
-					path: 'apps/:application_short_name/subscriptions',
+					path: ':application_short_name/subscriptions',
 					element: <SubscriptionContainer />,
 				},
 			],
