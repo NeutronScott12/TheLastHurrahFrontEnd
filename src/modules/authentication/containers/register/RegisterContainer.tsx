@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Checkbox, Container, FormControlLabel, TextField } from '@mui/material'
+import { Checkbox, Container, FormControlLabel, TextField, Button } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useFormik } from 'formik'
-import { Button } from 'antd'
+// import { Button } from 'antd'
 
 import { IRegisterForm } from '../../utils/types'
 import { useRegisterUserMutation } from '../../../../generated/graphql'
@@ -27,6 +27,7 @@ export const RegisterContainer = () => {
 			{ email, password, username, two_factor_authentication },
 			{ setSubmitting, setFieldError, resetForm }
 		) => {
+			console.log("WORKING")
 			try {
 				await registerUser({
 					variables: {
@@ -155,13 +156,22 @@ export const RegisterContainer = () => {
 					label="Two Factor Authentication"
 				/>
 				<Button
-					disabled={formik.isSubmitting || formik.dirty === false || !formik.isValid}
+					disabled={formik.isSubmitting || formik.dirty === false}
+					color="primary"
+					variant="contained"
+					fullWidth
+					type="submit"
+				>
+					Submit
+				</Button>
+				{/* <Button
+					disabled={formik.dirty === false || !formik.isValid}
 					type="primary"
 					block
 					loading={loading}
 				>
 					Submit
-				</Button>
+				</Button> */}
 			</form>
 		</Container>
 	)
