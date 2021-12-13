@@ -9,7 +9,7 @@ import { useRegisterUserMutation } from '../../../../generated/graphql'
 import { registrationValidation } from '../../helpers/validation'
 
 export const RegisterContainer = () => {
-	const [registerUser, { loading }] = useRegisterUserMutation()
+	const [registerUser] = useRegisterUserMutation()
 	const [alertToggle, changeToggle] = useState(false)
 	const [alertEmail, changeEmail] = useState('')
 
@@ -27,7 +27,7 @@ export const RegisterContainer = () => {
 			{ email, password, username, two_factor_authentication },
 			{ setSubmitting, setFieldError, resetForm }
 		) => {
-			console.log("WORKING")
+			console.log('WORKING')
 			try {
 				await registerUser({
 					variables: {

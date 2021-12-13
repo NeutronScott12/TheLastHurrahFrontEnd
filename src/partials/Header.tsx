@@ -7,7 +7,6 @@ import {
 	Grid,
 	IconButton,
 	Menu,
-	MenuItem,
 	Theme,
 	Toolbar,
 	Typography,
@@ -23,6 +22,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import LockIcon from '@material-ui/icons/Lock'
 import HomeIcon from '@material-ui/icons/Home'
+import AddIcon from '@mui/icons-material/Add'
 
 import { Link, useNavigate } from 'react-router-dom'
 import { IS_LOGGED_IN } from '../graphql/graphql'
@@ -107,8 +107,6 @@ export const MainHeader: React.FC<IMainHeader> = (props) => {
 	let show
 	let drawer
 
-	console.log('DATA', applicationData)
-
 	const logOut = () => {
 		// isLoggedInVar(false)
 		cache.writeQuery({
@@ -163,11 +161,25 @@ export const MainHeader: React.FC<IMainHeader> = (props) => {
 										Applications
 									</Grid>
 									<Grid item xs={4}>
-										<Link to="/add_application">Add</Link>
+										<Link to="/add_application">
+											<AddIcon />
+										</Link>
 									</Grid>
+									<Divider />
+									{applicationData?.fetch_applications_by_owner_id.map(
+										(application) => {
+											return (
+												<Grid key={application.id} item xs={12}>
+													<Link
+														to={`/dashboard/${application.short_name}`}
+													>
+														{application.application_name}
+													</Link>
+												</Grid>
+											)
+										}
+									)}
 								</Grid>
-
-								<Divider />
 							</span>
 						)}
 					</Menu>

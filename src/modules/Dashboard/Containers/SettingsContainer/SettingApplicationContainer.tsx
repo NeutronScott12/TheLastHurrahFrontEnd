@@ -7,7 +7,8 @@ import { useFetchApplicationByShortNameQuery } from '../../../../generated/graph
 import { SettingsEditFormComponent } from '../../components/SettingsComponents/SettingsEditForm'
 
 export const SettingApplicationContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+	const { application_short_name } = params as IParams
 	const { data, loading } = useFetchApplicationByShortNameQuery({
 		variables: { fetchApplicationByShortNameInput: { application_short_name } },
 	})

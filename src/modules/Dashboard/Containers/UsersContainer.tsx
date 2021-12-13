@@ -16,7 +16,8 @@ import { IAuthenticatedUsers } from '../types'
 // { key: 'body', name: 'Body', width: '50%', resizable: true },
 
 export const UsersContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+	const { application_short_name } = params as IParams
 	// const { checkError, errorMessage } = useErrorAndSuccess()
 	const [selected, changeSelected] = useState<ReadonlySet<string>>(() => new Set())
 	const [choice, changeChoice] = useState<Choice>(Choice.All)

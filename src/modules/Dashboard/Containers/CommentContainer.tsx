@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy } from 'react'
 import { useParams } from 'react-router-dom'
 import moment from 'moment'
 
@@ -16,10 +16,17 @@ import { formattedRows } from '../helpers'
 import { CommentDataGrid } from '../Views/CommentDataGrid'
 import { IFormattedRow } from '../types'
 import { useErrorAndSuccess } from '../../../utils/hooks/errorAndSuccessHooks'
-import { CommentGraph } from '../Views/CommentGraph'
+// import { CommentGraph } from '../Views/CommentGraph'
+
+const CommentGraph = lazy(() =>
+	import('../Views/CommentGraph').then((module) => ({
+		default: module.CommentGraph,
+	}))
+)
 
 export const CommentContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+	const { application_short_name } = params as IParams
 	const [deleteManyComments] = useDeleteManyCommentsMutation()
 	const [approveComments] = useApproveCommentMutation()
 	const [where, changeWhere] = useState<Where>(Where.All)
@@ -49,9 +56,6 @@ export const CommentContainer = () => {
 			},
 		},
 	})
-
-	console.log('LOADING', commentStatLoading)
-	console.log('DATA', commentStatsData)
 
 	useEffect(() => {
 		if (error && checkError !== false) {

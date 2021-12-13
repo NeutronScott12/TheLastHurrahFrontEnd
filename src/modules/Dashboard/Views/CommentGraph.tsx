@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -11,6 +11,7 @@ import {
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import moment from 'moment'
+import { LoadingComponent } from '../../../partials/Loading'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
@@ -36,9 +37,8 @@ export interface ICommentGraph {
 }
 
 export const CommentGraph: React.FC<ICommentGraph> = (info) => {
-	console.log('STATS', info)
 	let labels = info.info.map((obj) => moment(obj.date).format('DD-MM-YYYY'))
-	let statData = info.info.map((obj) => obj.count)
+	let statData = info.info.map((obj) => Math.trunc(obj.count))
 
 	const data = {
 		labels,
@@ -53,9 +53,9 @@ export const CommentGraph: React.FC<ICommentGraph> = (info) => {
 	}
 
 	return (
-		<div>
+		<Suspense fallback={LoadingComponent}>
 			<h2>Comment Graph</h2>
 			<Line options={options} data={data} />
-		</div>
+		</Suspense>
 	)
 }

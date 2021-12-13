@@ -25,7 +25,8 @@ export interface IFormikValues {
 }
 
 export const ModeratorContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+	const { application_short_name } = params as IParams
 	const [getUser, { data: userData }] = useSearchUserByEmailLazyQuery()
 	const [userModerator, setAddModerator] = useState<IModeratorState>()
 	const [isAddModeratorOpen, setAddModeratorOpen] = useState(false)

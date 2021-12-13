@@ -9,7 +9,8 @@ import { LoadingComponent } from '../../../partials/Loading'
 import { IParams } from './AppContainer'
 
 export const DashboardNotificationContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+	const { application_short_name } = params as IParams
 	const [deleteNotificationMutation] = useDeleteNotificationMutation()
 	const { data, loading, refetch } = useFetchNotificationByApplicationShortNameQuery({
 		variables: {

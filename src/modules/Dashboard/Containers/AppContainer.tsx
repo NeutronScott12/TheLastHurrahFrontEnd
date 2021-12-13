@@ -8,7 +8,9 @@ export interface IParams {
 }
 
 export const AppContainer = () => {
-	const { application_short_name } = useParams() as IParams
+	const params = useParams() as unknown
+
+	const { application_short_name } = params as IParams
 
 	const { loading, data } = useFetchApplicationByShortNameQuery({
 		variables: {

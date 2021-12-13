@@ -1133,7 +1133,7 @@ export type SearchUserByEmailQuery = { __typename?: 'Query', search_user_by_emai
 export type FetchApplicationsByOwnerIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchApplicationsByOwnerIdQuery = { __typename?: 'Query', fetch_applications_by_owner_id: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string }> };
+export type FetchApplicationsByOwnerIdQuery = { __typename?: 'Query', fetch_applications_by_owner_id: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, short_name: string }> };
 
 export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
 
@@ -1540,6 +1540,7 @@ export const FetchApplicationsByOwnerIdDocument = gql`
   fetch_applications_by_owner_id {
     id
     application_name
+    short_name
   }
 }
     `;

@@ -30,5 +30,6 @@ query FetchApplicationsByOwnerId {
 	fetch_applications_by_owner_id {
 		id
 		application_name
+		short_name
 	}
 }

@@ -11,7 +11,8 @@ interface IProfileParams {
 }
 
 export const ProfileContainer = () => {
-	const { username } = useParams() as IProfileParams
+	const params = useParams() as unknown
+	const { username } = params as IProfileParams
 	const { loading, data } = useFindProfileQuery({ variables: { findProfileInput: { username } } })
 
 	// console.log('DATA', data)
