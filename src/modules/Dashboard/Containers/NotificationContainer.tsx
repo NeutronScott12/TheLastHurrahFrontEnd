@@ -45,8 +45,8 @@ export const DashboardNotificationContainer = () => {
 				{data?.fetch_notifications_by_short_name.map((notification) => {
 					console.log('notification', notification)
 					return (
-						<div>
-							<ListItem key={notification.id}>{notification.message}</ListItem>
+						<div key={notification.id}>
+							<ListItem>{notification.message}</ListItem>
 							<Button onClick={() => deleteNotification(notification.id)}>
 								Delete
 							</Button>
