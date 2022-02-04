@@ -24,7 +24,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import HomeIcon from '@mui/icons-material/Home'
 import AddIcon from '@mui/icons-material/Add'
 
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { IS_LOGGED_IN } from '../graphql/graphql'
 import { cache } from '../apollo/cache'
 import { useLoggedIn } from '../utils/hooks/customApolloHooks'
@@ -85,8 +85,18 @@ interface IMainHeader {
 	open: boolean
 }
 
+export interface IHeaderParams {
+	application_short_name: string
+}
+
 export const MainHeader: React.FC<IMainHeader> = (props) => {
+	const params = useParams() as unknown
 	const { loading, data: applicationData } = useFetchApplicationsByOwnerIdQuery()
+
+	const { application_short_name } = params as IHeaderParams
+
+	console.log('PARAMS', params)
+	console.log('APPLICATION_SHORT_NAME', application_short_name)
 
 	const theme = useTheme()
 	const classes = useStyles()

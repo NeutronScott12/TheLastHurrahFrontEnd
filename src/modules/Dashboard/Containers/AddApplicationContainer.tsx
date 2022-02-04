@@ -41,7 +41,7 @@ export const AddApplicationContainer = () => {
 				})
 
 				if (response.data) {
-					navigate(`/dashboard/apps/${response.data.create_application.short_name}`)
+					navigate(`/dashboard/${response.data.create_application.short_name}`)
 				}
 			} catch (error) {
 				console.log(error)
