@@ -37,7 +37,7 @@ export const SettingsEditForm: React.FC<ISettingsEditForm> = ({
 	successMessage,
 }) => {
 	return (
-		<Suspense fallback={LoadingComponent}>
+		<Suspense fallback={<LoadingComponent />}>
 			<Grid
 				container
 				style={{ marginTop: '2rem' }}

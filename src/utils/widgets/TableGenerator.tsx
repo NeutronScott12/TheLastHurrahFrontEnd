@@ -25,6 +25,7 @@ interface ITableHead {
 
 interface ITableGenerator {
 	tableHeaders: ITableHead[]
+	children: React.ReactNode
 }
 
 export const TableGenerator: React.FC<ITableGenerator> = ({ children, tableHeaders }) => {

@@ -19,7 +19,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 	},
 }))
 
-export const MainContainer: React.FC = (props) => {
+type Props = {
+	children?: React.ReactNode
+}
+
+export const MainContainer: React.FC<Props> = (props) => {
 	const classes = useStyles()
 
 	return (

@@ -53,7 +53,7 @@ export const CommentGraph: React.FC<ICommentGraph> = (info) => {
 	}
 
 	return (
-		<Suspense fallback={LoadingComponent}>
+		<Suspense fallback={<LoadingComponent />}>
 			<h2>Comment Graph</h2>
 			<Line options={options} data={data} />
 		</Suspense>
