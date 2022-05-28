@@ -1,7 +1,6 @@
 import React from 'react'
 import Moment from 'react-moment'
 import { Link } from 'react-router-dom'
-import { Comment } from 'semantic-ui-react'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 
 import { IProfileCommentTypes } from '../types'
@@ -12,7 +11,7 @@ interface IProfileComment {
 
 export const ProfileComments: React.FC<IProfileComment> = ({ comments }) => {
 	return (
-		<Comment.Group size="huge">
+		<div>
 			{comments.map((comment) => {
 				return (
 					<div>
@@ -37,6 +36,6 @@ export const ProfileComments: React.FC<IProfileComment> = ({ comments }) => {
 					// </Comment>
 				)
 			})}
-		</Comment.Group>
+		</div>
 	)
 }

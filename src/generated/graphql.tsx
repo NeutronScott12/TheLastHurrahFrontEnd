@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -66,6 +66,7 @@ export type ApplicationModel = {
   pre_comment_moderation: Pre_Comment_Moderation;
   renewal?: Maybe<Scalars['DateTime']>;
   short_name: Scalars['String'];
+  subscription: SubscriptionEntity;
   theme: Theme;
   thread_ids: Array<Scalars['String']>;
   threads: Array<ThreadModel>;
@@ -144,6 +145,10 @@ export type ChangeCommentSettingsInput = {
 export type ChangePasswordInput = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type ChangeSubscriptionPlanInput = {
+  id: Scalars['String'];
 };
 
 export type ClosePollInput = {
@@ -285,7 +290,7 @@ export type FetchApplicationByShortNameInput = {
 export type FetchCommentByApplicationName = {
   __typename?: 'FetchCommentByApplicationName';
   comments: Array<CommentModel>;
-  comments_count: Scalars['Float'];
+  comments_count: Scalars['Int'];
 };
 
 export type FetchCommentByThreadIdInput = {
@@ -299,7 +304,7 @@ export type FetchCommentByThreadIdInput = {
 export type FetchCommentByThreadIdResponse = {
   __typename?: 'FetchCommentByThreadIdResponse';
   comments: Array<CommentModel>;
-  comments_count: Scalars['Float'];
+  comments_count: Scalars['Int'];
 };
 
 export type FetchCommentStatsInput = {
@@ -310,7 +315,7 @@ export type FetchCommentStatsInput = {
 export type FetchCommentsByApplicationId = {
   __typename?: 'FetchCommentsByApplicationId';
   comments: Array<CommentModel>;
-  comments_count: Scalars['Float'];
+  comments_count: Scalars['Int'];
 };
 
 export type FetchCommentsByApplicationIdInput = {
@@ -387,6 +392,7 @@ export enum Language {
 }
 
 export type LoginInput = {
+  application_short_name?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
 };
@@ -413,8 +419,10 @@ export type Mutation = {
   block_user: StandardResponseModel;
   block_users_from_application: ApplicationModel;
   cancel_order: StandardResponseModel;
+  cancel_subscription_plan: ApplicationModel;
   change_comment_settings: CommentModel;
   change_password: StandardResponseModel;
+  change_subscription_plan: ApplicationModel;
   close_poll: PollEntity;
   confirm_user: StandardResponseModel;
   create_application: ApplicationModel;
@@ -428,6 +436,7 @@ export type Mutation = {
   delete_many_notifications: StandardResponse;
   delete_notification: StandardResponse;
   delete_poll: StandardResponseModel;
+  delete_report_by_id: StandardResponseModel;
   delete_user: StandardResponseModel;
   down_vote_comment: CommentModel;
   forgot_password: StandardResponseModel;
@@ -450,6 +459,7 @@ export type Mutation = {
   update_comment: CommentModel;
   update_poll_vote: PollEntity;
   update_user: UserModel;
+  upgrade_subscription_plan: StandardResponseModel;
 };
 
 
@@ -500,6 +510,11 @@ export type MutationChange_Comment_SettingsArgs = {
 
 export type MutationChange_PasswordArgs = {
   changePasswordInput: ChangePasswordInput;
+};
+
+
+export type MutationChange_Subscription_PlanArgs = {
+  changeSubscriptionPlan: ChangeSubscriptionPlanInput;
 };
 
 
@@ -565,6 +580,11 @@ export type MutationDelete_NotificationArgs = {
 
 export type MutationDelete_PollArgs = {
   deletePollInput: DeletePollInput;
+};
+
+
+export type MutationDelete_Report_By_IdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -759,6 +779,7 @@ export type Query = {
   current_user: UserModel;
   fetch_all_applications: Array<ApplicationModel>;
   fetch_all_orders: Array<OrderEntity>;
+  fetch_all_reports: Array<ReportModel>;
   fetch_all_threads: Array<ThreadModel>;
   fetch_application_by_short_name: ApplicationModel;
   fetch_applications_by_owner_id: Array<ApplicationModel>;
@@ -892,6 +913,7 @@ export type RefundOrderInput = {
 
 export type RegistrationInput = {
   application_id?: InputMaybe<Scalars['String']>;
+  application_short_name?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
   redirect_url?: InputMaybe<Scalars['String']>;
@@ -948,6 +970,17 @@ export type StandardResponseModel = {
   __typename?: 'StandardResponseModel';
   message: Scalars['String'];
   success: Scalars['Boolean'];
+};
+
+export type SubscriptionEntity = {
+  __typename?: 'SubscriptionEntity';
+  created_at: Scalars['DateTime'];
+  id: Scalars['String'];
+  idempotency_key: Scalars['String'];
+  order_id: Scalars['String'];
+  renewal: Scalars['Boolean'];
+  renewal_date: Scalars['DateTime'];
+  updated_at: Scalars['DateTime'];
 };
 
 export enum Theme {
@@ -1135,7 +1168,7 @@ export type FetchApplicationsByOwnerIdQueryVariables = Exact<{ [key: string]: ne
 
 export type FetchApplicationsByOwnerIdQuery = { __typename?: 'Query', fetch_applications_by_owner_id: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, short_name: string }> };
 
-export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> };
 
 export type FetchCommentsByApplicationByShortNameQueryVariables = Exact<{
   fetchCommentsByApplicationShortNameInput: FetchCommentsByApplicationShortNameInput;
@@ -1149,7 +1182,7 @@ export type FetchApplicationByShortNameQueryVariables = Exact<{
 }>;
 
 
-export type FetchApplicationByShortNameQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FetchApplicationByShortNameQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type FetchNotificationByApplicationShortNameQueryVariables = Exact<{
   fetchNotificationByApplicationShortNameInput: FetchNotificationByApplicationShortNameInput;
@@ -1163,7 +1196,7 @@ export type FetchApplicationByNameQueryVariables = Exact<{
 }>;
 
 
-export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FetchApplicationByNameQuery = { __typename?: 'Query', find_one_application_by_name: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CommentFragmentFragment = { __typename?: 'CommentModel', id: string, plain_text_body: string, application_id: string, created_at: any, updated_at: any, author: { __typename?: 'UserModel', id: string, username: string } };
 
@@ -1177,14 +1210,14 @@ export type FetchCommentsByApplicationIdQuery = { __typename?: 'Query', fetch_co
 export type FetchApplicationsByOwnerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
+export type FetchApplicationsByOwnerQuery = { __typename?: 'Query', fetch_all_applications: Array<{ __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> }> };
 
 export type FindOneApplicationByIdQueryVariables = Exact<{
   findOneApplicationByIdId: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type FindOneApplicationByIdQuery = { __typename?: 'Query', find_one_application_by_id: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type CreateApplicationMutationVariables = Exact<{
   createApplicationInput: CreateApplicationInput;
@@ -1198,14 +1231,14 @@ export type RemoveApplicationModeratorMutationVariables = Exact<{
 }>;
 
 
-export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type RemoveApplicationModeratorMutation = { __typename?: 'Mutation', remove_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type AddApplicationModeratorMutationVariables = Exact<{
   addModeratorInput: AddModeratorInput;
 }>;
 
 
-export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type AddApplicationModeratorMutation = { __typename?: 'Mutation', add_application_moderator: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type DeleteManyCommentsMutationVariables = Exact<{
   deleteManyCommentsInput: DeleteManyCommentsInput;
@@ -1226,7 +1259,7 @@ export type UpdateApplicationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type UpdateApplicationMutation = { __typename?: 'Mutation', update_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type ApproveCommentMutationVariables = Exact<{
   approveCommentsInput: ApproveCommentsInput;
@@ -1248,14 +1281,14 @@ export type BlockUsersFromApplicationMutationVariables = Exact<{
 }>;
 
 
-export type BlockUsersFromApplicationMutation = { __typename?: 'Mutation', block_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type BlockUsersFromApplicationMutation = { __typename?: 'Mutation', block_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type UnBlockUsersFromApplicationMutationVariables = Exact<{
   unBlockUsersFromApplication: UnBlockUserFromApplicationInput;
 }>;
 
 
-export type UnBlockUsersFromApplicationMutation = { __typename?: 'Mutation', unblock_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null | undefined, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null | undefined, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null | undefined, comment_policy_summary?: string | null | undefined, description?: string | null | undefined, default_avatar_url?: string | null | undefined, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
+export type UnBlockUsersFromApplicationMutation = { __typename?: 'Mutation', unblock_users_from_application: { __typename?: 'ApplicationModel', id: string, application_name: string, plan: string, cost: number, renewal?: any | null, short_name: string, created_at: any, updated_at: any, links_in_comments: boolean, email_mods_when_comments_flagged: boolean, allow_images_and_videos_on_comments: boolean, pre_comment_moderation: Pre_Comment_Moderation, display_comments_when_flagged: boolean, website_url?: string | null, category: Category, language: Language, theme: Theme, adult_content: boolean, comment_policy_url?: string | null, comment_policy_summary?: string | null, description?: string | null, default_avatar_url?: string | null, application_owner: { __typename?: 'UserModel', id: string }, moderators: Array<{ __typename?: 'UserModel', email: string, username: string, id: string }> } };
 
 export type FetchCommentStatsQueryVariables = Exact<{
   fetchCommentStatsInput: FetchCommentStatsInput;

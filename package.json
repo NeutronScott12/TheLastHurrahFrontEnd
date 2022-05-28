@@ -1,9 +1,8 @@
 {
-	"name": "thelastfrontend",
+	"name": "temp",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@ant-design/icons": "^4.7.0",
 		"@apollo/client": "^3.6.5",
 		"@emotion/react": "^11.9.0",
 		"@emotion/styled": "^11.8.1",
@@ -12,9 +11,9 @@
 		"@mui/styles": "^5.8.0",
 		"@mui/x-data-grid": "^5.11.1",
 		"@testing-library/jest-dom": "^5.16.4",
-		"@testing-library/react": "^13.2.0",
+		"@testing-library/react": "^13.3.0",
 		"@testing-library/user-event": "^14.2.0",
-		"chart.js": "^3.7.1",
+		"chart.js": "^3.8.0",
 		"clsx": "^1.1.1",
 		"dotenv": "^16.0.1",
 		"downshift": "^6.1.7",
@@ -31,14 +30,11 @@
 		"react-dom": "^18.1.0",
 		"react-helmet": "^6.1.0",
 		"react-moment": "^1.1.2",
-		"react-router": "^6.3.0",
 		"react-router-dom": "^6.3.0",
 		"react-scripts": "5.0.1",
 		"recharts": "^2.1.10",
-		"semantic-ui-css": "^2.4.1",
-		"semantic-ui-react": "^2.1.2",
 		"styled-components": "^5.3.5",
-		"typescript": "^4.6.4",
+		"typescript": "^4.7.2",
 		"web-vitals": "^2.1.4",
 		"yup": "^0.32.11"
 	},
@@ -47,7 +43,7 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"remove:node_modules": "npx rimraf node_modules"
+		"graphql-codegen": "graphql-codegen --config codegen.yml"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -68,16 +64,16 @@
 		]
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^7.1.0",
 		"@graphql-codegen/cli": "^2.6.2",
 		"@graphql-codegen/introspection": "^2.1.1",
 		"@graphql-codegen/typescript": "^2.4.11",
 		"@graphql-codegen/typescript-apollo-client-helpers": "^2.1.18",
 		"@graphql-codegen/typescript-operations": "^2.4.0",
 		"@graphql-codegen/typescript-react-apollo": "^3.2.14",
-		"@types/faker": "^6.6.9",
 		"@types/jest": "^27.5.1",
 		"@types/jwt-decode": "^3.1.0",
-		"@types/node": "^17.0.35",
+		"@types/node": "^17.0.36",
 		"@types/ramda": "^0.28.13",
 		"@types/react": "^18.0.9",
 		"@types/react-dom": "^18.0.5",
@@ -85,9 +81,6 @@
 		"@types/react-router-dom": "^5.3.3",
 		"@types/styled-components": "^5.1.25",
 		"@types/yup": "^0.29.14",
-		"css-loader": "^6.7.1",
-		"faker": "^6.6.6",
-		"rimraf": "^3.0.2",
-		"url-loader": "^4.1.1"
+		"rimraf": "^3.0.2"
 	}
 }
