@@ -2,7 +2,8 @@ import { Container, Grid, Theme } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import React from 'react'
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
+	//@ts-ignore
 	appBarSpacer: theme.mixins.toolbar,
 	content: {
 		flexGrow: 1,
@@ -12,9 +13,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 	container: {
 		color: 'white',
 		// background: 'blue',
+		//@ts-ignore
 		marginTop: theme.spacing(6),
+		//@ts-ignore
 		paddingTop: theme.spacing(2),
+		//@ts-ignore
 		paddingBottom: theme.spacing(4),
+		//@ts-ignore
 		paddingLeft: theme.spacing(2),
 	},
 }))

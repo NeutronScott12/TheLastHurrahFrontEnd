@@ -10,12 +10,13 @@ import { useCurrentUserQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
 	toolbarIcon: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
 		padding: '0 8px',
+		//@ts-ignore
 		...theme.mixins.toolbar,
 	},
 }))

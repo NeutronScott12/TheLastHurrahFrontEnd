@@ -296,6 +296,7 @@ query FetchApplicationAuthenticatedUsers(
 			confirmed
 			last_active
 			username
+			two_factor_authentication
 			id
 			created_at
 		}

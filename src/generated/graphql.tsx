@@ -1274,7 +1274,7 @@ export type FetchApplicationAuthenticatedUsersQueryVariables = Exact<{
 }>;
 
 
-export type FetchApplicationAuthenticatedUsersQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', authenticated_users: Array<{ __typename?: 'UserModel', confirmed: boolean, last_active: any, username: string, id: string, created_at: any }> } };
+export type FetchApplicationAuthenticatedUsersQuery = { __typename?: 'Query', fetch_application_by_short_name: { __typename?: 'ApplicationModel', authenticated_users: Array<{ __typename?: 'UserModel', confirmed: boolean, last_active: any, username: string, two_factor_authentication: boolean, id: string, created_at: any }> } };
 
 export type BlockUsersFromApplicationMutationVariables = Exact<{
   blockUsersFromApplication: BlockUserFromApplicationInput;
@@ -2117,6 +2117,7 @@ export const FetchApplicationAuthenticatedUsersDocument = gql`
       confirmed
       last_active
       username
+      two_factor_authentication
       id
       created_at
     }

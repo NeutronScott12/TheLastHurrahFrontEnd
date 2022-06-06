@@ -69,6 +69,8 @@ export const UsersContainer = () => {
 		console.log('SELECTED', selected)
 	}
 
+	console.log('ROWS', rows)
+
 	console.log('CHOICE', choice)
 
 	return loading ? (

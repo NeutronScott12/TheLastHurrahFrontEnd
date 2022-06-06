@@ -34,7 +34,7 @@ import { useFetchApplicationsByOwnerIdQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
 	toolbar: {
 		paddingRight: 24, // keep right padding when drawer closed
 	},
@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 		paddingRight: '2rem',
 		justifyContent: 'flex-end',
 		margin: '2rem',
+		//@ts-ignore
 		...theme.mixins.toolbar,
 	},
 	menuButton: {

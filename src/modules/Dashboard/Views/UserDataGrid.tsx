@@ -10,10 +10,11 @@ import { rowKeyGetter } from '../helpers'
 const columns: Column<IAuthenticatedUsers>[] = [
 	SelectColumn,
 	{ key: 'username', name: 'Username', width: '20%' },
-	{ key: 'confirmed', name: 'Confirmed', width: '20%' },
+	{ key: 'confirmed', name: 'Confirmed', width: '10%' },
 	{ key: 'created_at', name: 'Created At', width: '20%' },
 	{ key: 'last_active', name: 'Last Active', width: '20%' },
-	{ key: 'status', name: 'Status', width: '20%' },
+	{ key: 'status', name: 'Status', width: '10%' },
+	{ key: 'two_factor_authentication', name: 'Two Factor', width: '10%' },
 ]
 
 interface IUserDataGrid {
