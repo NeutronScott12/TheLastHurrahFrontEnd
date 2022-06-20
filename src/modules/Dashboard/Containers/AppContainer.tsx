@@ -26,6 +26,7 @@ export const AppContainer = () => {
 		<div>
 			<h2>AppContainer: {application_short_name}</h2>
 			<h2>App ID: {data?.fetch_application_by_short_name.id}</h2>
+			<h2>API Secret: {data?.fetch_application_by_short_name.auth_secret}</h2>
 			<Button
 				component={Link}
 				style={{}}

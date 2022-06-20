@@ -7,6 +7,7 @@ fragment ApplicationFields on ApplicationModel {
 	short_name
 	created_at
 	updated_at
+	auth_secret
 	application_name
 	links_in_comments
 	email_mods_when_comments_flagged
