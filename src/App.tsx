@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useLayoutEffect, useState } from 'react'
 import { CssBaseline } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 import { makeStyles, ThemeProvider } from '@mui/styles'
@@ -40,7 +40,8 @@ export const ColorModeContext = React.createContext({
 function App() {
 	const [mode, setMode] = useState('dark')
 	const classes = useStyles()
-	const { data, loading: userLoading } = useCurrentUserQuery()
+	const [loaded, setLoaded] = React.useState(true)
+	const { data } = useCurrentUserQuery()
 
 	const colorMode = React.useMemo(
 		() => ({
@@ -62,7 +63,7 @@ function App() {
 		[mode]
 	)
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		// console.log('USEEFFECT_RUN')
 		// console.log('DATA', data)
 
@@ -81,8 +82,10 @@ function App() {
 					isLoggedIn: true,
 				},
 			})
+
+			setLoaded(false)
 		}
-	}, [userLoading, data])
+	}, [data])
 	// console.log('CURRENT_USER', data)
 	// console.log('Loading', userLoading)
 
@@ -92,7 +95,7 @@ function App() {
 		setOpen(!open)
 	}
 
-	return userLoading ? (
+	return loaded ? (
 		<LoadingComponent />
 	) : (
 		<ColorModeContext.Provider value={colorMode}>
