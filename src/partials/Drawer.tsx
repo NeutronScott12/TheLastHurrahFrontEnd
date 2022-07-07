@@ -10,7 +10,7 @@ import { useCurrentUserQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
 	toolbarIcon: {
 		display: 'flex',
 		alignItems: 'center',

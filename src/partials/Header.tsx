@@ -34,7 +34,7 @@ import { useFetchApplicationsByOwnerIdQuery } from '../generated/graphql'
 
 const drawerWidth = 240
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
 	toolbar: {
 		paddingRight: 24, // keep right padding when drawer closed
 	},

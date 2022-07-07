@@ -2,7 +2,7 @@ import { Container, Grid, Theme } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import React from 'react'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
 	//@ts-ignore
 	appBarSpacer: theme.mixins.toolbar,
 	content: {
