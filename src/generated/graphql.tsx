@@ -1023,6 +1023,7 @@ export type ToggleSubscriptionToThreadInput = {
 };
 
 export type TwoFactorInput = {
+  application_short_name?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   two_factor_id: Scalars['String'];
 };
