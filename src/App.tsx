@@ -84,6 +84,8 @@ function App() {
 			})
 
 			setLoaded(false)
+		} else {
+			setLoaded(false)
 		}
 	}, [data])
 	// console.log('CURRENT_USER', data)

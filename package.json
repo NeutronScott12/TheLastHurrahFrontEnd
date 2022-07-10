@@ -9,7 +9,7 @@
 		"@mui/icons-material": "^5.8.4",
 		"@mui/material": "^5.8.7",
 		"@mui/styles": "^5.8.7",
-		"@mui/x-data-grid": "^5.12.3",
+		"@mui/x-data-grid": "^5.13.0",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^13.3.0",
 		"@testing-library/user-event": "^14.2.1",
@@ -44,7 +44,8 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"graphql-codegen": "graphql-codegen --config codegen.yml"
+		"graphql-codegen": "graphql-codegen --config codegen.yml",
+		"rimraf": "npx rimraf ./node_modules"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -66,22 +67,25 @@
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^7.3.0",
-		"@graphql-codegen/cli": "^2.7.0",
-		"@graphql-codegen/introspection": "^2.1.1",
-		"@graphql-codegen/typescript": "^2.6.0",
-		"@graphql-codegen/typescript-apollo-client-helpers": "^2.1.21",
-		"@graphql-codegen/typescript-operations": "^2.4.3",
-		"@graphql-codegen/typescript-react-apollo": "^3.2.17",
+		"@graphql-codegen/cli": "^2.8.0",
+		"@graphql-codegen/introspection": "^2.2.0",
+		"@graphql-codegen/typescript": "^2.7.1",
+		"@graphql-codegen/typescript-apollo-client-helpers": "^2.2.1",
+		"@graphql-codegen/typescript-operations": "^2.5.1",
+		"@graphql-codegen/typescript-react-apollo": "^3.3.1",
 		"@types/jest": "^28.1.4",
 		"@types/jwt-decode": "^3.1.0",
 		"@types/node": "^18.0.3",
-		"@types/ramda": "^0.28.14",
+		"@types/ramda": "^0.28.15",
 		"@types/react": "^18.0.15",
 		"@types/react-dom": "^18.0.6",
 		"@types/react-helmet": "^6.1.5",
 		"@types/react-router-dom": "^5.3.3",
 		"@types/styled-components": "^5.1.25",
 		"@types/yup": "^0.29.14",
-		"rimraf": "^3.0.2"
+		"autoprefixer": "^10.4.7",
+		"postcss": "^8.4.14",
+		"rimraf": "^3.0.2",
+		"tailwindcss": "^3.1.5"
 	}
 }
